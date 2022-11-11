@@ -4,7 +4,7 @@ A Minecraft clone in 2D.
 
 ## Run locally
 
-Run `yarn start` and open this address `localhost:3000` on any browser.
+Run `yarn dev` and open this address `localhost:3000` on any browser.
 
 ## Deploy
 
