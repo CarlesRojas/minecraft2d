@@ -1,5 +1,7 @@
+import Game from '@game/Game';
+
 const App = () => {
-  return <div>Minecraft 2D</div>;
+  return <Game />;
 };
 
 export default App;
