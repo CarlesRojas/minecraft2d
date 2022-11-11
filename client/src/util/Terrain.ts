@@ -9,6 +9,9 @@ import stoneImage from '@asset/textures/block/stone.png';
 import coalImage from '@asset/textures/block/coal_ore.png';
 import ironImage from '@asset/textures/block/iron_ore.png';
 import diamondImage from '@asset/textures/block/diamond_ore.png';
+import andesiteImage from '@asset/textures/block/andesite.png';
+import dioriteImage from '@asset/textures/block/diorite.png';
+import graniteImage from '@asset/textures/block/granite.png';
 
 export const getRenderedTiles = (tileSize: number, dimensions: { width: number; height: number }) => {
   if (tileSize === 0) return null;
@@ -31,6 +34,9 @@ export const getTileTypeInCoords = (seed: number, coords: Vector2) => {
 
   if (coords.y === terrainHeight) return TileType.GRASS;
   if (coords.y > stoneTerrainHeight) {
+    if (hasOre(seed, TileType.ANDESITE, coords)) return TileType.ANDESITE;
+    if (hasOre(seed, TileType.DIORITE, coords)) return TileType.DIORITE;
+    if (hasOre(seed, TileType.GRANITE, coords)) return TileType.GRANITE;
     if (hasOre(seed, TileType.COAL, coords)) return TileType.COAL;
     if (hasOre(seed, TileType.IRON, coords)) return TileType.IRON;
     if (hasOre(seed, TileType.DIAMOND, coords)) return TileType.DIAMOND;
@@ -56,6 +62,12 @@ export const getTextureFromTileType = (type: TileType) => {
         return PIXI.Texture.from(ironImage);
       case TileType.DIAMOND:
         return PIXI.Texture.from(diamondImage);
+      case TileType.ANDESITE:
+        return PIXI.Texture.from(andesiteImage);
+      case TileType.DIORITE:
+        return PIXI.Texture.from(dioriteImage);
+      case TileType.GRANITE:
+        return PIXI.Texture.from(graniteImage);
       default:
         return null;
     }

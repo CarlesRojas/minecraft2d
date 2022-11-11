@@ -44,6 +44,9 @@ const ores: { [key in TileType]?: OreInfo } = {
   [TileType.COAL]: { i: 0, depositSize: 0.36, frequency: 0.3 },
   [TileType.IRON]: { i: 1, depositSize: 0.3, frequency: 0.2 },
   [TileType.DIAMOND]: { i: 2, depositSize: 0.26, frequency: 0.15 },
+  [TileType.ANDESITE]: { i: 3, depositSize: 0.3, frequency: 0.07 },
+  [TileType.DIORITE]: { i: 4, depositSize: 0.3, frequency: 0.07 },
+  [TileType.GRANITE]: { i: 5, depositSize: 0.3, frequency: 0.07 },
 };
 
 export const hasOre = (seed: number, oreType: TileType, coords: Vector2) => {
