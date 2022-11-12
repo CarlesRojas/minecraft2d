@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@asset/*": ["src/asset/*"],
+      "@component/*": ["src/component/*"],
       "@game/*": ["src/game/*"],
       "@hook/*": ["src/hook/*"],
       "@style/*": ["src/style/*"],
