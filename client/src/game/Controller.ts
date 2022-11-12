@@ -3,11 +3,10 @@ import { EventSystem } from '@pixi/events';
 
 import Vector2 from '@util/Vector2';
 import GameClass from '@util/GameClass';
-import textureManifest from '@asset/texture/textureManifest.json';
+import textures from '@asset/texture/textures';
 import DevTools from '@game/DevTools';
 import World from '@game/world/World';
 import { Events } from '@util/Events';
-import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
 
 export enum Child {
   DEV_TOOLS = 'dev-tools',
@@ -61,6 +60,29 @@ export default class Controller extends GameClass {
   }
 
   // #################################################
+  //   RESIZE
+  // #################################################
+
+  handleResize(dimensions: Dimensions) {
+    this.global.dimensions = dimensions;
+    this.global.app.renderer.resize(dimensions.screen.x, dimensions.screen.y);
+    for (const value of Object.values(this.global.childs)) value.handleResize(dimensions);
+  }
+
+  // #################################################
+  //   GAME LOOP
+  // #################################################
+
+  #startGameLoop() {
+    if (!this.global) return;
+    this.global.app.ticker.add(() => this.gameLoop(this.global.app.ticker.deltaMS / 1000));
+  }
+
+  gameLoop(deltaInSeconds: number) {
+    for (const value of Object.values(this.global.childs)) value.gameLoop(deltaInSeconds);
+  }
+
+  // #################################################
   //   ENABLE INTERACTION
   // #################################################
 
@@ -85,7 +107,7 @@ export default class Controller extends GameClass {
   // #################################################
 
   async #loadAssets() {
-    PIXI.Assets.init({ manifest: textureManifest });
+    PIXI.Assets.init({ manifest: textures });
     await PIXI.Assets.loadBundle('blocks');
     this.#handleLoadingComplete();
   }
@@ -95,28 +117,5 @@ export default class Controller extends GameClass {
     this.global.childs[Child.WORLD] = new World({ global: this.global });
     this.handleResize(this.global.dimensions);
     this.#startGameLoop();
-  }
-
-  // #################################################
-  //   RESIZE
-  // #################################################
-
-  handleResize(dimensions: Dimensions) {
-    this.global.dimensions = dimensions;
-    this.global.app.renderer.resize(dimensions.screen.x, dimensions.screen.y);
-    for (const value of Object.values(this.global.childs)) value.handleResize(dimensions);
-  }
-
-  // #################################################
-  //   GAME LOOP
-  // #################################################
-
-  #startGameLoop() {
-    if (!this.global) return;
-    this.global.app.ticker.add(() => this.gameLoop(this.global.app.ticker.deltaMS / 1000));
-  }
-
-  gameLoop(deltaInSeconds: number) {
-    for (const value of Object.values(this.global.childs)) value.gameLoop(deltaInSeconds);
   }
 }

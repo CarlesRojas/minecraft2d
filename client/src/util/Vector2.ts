@@ -11,6 +11,11 @@ export default class Vector2 {
     return new Vector2(a.x * b.x + b.y * b.y);
   }
 
+  public static toCoords(coords: string): Vector2 {
+    const [x, y] = coords.split('-');
+    return new Vector2(parseInt(x), parseInt(y));
+  }
+
   public x: number;
   public y: number;
 
@@ -55,6 +60,6 @@ export default class Vector2 {
   }
 
   public toString(): string {
-    return `(${this.x}, ${this.y})`;
+    return `${this.x}-${this.y}`;
   }
 }

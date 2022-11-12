@@ -1,4 +1,4 @@
-export const HORIZONTAL_TILES_PER_SCREEN = 50;
+export const HORIZONTAL_TILES_PER_SCREEN = 30;
 export const SAFTY_TILES = 5;
 
 // export enum TileType {

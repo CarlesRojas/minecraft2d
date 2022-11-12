@@ -1,6 +1,6 @@
 import p5 from 'p5';
 import Vector2 from '@util/Vector2';
-import { TileType } from '@game/constant/constants';
+import { TileType } from '@asset/texture/textures';
 const p5Instance = new p5(() => {});
 
 const DISPL = 100000;
