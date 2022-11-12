@@ -20,11 +20,12 @@ export default class Tils extends GameClass {
     this.coords = coords;
     this.container = container;
 
-    this.sprite = new PIXI.Sprite(getTexture(TileType.DIRT));
+    this.sprite = new PIXI.Sprite(getTexture(TileType.GRASS));
     this.sprite.anchor.set(0.5);
     this.handleResize(dimensions);
 
-    this.container.addChild(this.sprite);
+    // TODO remove this condition and check this in the Ground class
+    if (this.coords.y > 0) this.container.addChild(this.sprite);
   }
 
   destructor() {

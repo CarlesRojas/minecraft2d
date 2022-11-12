@@ -67,6 +67,9 @@ export default class Controller extends GameClass {
     this.global.dimensions = dimensions;
     this.global.app.renderer.resize(dimensions.screen.x, dimensions.screen.y);
     for (const value of Object.values(this.global.childs)) value.handleResize(dimensions);
+
+    // TODO - do this in a camera class
+    this.global.app.stage.position.set(dimensions.screen.x / 2, dimensions.screen.y / 2);
   }
 
   // #################################################
