@@ -6,6 +6,12 @@ import useResize from '@hook/useResize';
 import Vector2 from '@util/Vector2';
 import { useEvents } from '@util/Events';
 import s from '@style/App.module.scss';
+import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
+
+const getGameDimensions = (dimensions: Vector2) => ({
+  screen: dimensions,
+  tile: dimensions.x / HORIZONTAL_TILES_PER_SCREEN,
+});
 
 const App = () => {
   const events = useEvents();
@@ -31,11 +37,15 @@ const App = () => {
 
   useDidMount(() => {
     if (!container.current) return;
-    controller.current = new Controller({ container: container.current, dimensions, events });
+    controller.current = new Controller({
+      container: container.current,
+      dimensions: getGameDimensions(dimensions),
+      events,
+    });
   });
 
   useEffect(() => {
-    if (controller.current) controller.current.handleResize(dimensions);
+    if (controller.current) controller.current.handleResize(getGameDimensions(dimensions));
   }, [dimensions]);
 
   // #################################################

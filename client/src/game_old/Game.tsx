@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Stage } from 'react-pixi-fiber';
 import useResize from '@hook/useResize';
 import World from 'src/game_old/terrain/World';
-import { HORIZONTAL_TILES_PER_SCREEN } from '@util/constant/constants';
+import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
 import useCharacter from '@hook/useCharacter';
 
 const Game = () => {

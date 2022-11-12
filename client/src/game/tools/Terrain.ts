@@ -1,7 +1,7 @@
 import Vector2 from '@util/Vector2';
-import { SAFTY_TILES, TileType } from '@util/constant/constants';
+import { SAFTY_TILES, TileType } from '@game/constant/constants';
 import * as PIXI from 'pixi.js';
-import { addNoiseToTerrain, getTerrainElevation, hasOre } from '@util/Noise';
+import { addNoiseToTerrain, getTerrainElevation, hasOre } from '@game/tools/Noise';
 
 import dirtImage from '@asset/textures/block/dirt.png';
 import grassImage from '@asset/textures/block/grass_block_side.png';

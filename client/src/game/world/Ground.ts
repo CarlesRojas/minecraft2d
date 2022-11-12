@@ -1,26 +1,16 @@
-import { Dimensions } from '@game/Controller';
-
-export default abstract class Controller {
-  constructor() {}
-  abstract destructor(): void;
-  abstract handleResize(dimensions: Dimensions): void;
-  abstract gameLoop(deltaInSeconds: number): void;
-}
-
-/*
 import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';
 
-export interface WorldProps {
+export interface GroundProps {
   global: Global;
 }
 
-export default class World extends GameClass {
+export default class Ground extends GameClass {
   global: Global;
   container: PIXI.Container;
 
-  constructor({ global }: WorldProps) {
+  constructor({ global }: GroundProps) {
     super();
     this.global = global;
 
@@ -44,5 +34,3 @@ export default class World extends GameClass {
 
   gameLoop(deltaInSeconds: number) {}
 }
-
-*/

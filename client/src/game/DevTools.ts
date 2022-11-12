@@ -1,8 +1,5 @@
-import * as PIXI from 'pixi.js';
-
-import { Global } from '@game/Controller';
+import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';
-import Vector2 from '@util/Vector2';
 import { Event } from '@util/Events';
 
 export interface DevToolsProps {
@@ -25,13 +22,17 @@ export default class DevTools extends GameClass {
   //   HANDLE RESIZE
   // #################################################
 
-  handleResize(dimensions: Vector2) {}
+  handleResize(dimensions: Dimensions) {}
 
   // #################################################
   //   GAME LOOP
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
+    this.#updateFrameRate(deltaInSeconds);
+  }
+
+  #updateFrameRate(deltaInSeconds: number) {
     const frameRate = Math.floor(1 / deltaInSeconds);
     if (this.frameRate !== frameRate) {
       this.frameRate = frameRate;

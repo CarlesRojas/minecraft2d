@@ -5,23 +5,30 @@ import Vector2 from '@util/Vector2';
 import GameClass from '@util/GameClass';
 import textureManifest from '@asset/texture/textureManifest.json';
 import DevTools from '@game/DevTools';
+import World from '@game/world/World';
 import { Events } from '@util/Events';
-
-export interface ControllerProps {
-  container: HTMLElement;
-  dimensions: Vector2;
-  events: Events;
-}
+import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
 
 export enum Child {
   DEV_TOOLS = 'dev-tools',
-  WORLD = 'world', // TODO use this
+  WORLD = 'world',
+}
+
+export interface Dimensions {
+  screen: Vector2;
+  tile: number;
 }
 
 export interface Global {
   app: PIXI.Application;
-  dimensions: Vector2;
+  dimensions: Dimensions;
   childs: { [key in Child]?: GameClass };
+  events: Events;
+}
+
+export interface ControllerProps {
+  container: HTMLElement;
+  dimensions: Dimensions;
   events: Events;
 }
 
@@ -33,8 +40,8 @@ export default class Controller extends GameClass {
 
     this.global = {
       app: new PIXI.Application({
-        width: dimensions.x,
-        height: dimensions.y,
+        width: dimensions.screen.x,
+        height: dimensions.screen.y,
         backgroundColor: 0x91bfff,
         resolution: window.devicePixelRatio || 1,
         autoDensity: true,
@@ -49,7 +56,9 @@ export default class Controller extends GameClass {
     this.#loadAssets();
   }
 
-  destructor() {}
+  destructor() {
+    for (const value of Object.values(this.global.childs)) value.destructor();
+  }
 
   // #################################################
   //   ENABLE INTERACTION
@@ -83,6 +92,7 @@ export default class Controller extends GameClass {
 
   #handleLoadingComplete() {
     this.global.childs[Child.DEV_TOOLS] = new DevTools({ global: this.global });
+    this.global.childs[Child.WORLD] = new World({ global: this.global });
     this.handleResize(this.global.dimensions);
     this.#startGameLoop();
   }
@@ -91,9 +101,9 @@ export default class Controller extends GameClass {
   //   RESIZE
   // #################################################
 
-  handleResize(dimensions: Vector2) {
+  handleResize(dimensions: Dimensions) {
     this.global.dimensions = dimensions;
-    this.global.app.renderer.resize(dimensions.x, dimensions.y);
+    this.global.app.renderer.resize(dimensions.screen.x, dimensions.screen.y);
     for (const value of Object.values(this.global.childs)) value.handleResize(dimensions);
   }
 

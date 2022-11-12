@@ -1,4 +1,4 @@
-import { getRenderedTiles } from '@util/Terrain';
+import { getRenderedTiles } from '@game/tools/Terrain';
 import Vector2 from '@util/Vector2';
 import { useMemo } from 'react';
 import Tile from './Tile';
