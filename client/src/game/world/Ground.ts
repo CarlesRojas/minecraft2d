@@ -43,7 +43,7 @@ export default class Ground extends GameClass {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    // for (const tile of Object.values(this._renderedTiles)) tile.gameLoop(deltaInSeconds);
+    for (const tile of Object.values(this._renderedTiles)) tile.gameLoop(deltaInSeconds);
   }
 
   // #################################################

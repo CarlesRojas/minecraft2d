@@ -9,7 +9,7 @@ const DevToolsUI = () => {
   //   FRAME RATE
   // #################################################
 
-  const [frameRate, setFrameRate] = useState(1000);
+  const [frameRate, setFrameRate] = useState(0);
 
   const handleFrameRateChange = ({ frameRate }: any) => {
     setFrameRate(frameRate);
