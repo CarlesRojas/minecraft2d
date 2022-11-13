@@ -9,6 +9,7 @@ export interface TileProps {
   container: PIXI.Container;
   dimensions: Dimensions;
   type: TileType;
+  isBackground: boolean;
 }
 
 export default class Tile extends GameClass {
@@ -16,16 +17,19 @@ export default class Tile extends GameClass {
   private _type: TileType = TileType.NONE;
   private _sprite: PIXI.Sprite | null = null;
   private _container: PIXI.Container;
+  private _isBackground: boolean;
 
-  constructor({ coords, container, dimensions, type }: TileProps) {
+  constructor({ coords, container, dimensions, type, isBackground }: TileProps) {
     super();
     this._coords = coords;
     this._container = container;
     this._type = type;
+    this._isBackground = isBackground;
 
     if (type === TileType.NONE) return;
 
     this._sprite = new PIXI.Sprite(getTileTexture(this._type));
+    if (this._isBackground) this._sprite.tint = 0xaaaaaa;
     this._sprite.anchor.set(0.5);
     this.handleResize(dimensions);
 

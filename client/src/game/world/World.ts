@@ -2,11 +2,13 @@ import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';
 import Ground from '@game/world/Ground';
+import Background from '@game/world/Background';
 import Vector2 from '@util/Vector2';
 import { SAFTY_TILES } from '@game/constant/constants';
 
 export interface Layers {
   ground: Ground;
+  background: Background;
 }
 
 export interface RenderArea {
@@ -32,6 +34,7 @@ export default class World extends GameClass {
     this._global.app.stage.addChild(this._container);
 
     this._layers = {
+      background: new Background({ global: this._global }),
       ground: new Ground({ global: this._global }),
     };
 

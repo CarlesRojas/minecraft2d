@@ -7,16 +7,16 @@ import Vector2 from '@util/Vector2';
 import { getTileTypeInCoords } from '@game/tools/Terrain';
 import { TileType } from '@game/tools/Textures';
 
-export interface GroundProps {
+export interface BackgroundProps {
   global: Global;
 }
 
-export default class Ground extends GameClass {
+export default class Background extends GameClass {
   private _global: Global;
   private _container: PIXI.Container;
   private _renderedTiles: { [key: string]: Tile };
 
-  constructor({ global }: GroundProps) {
+  constructor({ global }: BackgroundProps) {
     super();
     this._global = global;
 
@@ -58,8 +58,8 @@ export default class Ground extends GameClass {
       coords: new Vector2(coords.x, coords.y),
       container: this._container,
       dimensions: this._global.dimensions,
-      type: isCave ? TileType.NONE : type,
-      isBackground: false,
+      type: !isCave ? TileType.NONE : type,
+      isBackground: true,
     });
   }
 

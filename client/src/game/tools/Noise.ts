@@ -59,3 +59,13 @@ export const hasOre = (oreType: TileType, coords: Vector2) => {
     1 - depositSize
   );
 };
+
+export const isCave = (coords: Vector2) => {
+  const depositSize = 0.37;
+  const frequency = 0.03;
+
+  return (
+    roundToDecimals(p5Instance.noise((coords.x + DISPL) * frequency, (coords.y + DISPL) * frequency), 2) >
+    1 - depositSize
+  );
+};
