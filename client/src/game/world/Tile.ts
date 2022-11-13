@@ -16,6 +16,7 @@ export default class Tile extends GameClass {
   private _coords: Vector2;
   private _type: TileType = TileType.NONE;
   private _sprite: PIXI.Sprite | null = null;
+  private _shadowSprite: PIXI.Sprite | null = null;
   private _container: PIXI.Container;
   private _isBackground: boolean;
 
@@ -28,15 +29,27 @@ export default class Tile extends GameClass {
 
     if (type === TileType.NONE) return;
 
-    this._sprite = new PIXI.Sprite(getTileTexture(this._type));
-    if (this._isBackground) this._sprite.tint = 0xaaaaaa;
+    const texture = getTileTexture(this._type);
+
+    this._sprite = new PIXI.Sprite(texture);
     this._sprite.anchor.set(0.5);
-    this.handleResize(dimensions);
+    this._sprite.zIndex = 0;
+
+    if (this._isBackground) this._sprite.tint = 0x888888;
+    else {
+      this._shadowSprite = new PIXI.Sprite(texture);
+      this._shadowSprite.zIndex = -1;
+      this._shadowSprite.tint = 0x444444;
+      this._shadowSprite.anchor.set(0.5);
+      this._container.addChild(this._shadowSprite);
+    }
 
     this._container.addChild(this._sprite);
+    this.handleResize(dimensions);
   }
 
   destructor() {
+    if (this._shadowSprite) this._container.removeChild(this._shadowSprite);
     if (this._sprite) this._container.removeChild(this._sprite);
   }
 
@@ -45,13 +58,17 @@ export default class Tile extends GameClass {
   // #################################################
 
   handleResize(dimensions: Dimensions) {
-    if (!this._sprite) return;
-
     const { tile } = dimensions;
 
+    if (!this._sprite) return;
     this._sprite.position.set(this._coords.x * tile, this._coords.y * tile);
     this._sprite.width = tile;
     this._sprite.height = tile;
+
+    if (!this._shadowSprite) return;
+    this._shadowSprite.position.set(this._coords.x * tile, this._coords.y * tile);
+    this._shadowSprite.width = tile + 6;
+    this._shadowSprite.height = tile + 6;
   }
 
   // #################################################

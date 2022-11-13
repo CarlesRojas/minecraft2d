@@ -21,6 +21,7 @@ export default class Background extends GameClass {
     this._global = global;
 
     this._container = new PIXI.Container();
+    this._container.sortableChildren = true;
     this._global.app.stage.addChild(this._container);
 
     this._renderedTiles = {};
@@ -52,13 +53,13 @@ export default class Background extends GameClass {
   // #################################################
 
   async #instantiateTile(key: string, coords: Vector2) {
-    const { type, isCave } = await getTileTypeInCoords(coords);
+    const { backgroundType } = await getTileTypeInCoords(coords);
 
     this._renderedTiles[key] = new Tile({
       coords: new Vector2(coords.x, coords.y),
       container: this._container,
       dimensions: this._global.dimensions,
-      type: !isCave ? TileType.NONE : type,
+      type: backgroundType,
       isBackground: true,
     });
   }
