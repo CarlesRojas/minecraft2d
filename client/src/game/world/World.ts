@@ -4,7 +4,6 @@ import GameClass from '@util/GameClass';
 import Ground from '@game/world/Ground';
 import Vector2 from '@util/Vector2';
 import { SAFTY_TILES } from '@game/constant/constants';
-import Timer from '@util/Timer';
 
 export interface Layers {
   ground: Ground;

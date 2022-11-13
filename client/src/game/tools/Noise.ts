@@ -1,7 +1,9 @@
 import p5 from 'p5';
 import Vector2 from '@util/Vector2';
 import { TileType } from '@game/tools/Textures';
+import { SEED } from '@game/constant/constants';
 const p5Instance = new p5(() => {});
+p5Instance.noiseSeed(SEED);
 
 const DISPL = 100000;
 
@@ -15,23 +17,19 @@ const TERRAIN_SMOOTHNESS = 0.05;
 const MOUNTAIN_VARIANCE = 100;
 const MOUNTAIN_SMOOTHNESS = 0.005;
 
-export const getTerrainElevation = (seed: number, x: number) => {
-  p5Instance.noiseSeed(seed);
+const terrainElevationCache: { [key: number]: number } = {};
+
+export const getTerrainElevation = (x: number) => {
+  if (terrainElevationCache[x]) return terrainElevationCache[x];
 
   const terrainNoise = Math.round((p5Instance.noise((x + DISPL) * TERRAIN_SMOOTHNESS) - 0.5) * TERRAIN_VARIANCE);
   const mountainNoise = Math.round((p5Instance.noise((x + DISPL) * MOUNTAIN_SMOOTHNESS) - 0.5) * MOUNTAIN_VARIANCE);
 
-  return terrainNoise + mountainNoise;
+  terrainElevationCache[x] = terrainNoise + mountainNoise;
+  return terrainElevationCache[x];
 };
 
-export const addNoiseToTerrain = (
-  seed: number,
-  x: number,
-  smoothness = TERRAIN_SMOOTHNESS,
-  variance = TERRAIN_VARIANCE
-) => {
-  p5Instance.noiseSeed(seed);
-
+export const addNoiseToTerrain = (x: number, smoothness = TERRAIN_SMOOTHNESS, variance = TERRAIN_VARIANCE) => {
   return Math.round(p5Instance.noise((x + DISPL) * smoothness) * variance);
 };
 
@@ -50,12 +48,11 @@ const ores: { [key in TileType]?: OreInfo } = {
   [TileType.GRANITE]: { i: 5, depositSize: 0.3, frequency: 0.07 },
 };
 
-export const hasOre = (seed: number, oreType: TileType, coords: Vector2) => {
+export const hasOre = (oreType: TileType, coords: Vector2) => {
   const oreInfo = ores[oreType];
   if (!oreInfo) return false;
 
   const { i, depositSize, frequency } = oreInfo;
-  p5Instance.noiseSeed(seed + i);
 
   return (
     roundToDecimals(p5Instance.noise((coords.x + DISPL) * frequency, (coords.y + DISPL) * frequency), 2) >

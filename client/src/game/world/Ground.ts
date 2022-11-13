@@ -5,7 +5,6 @@ import { RenderArea } from '@game/world/World';
 import Tile from '@game/world/Tile';
 import Vector2 from '@util/Vector2';
 import { getTileTypeInCoords } from '@game/tools/Terrain';
-import { SEED } from '@game/constant/constants';
 
 export interface GroundProps {
   global: Global;
@@ -44,7 +43,7 @@ export default class Ground extends GameClass {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    for (const tile of Object.values(this._renderedTiles)) tile.gameLoop(deltaInSeconds);
+    // for (const tile of Object.values(this._renderedTiles)) tile.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -52,7 +51,7 @@ export default class Ground extends GameClass {
   // #################################################
 
   async #instantiateTile(key: string, coords: Vector2) {
-    const type = await getTileTypeInCoords(SEED, coords);
+    const type = await getTileTypeInCoords(coords);
 
     this._renderedTiles[key] = new Tile({
       coords: new Vector2(coords.x, coords.y),
