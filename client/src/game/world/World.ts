@@ -25,7 +25,6 @@ export default class World extends GameClass {
   private _layers: Layers;
   private _renderArea: RenderArea;
   private _lastRenderArea: RenderArea | null;
-  // private updateRenderAreaTimer: Timer;
 
   constructor({ global }: WorldProps) {
     super();
@@ -42,11 +41,6 @@ export default class World extends GameClass {
       end: new Vector2(0, 0),
     };
     this._lastRenderArea = null;
-
-    // this.updateRenderAreaTimer = new Timer(10, this.#updateRenderArea.bind(this), {
-    //   callOnStart: true,
-    //   resetOnEnd: false,
-    // });
   }
 
   destructor() {
@@ -67,7 +61,6 @@ export default class World extends GameClass {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    // this.updateRenderAreaTimer.gameLoop(deltaInSeconds);
     this.#updateRenderArea();
     for (const value of Object.values(this._layers)) value.gameLoop(deltaInSeconds);
   }
@@ -76,7 +69,7 @@ export default class World extends GameClass {
   //   RENDER AREA
   // #################################################
 
-  #updateRenderArea() {
+  async #updateRenderArea() {
     const { screen, tile } = this._global.dimensions;
     const characterPosition = this._global.controller.character.roundedPosition;
 

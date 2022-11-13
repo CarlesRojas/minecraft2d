@@ -15,7 +15,7 @@ export default class Character extends GameClass {
   private _container: PIXI.Container;
 
   private _position: Vector2 = new Vector2(0, 0);
-  private _movementSpeed = 6; // Tiles per second
+  private _movementSpeed = 10; // Tiles per second
 
   constructor({ global, dimensions }: CharacterProps) {
     super();
