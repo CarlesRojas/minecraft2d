@@ -19,6 +19,8 @@ export default class Tile extends GameClass {
   private _shadowSprite: PIXI.Sprite | null = null;
   private _container: PIXI.Container;
   private _isBackground: boolean;
+  private _debug: boolean = false;
+  private _text: PIXI.Text | null = null;
 
   constructor({ coords, container, dimensions, type, isBackground }: TileProps) {
     super();
@@ -35,13 +37,20 @@ export default class Tile extends GameClass {
     this._sprite.anchor.set(0.5);
     this._sprite.zIndex = 0;
 
-    if (this._isBackground) this._sprite.tint = 0x888888;
+    if (this._isBackground) this._sprite.tint = 0x999999;
     else {
       this._shadowSprite = new PIXI.Sprite(texture);
       this._shadowSprite.zIndex = -1;
       this._shadowSprite.tint = 0x444444;
       this._shadowSprite.anchor.set(0.5);
       this._container.addChild(this._shadowSprite);
+    }
+
+    if (this._debug) {
+      this._text = new PIXI.Text(this._coords.toString(), { fill: 0x00ff00, fontSize: 14 });
+      this._text.anchor.set(0.5);
+      this._text.zIndex = 1;
+      this._container.addChild(this._text);
     }
 
     this._container.addChild(this._sprite);
@@ -51,6 +60,7 @@ export default class Tile extends GameClass {
   destructor() {
     if (this._shadowSprite) this._container.removeChild(this._shadowSprite);
     if (this._sprite) this._container.removeChild(this._sprite);
+    if (this._text) this._container.removeChild(this._text);
   }
 
   // #################################################
@@ -60,15 +70,21 @@ export default class Tile extends GameClass {
   handleResize(dimensions: Dimensions) {
     const { tile } = dimensions;
 
-    if (!this._sprite) return;
-    this._sprite.position.set(this._coords.x * tile, this._coords.y * tile);
-    this._sprite.width = tile;
-    this._sprite.height = tile;
+    if (this._sprite) {
+      this._sprite.position.set(this._coords.x * tile, this._coords.y * tile);
+      this._sprite.width = tile;
+      this._sprite.height = tile;
+    }
 
-    if (!this._shadowSprite) return;
-    this._shadowSprite.position.set(this._coords.x * tile, this._coords.y * tile);
-    this._shadowSprite.width = tile + 6;
-    this._shadowSprite.height = tile + 6;
+    if (this._shadowSprite) {
+      this._shadowSprite.position.set(this._coords.x * tile, this._coords.y * tile);
+      this._shadowSprite.width = tile + 6;
+      this._shadowSprite.height = tile + 6;
+    }
+
+    if (this._text) {
+      this._text.position.set(this._coords.x * tile, this._coords.y * tile);
+    }
   }
 
   // #################################################
@@ -87,5 +103,10 @@ export default class Tile extends GameClass {
 
   get type() {
     return this._type;
+  }
+
+  get bounds() {
+    if (!this._sprite) return null;
+    return this._sprite.getBounds();
   }
 }

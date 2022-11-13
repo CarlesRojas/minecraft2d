@@ -60,11 +60,14 @@ export default class Vector2 {
   }
 
   public toString(): string {
-    return `${this.x}-${this.y}`;
+    return `${this.x} ${this.y}`;
   }
 
-  // Check if another vector2 is equal to this one
   public equals(v: Vector2): boolean {
     return this.x === v.x && this.y === v.y;
+  }
+
+  public clone(): Vector2 {
+    return new Vector2(this.x, this.y);
   }
 }

@@ -6,7 +6,7 @@ export interface CameraProps {
   global: Global;
 }
 
-const CAMERA_SCALE = 0.8; // TODO change to 1
+const CAMERA_SCALE = 1; // TODO change to 1
 
 export default class Camera extends GameClass {
   private _global: Global;

@@ -94,4 +94,16 @@ export default class World extends GameClass {
 
     for (const value of Object.values(this._layers)) value.updateRenderArea(this._renderArea);
   }
+
+  // #################################################
+  //   GETTERS
+  // #################################################
+
+  get ground() {
+    return this._layers.ground;
+  }
+
+  get background() {
+    return this._layers.background;
+  }
 }

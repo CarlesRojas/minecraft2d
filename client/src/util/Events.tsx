@@ -5,6 +5,7 @@ enum Event {
   ON_MOUSE_MOVE = 'onMouseMove',
   ON_KEY_DOWN = 'onKeyDown',
   ON_KEY_UP = 'onKeyUp',
+  ON_GROUND_LOADED = 'onGroundLoaded',
 }
 
 export type Events = {

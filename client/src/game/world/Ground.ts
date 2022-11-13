@@ -6,6 +6,7 @@ import Tile from '@game/world/Tile';
 import Vector2 from '@util/Vector2';
 import { getTileTypeInCoords } from '@game/tools/Terrain';
 import { TileType } from '@game/tools/Textures';
+import { Event } from '@util/Events';
 
 export interface GroundProps {
   global: Global;
@@ -88,5 +89,16 @@ export default class Ground extends GameClass {
         this.#instantiateTile(key, coords);
       }
     }
+  }
+
+  // #################################################
+  //   GETTERS
+  // #################################################
+
+  get tileAtCoords() {
+    return (coords: Vector2) => {
+      const key = coords.toString();
+      return key in this._renderedTiles ? this._renderedTiles[key] : null;
+    };
   }
 }
