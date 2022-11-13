@@ -62,6 +62,7 @@ export default class Character extends GameClass {
     this.#applyPlayerMovement(deltaInSeconds);
     // this.#applyPhysics(deltaInSeconds);
     this.#moveCharacterToPosition(this._position);
+    // Try this https://stackoverflow.com/questions/6673822/collision-reaction-in-a-2d-side-scroller-game-similar-to-mario/6699728#6699728
 
     // const collision = this.#isCollidingWithEnviroment();
     // if (collision.horizontal) this.#moveCharacterToPosition(new Vector2(prevPosition.x, this._position.y));
