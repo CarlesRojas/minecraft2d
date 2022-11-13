@@ -13,6 +13,10 @@ export enum TileType {
   GRANITE = 'granite',
 }
 
+export enum CharacterType {
+  STEVE = 'steve',
+}
+
 const textures = {
   bundles: [
     {
@@ -29,10 +33,20 @@ const textures = {
         { name: TileType.GRANITE, srcs: 'src/asset/texture/block/granite.png' },
       ],
     },
+    {
+      name: 'characters',
+      assets: [{ name: CharacterType.STEVE, srcs: 'src/asset/texture/block/magenta_shulker_box.png' }],
+    },
   ],
 };
 
-export const getTexture = (name: TileType) => {
+export const getTileTexture = (name: TileType) => {
+  const texture = PIXI.Assets.get(name) as PIXI.Texture;
+  texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+  return texture;
+};
+
+export const getCharacterTexture = (name: CharacterType) => {
   const texture = PIXI.Assets.get(name) as PIXI.Texture;
   texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
   return texture;

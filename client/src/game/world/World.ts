@@ -4,6 +4,7 @@ import GameClass from '@util/GameClass';
 import Ground from '@game/world/Ground';
 import Vector2 from '@util/Vector2';
 import { SAFTY_TILES } from '@game/constant/constants';
+import Timer from '@util/Timer';
 
 export interface Layers {
   ground: Ground;
@@ -19,33 +20,38 @@ export interface WorldProps {
 }
 
 export default class World extends GameClass {
-  global: Global;
-  container: PIXI.Container;
-  layers: Layers;
-  characterPosition: Vector2;
-  renderArea: RenderArea;
+  private _global: Global;
+  private _container: PIXI.Container;
+  private _layers: Layers;
+  private _renderArea: RenderArea;
+  private _lastRenderArea: RenderArea | null;
+  // private updateRenderAreaTimer: Timer;
 
   constructor({ global }: WorldProps) {
     super();
-    this.global = global;
-    this.container = new PIXI.Container();
-    this.global.app.stage.addChild(this.container);
+    this._global = global;
+    this._container = new PIXI.Container();
+    this._global.app.stage.addChild(this._container);
 
-    this.layers = {
-      ground: new Ground({ global: this.global }),
+    this._layers = {
+      ground: new Ground({ global: this._global }),
     };
 
-    this.characterPosition = new Vector2(0, 0);
-
-    this.renderArea = {
+    this._renderArea = {
       start: new Vector2(0, 0),
       end: new Vector2(0, 0),
     };
+    this._lastRenderArea = null;
+
+    // this.updateRenderAreaTimer = new Timer(10, this.#updateRenderArea.bind(this), {
+    //   callOnStart: true,
+    //   resetOnEnd: false,
+    // });
   }
 
   destructor() {
-    for (const value of Object.values(this.layers)) value.destructor();
-    this.global.app.stage.removeChild(this.container);
+    for (const value of Object.values(this._layers)) value.destructor();
+    this._global.app.stage.removeChild(this._container);
   }
 
   // #################################################
@@ -53,37 +59,7 @@ export default class World extends GameClass {
   // #################################################
 
   handleResize(dimensions: Dimensions) {
-    this.#updateRenderArea();
-    for (const value of Object.values(this.layers)) value.handleResize(dimensions);
-  }
-
-  // #################################################
-  //   RENDER AREA
-  // #################################################
-
-  handleCharacterPositionChange(position: Vector2) {
-    this.characterPosition = position;
-    this.#updateRenderArea();
-  }
-
-  #updateRenderArea() {
-    const { screen, tile } = this.global.dimensions;
-
-    const horizontalNumberOfTiles = Math.ceil(screen.x / tile / 2) + SAFTY_TILES;
-    const verticalNumberOfTiles = Math.ceil(screen.y / tile / 2) + SAFTY_TILES;
-
-    this.renderArea = {
-      start: new Vector2(
-        this.characterPosition.x - horizontalNumberOfTiles,
-        this.characterPosition.y - verticalNumberOfTiles
-      ),
-      end: new Vector2(
-        this.characterPosition.x + horizontalNumberOfTiles,
-        this.characterPosition.y + verticalNumberOfTiles
-      ),
-    };
-
-    for (const value of Object.values(this.layers)) value.updateRenderArea(this.renderArea);
+    for (const value of Object.values(this._layers)) value.handleResize(dimensions);
   }
 
   // #################################################
@@ -91,6 +67,36 @@ export default class World extends GameClass {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    for (const value of Object.values(this.layers)) value.gameLoop(deltaInSeconds);
+    // this.updateRenderAreaTimer.gameLoop(deltaInSeconds);
+    this.#updateRenderArea();
+    for (const value of Object.values(this._layers)) value.gameLoop(deltaInSeconds);
+  }
+
+  // #################################################
+  //   RENDER AREA
+  // #################################################
+
+  #updateRenderArea() {
+    const { screen, tile } = this._global.dimensions;
+    const characterPosition = this._global.controller.character.roundedPosition;
+
+    const horizontalNumberOfTiles = Math.ceil(screen.x / tile / 2) + SAFTY_TILES;
+    const verticalNumberOfTiles = Math.ceil(screen.y / tile / 2) + SAFTY_TILES;
+
+    this._renderArea = {
+      start: new Vector2(characterPosition.x - horizontalNumberOfTiles, characterPosition.y - verticalNumberOfTiles),
+      end: new Vector2(characterPosition.x + horizontalNumberOfTiles, characterPosition.y + verticalNumberOfTiles),
+    };
+
+    if (
+      this._lastRenderArea &&
+      this._lastRenderArea.start.equals(this._renderArea.start) &&
+      this._lastRenderArea.end.equals(this._renderArea.end)
+    )
+      return;
+
+    this._lastRenderArea = this._renderArea;
+
+    for (const value of Object.values(this._layers)) value.updateRenderArea(this._renderArea);
   }
 }

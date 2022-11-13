@@ -8,6 +8,7 @@ export default abstract class Controller {
 }
 
 /*
+
 import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';

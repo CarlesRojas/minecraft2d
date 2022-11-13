@@ -2,6 +2,9 @@ import { createContext, useContext, useRef } from 'react';
 
 enum Event {
   ON_FRAME_RATE_CHANGE = 'onFramerateChange',
+  ON_MOUSE_MOVE = 'onMouseMove',
+  ON_KEY_DOWN = 'onKeyDown',
+  ON_KEY_UP = 'onKeyUp',
 }
 
 export type Events = {

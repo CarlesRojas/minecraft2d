@@ -4,7 +4,7 @@ import Controller from '@game/Controller';
 import useDidMount from '@hook/useDidMount';
 import useResize from '@hook/useResize';
 import Vector2 from '@util/Vector2';
-import { useEvents } from '@util/Events';
+import { Event, useEvents } from '@util/Events';
 import s from '@style/App.module.scss';
 import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
 
@@ -49,13 +49,33 @@ const App = () => {
   }, [dimensions]);
 
   // #################################################
+  //   CAPTURE EVENTS
+  // #################################################
+
+  const handleMouseMove = (e: MouseEvent) => events.emit(Event.ON_MOUSE_MOVE, e);
+  const handleKeyDown = (e: KeyboardEvent) => events.emit(Event.ON_KEY_DOWN, e);
+  const handleKeyUp = (e: KeyboardEvent) => events.emit(Event.ON_KEY_UP, e);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  // #################################################
   //   RENDER
   // #################################################
 
   return (
     <>
       <DevToolsUI />
-      <main className={s.game} ref={container} />;
+      <main className={s.game} ref={container} />
     </>
   );
 };

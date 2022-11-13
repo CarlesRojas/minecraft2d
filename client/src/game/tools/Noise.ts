@@ -1,6 +1,6 @@
 import p5 from 'p5';
 import Vector2 from '@util/Vector2';
-import { TileType } from '@asset/texture/textures';
+import { TileType } from '@game/tools/Textures';
 const p5Instance = new p5(() => {});
 
 const DISPL = 100000;
@@ -20,6 +20,7 @@ export const getTerrainElevation = (seed: number, x: number) => {
 
   const terrainNoise = Math.round((p5Instance.noise((x + DISPL) * TERRAIN_SMOOTHNESS) - 0.5) * TERRAIN_VARIANCE);
   const mountainNoise = Math.round((p5Instance.noise((x + DISPL) * MOUNTAIN_SMOOTHNESS) - 0.5) * MOUNTAIN_VARIANCE);
+
   return terrainNoise + mountainNoise;
 };
 

@@ -3,14 +3,20 @@ import { EventSystem } from '@pixi/events';
 
 import Vector2 from '@util/Vector2';
 import GameClass from '@util/GameClass';
-import textures from '@asset/texture/textures';
 import DevTools from '@game/DevTools';
 import World from '@game/world/World';
 import { Events } from '@util/Events';
+import textures from '@game/tools/Textures';
+import Character from '@game/Character';
+import Camera from '@game/Camera';
+import Interaction from '@game/Interaction';
 
 export enum Child {
   DEV_TOOLS = 'dev-tools',
   WORLD = 'world',
+  CHARACTER = 'character',
+  CAMERA = 'camera',
+  INTERACTION = 'interaction',
 }
 
 export interface Dimensions {
@@ -23,6 +29,7 @@ export interface Global {
   dimensions: Dimensions;
   childs: { [key in Child]?: GameClass };
   events: Events;
+  controller: Controller;
 }
 
 export interface ControllerProps {
@@ -32,12 +39,12 @@ export interface ControllerProps {
 }
 
 export default class Controller extends GameClass {
-  global: Global;
+  private _global: Global;
 
   constructor({ container, dimensions, events }: ControllerProps) {
     super();
 
-    this.global = {
+    this._global = {
       app: new PIXI.Application({
         width: dimensions.screen.x,
         height: dimensions.screen.y,
@@ -48,6 +55,7 @@ export default class Controller extends GameClass {
       dimensions,
       childs: {},
       events,
+      controller: this,
     };
 
     this.#enableInteraction();
@@ -56,7 +64,7 @@ export default class Controller extends GameClass {
   }
 
   destructor() {
-    for (const value of Object.values(this.global.childs)) value.destructor();
+    for (const value of Object.values(this._global.childs)) value.destructor();
   }
 
   // #################################################
@@ -64,12 +72,13 @@ export default class Controller extends GameClass {
   // #################################################
 
   handleResize(dimensions: Dimensions) {
-    this.global.dimensions = dimensions;
-    this.global.app.renderer.resize(dimensions.screen.x, dimensions.screen.y);
-    for (const value of Object.values(this.global.childs)) value.handleResize(dimensions);
+    this._global.dimensions = dimensions;
+    this._global.app.renderer.resize(dimensions.screen.x, dimensions.screen.y);
+    for (const value of Object.values(this._global.childs)) value.handleResize(dimensions);
 
     // TODO - do this in a camera class
-    this.global.app.stage.position.set(dimensions.screen.x / 2, dimensions.screen.y / 2);
+    this._global.app.stage.position.set(dimensions.screen.x / 2, dimensions.screen.y / 2);
+    this._global.app.stage.scale.set(0.6);
   }
 
   // #################################################
@@ -77,12 +86,12 @@ export default class Controller extends GameClass {
   // #################################################
 
   #startGameLoop() {
-    if (!this.global) return;
-    this.global.app.ticker.add(() => this.gameLoop(this.global.app.ticker.deltaMS / 1000));
+    if (!this._global) return;
+    this._global.app.ticker.add(() => this.gameLoop(this._global.app.ticker.deltaMS / 1000));
   }
 
   gameLoop(deltaInSeconds: number) {
-    for (const value of Object.values(this.global.childs)) value.gameLoop(deltaInSeconds);
+    for (const value of Object.values(this._global.childs)) value.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -90,8 +99,7 @@ export default class Controller extends GameClass {
   // #################################################
 
   #enableInteraction() {
-    delete PIXI.Renderer.__plugins.interaction;
-    if (!('events' in this.global.app.renderer)) this.global.app.renderer.addSystem(EventSystem, 'events');
+    this._global.app.stage.interactive = false;
   }
 
   // #################################################
@@ -102,7 +110,7 @@ export default class Controller extends GameClass {
     const oldCanvases = container.getElementsByTagName('canvas');
     if (oldCanvases.length)
       for (let i = 0; i < oldCanvases.length; i++) oldCanvases[i].parentNode?.removeChild(oldCanvases[0]);
-    container.appendChild(this.global.app.view as any);
+    container.appendChild(this._global.app.view as any);
   }
 
   // #################################################
@@ -111,14 +119,42 @@ export default class Controller extends GameClass {
 
   async #loadAssets() {
     PIXI.Assets.init({ manifest: textures });
-    await PIXI.Assets.loadBundle('blocks');
+    await Promise.all([PIXI.Assets.loadBundle('blocks'), PIXI.Assets.loadBundle('characters')]);
     this.#handleLoadingComplete();
   }
 
   #handleLoadingComplete() {
-    this.global.childs[Child.DEV_TOOLS] = new DevTools({ global: this.global });
-    this.global.childs[Child.WORLD] = new World({ global: this.global });
-    this.handleResize(this.global.dimensions);
+    this._global.childs[Child.DEV_TOOLS] = new DevTools({ global: this._global });
+    this._global.childs[Child.WORLD] = new World({ global: this._global });
+    this._global.childs[Child.CHARACTER] = new Character({ global: this._global, dimensions: this._global.dimensions });
+    this._global.childs[Child.CAMERA] = new Camera({ global: this._global });
+    this._global.childs[Child.INTERACTION] = new Interaction({ global: this._global });
+
+    this.handleResize(this._global.dimensions);
     this.#startGameLoop();
+  }
+
+  // #################################################
+  //   GETTERS
+  // #################################################
+
+  get devTools() {
+    return this._global.childs[Child.DEV_TOOLS] as DevTools;
+  }
+
+  get world() {
+    return this._global.childs[Child.WORLD] as World;
+  }
+
+  get character() {
+    return this._global.childs[Child.CHARACTER] as Character;
+  }
+
+  get camera() {
+    return this._global.childs[Child.CAMERA] as Camera;
+  }
+
+  get interaction() {
+    return this._global.childs[Child.INTERACTION] as Interaction;
   }
 }

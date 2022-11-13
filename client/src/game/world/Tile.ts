@@ -2,34 +2,38 @@ import * as PIXI from 'pixi.js';
 import { Dimensions } from '@game/Controller';
 import GameClass from '@util/GameClass';
 import Vector2 from '@util/Vector2';
-import { TileType, getTexture } from '@asset/texture/textures';
+import { getTileTexture, TileType } from '@game/tools/Textures';
 
-export interface TilsProps {
+export interface TileProps {
   coords: Vector2;
   container: PIXI.Container;
   dimensions: Dimensions;
+  type: TileType;
 }
 
-export default class Tils extends GameClass {
-  coords: Vector2;
-  sprite: PIXI.Sprite;
-  container: PIXI.Container;
+export default class Tile extends GameClass {
+  private _coords: Vector2;
+  private _type: TileType = TileType.NONE;
+  private _sprite: PIXI.Sprite | null = null;
+  private _container: PIXI.Container;
 
-  constructor({ coords, container, dimensions }: TilsProps) {
+  constructor({ coords, container, dimensions, type }: TileProps) {
     super();
-    this.coords = coords;
-    this.container = container;
+    this._coords = coords;
+    this._container = container;
+    this._type = type;
 
-    this.sprite = new PIXI.Sprite(getTexture(TileType.GRASS));
-    this.sprite.anchor.set(0.5);
+    if (type === TileType.NONE) return;
+
+    this._sprite = new PIXI.Sprite(getTileTexture(this._type));
+    this._sprite.anchor.set(0.5);
     this.handleResize(dimensions);
 
-    // TODO remove this condition and check this in the Ground class
-    if (this.coords.y > 0) this.container.addChild(this.sprite);
+    this._container.addChild(this._sprite);
   }
 
   destructor() {
-    this.container.removeChild(this.sprite);
+    if (this._sprite) this._container.removeChild(this._sprite);
   }
 
   // #################################################
@@ -37,11 +41,13 @@ export default class Tils extends GameClass {
   // #################################################
 
   handleResize(dimensions: Dimensions) {
+    if (!this._sprite) return;
+
     const { tile } = dimensions;
 
-    this.sprite.position.set(this.coords.x * tile, this.coords.y * tile);
-    this.sprite.width = tile;
-    this.sprite.height = tile;
+    this._sprite.position.set(this._coords.x * tile, this._coords.y * tile);
+    this._sprite.width = tile;
+    this._sprite.height = tile;
   }
 
   // #################################################
@@ -49,4 +55,16 @@ export default class Tils extends GameClass {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {}
+
+  // #################################################
+  //   GETTERS
+  // #################################################
+
+  get coords() {
+    return this._coords;
+  }
+
+  get type() {
+    return this._type;
+  }
 }

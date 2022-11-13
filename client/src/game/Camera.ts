@@ -1,19 +1,18 @@
+import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';
 import { Event } from '@util/Events';
 
-export interface DevToolsProps {
+export interface CameraProps {
   global: Global;
 }
 
-export default class DevTools extends GameClass {
+export default class Camera extends GameClass {
   private _global: Global;
-  private _frameRate: number;
 
-  constructor({ global }: DevToolsProps) {
+  constructor({ global }: CameraProps) {
     super();
     this._global = global;
-    this._frameRate = 0;
   }
 
   destructor() {}
@@ -28,15 +27,5 @@ export default class DevTools extends GameClass {
   //   GAME LOOP
   // #################################################
 
-  gameLoop(deltaInSeconds: number) {
-    this.#updateFrameRate(deltaInSeconds);
-  }
-
-  #updateFrameRate(deltaInSeconds: number) {
-    const frameRate = Math.floor(1 / deltaInSeconds);
-    if (this._frameRate !== frameRate) {
-      this._frameRate = frameRate;
-      this._global.events.emit(Event.ON_FRAME_RATE_CHANGE, { frameRate: this._frameRate });
-    }
-  }
+  gameLoop(deltaInSeconds: number) {}
 }
