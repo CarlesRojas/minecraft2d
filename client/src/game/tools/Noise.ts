@@ -60,12 +60,26 @@ export const hasOre = (oreType: TileType, coords: Vector2) => {
   );
 };
 
-export const isCave = (coords: Vector2) => {
-  const depositSize = 0.37;
-  const frequency = 0.03;
+export const isCave = (coords: Vector2, stoneElevation: number) => {
+  const isBelowStoneElevation = coords.y > stoneElevation;
 
-  return (
-    roundToDecimals(p5Instance.noise((coords.x + DISPL) * frequency, (coords.y + DISPL) * frequency), 2) >
-    1 - depositSize
+  const bigCaveSize = 0.37;
+  const bigCaveFrequency = 0.03;
+
+  const isBigCave =
+    isBelowStoneElevation &&
+    roundToDecimals(p5Instance.noise((coords.x + DISPL) * bigCaveFrequency, (coords.y + DISPL) * bigCaveFrequency), 2) >
+      1 - bigCaveSize;
+
+  const smallCaveSize = 0.028;
+  const smallCaveFrequency = 0.009;
+
+  const smallCaveNoise = roundToDecimals(
+    p5Instance.noise((coords.x + DISPL) * smallCaveFrequency * 2, (coords.y + DISPL) * smallCaveFrequency * 2),
+    2
   );
+
+  const isSmallCave = smallCaveNoise > 0.5 - smallCaveSize && smallCaveNoise < 0.5 + smallCaveSize;
+
+  return isBigCave || isSmallCave;
 };

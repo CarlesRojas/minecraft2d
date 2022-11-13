@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { Child, Dimensions, Global } from '@game/Controller';
+import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';
-import { CharacterType, getCharacterTexture, getTileTexture } from '@game/tools/Textures';
+import { CharacterType, getCharacterTexture } from '@game/tools/Textures';
 import Vector2 from '@util/Vector2';
 
 export interface CharacterProps {
@@ -15,7 +15,7 @@ export default class Character extends GameClass {
   private _container: PIXI.Container;
 
   private _position: Vector2 = new Vector2(0, 0);
-  private _movementSpeed = 10; // Tiles per second
+  private _movementSpeed = 30; // Tiles per second
 
   constructor({ global, dimensions }: CharacterProps) {
     super();

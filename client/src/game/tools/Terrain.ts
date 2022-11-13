@@ -22,11 +22,10 @@ export const getTileTypeInCoords = async (coords: Vector2) => {
 
   let backgroundTileType = TileType.NONE;
   let groundTileType = TileType.NONE;
-  let cave = false;
+  let cave = isCave(coords, stoneElevation);
 
   if (y === elevation) backgroundTileType = groundTileType = TileType.GRASS;
   else if (y > stoneElevation) {
-    cave = isCave(coords);
     if (hasOre(TileType.ANDESITE, coords)) backgroundTileType = groundTileType = TileType.ANDESITE;
     else if (hasOre(TileType.DIORITE, coords)) backgroundTileType = groundTileType = TileType.DIORITE;
     else if (hasOre(TileType.GRANITE, coords)) backgroundTileType = groundTileType = TileType.GRANITE;
