@@ -20,10 +20,10 @@ export default class Character extends GameClass {
 
   // MOVEMENT
   private _position: Vector2 = new Vector2(0, 0);
-  private _gravity = GRAVITY;
-  private _acceleration = 150;
+  private _acceleration = 200;
   private _velocity: Vector2 = new Vector2(0, 0); // Tiles per second
   private _maxVelocity: Vector2 = new Vector2(10, 20); // Tiles per second
+  private _isGrounded = true;
   private _isJumping = false;
   private _jumpingVelocity = 50;
 
@@ -32,7 +32,7 @@ export default class Character extends GameClass {
     this._global = global;
     this._container = new PIXI.Container();
     this._global.app.stage.addChild(this._container);
-    this._position = new Vector2(0, getTerrainElevation(0) - 1);
+    this._position = new Vector2(0, getTerrainElevation(0) - 2);
 
     this._sprite = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE));
     this._sprite.zIndex = 1;
@@ -55,8 +55,8 @@ export default class Character extends GameClass {
     const { tile } = dimensions;
 
     this._sprite.position.set(this._position.x * tile, this._position.y * tile);
-    this._sprite.width = tile;
     this._sprite.height = tile;
+    this._sprite.width = tile;
   }
 
   // #################################################
@@ -66,19 +66,8 @@ export default class Character extends GameClass {
   gameLoop(deltaInSeconds: number) {
     this.#updatePlayerSpeed(deltaInSeconds);
 
-    const newPosition = new Vector2(
-      this.position.x + this._velocity.x * deltaInSeconds,
-      this.position.y + this._velocity.y * deltaInSeconds
-    );
-
-    this.#moveCharacterToPosition(newPosition);
-    // const prevPosition = this._position.clone();
-    // this.#applyPhysics(deltaInSeconds);
-    // this.#applyPlayerMovement(deltaInSeconds);
-    // this.#moveCharacterToPosition(this._position);
-    // const collision = this.#isCollidingWithEnviroment();
-    // if (collision.horizontal) this.#moveCharacterToPosition(new Vector2(prevPosition.x, this._position.y));
-    // if (collision.vertical) this.#moveCharacterToPosition(new Vector2(this._position.x, prevPosition.y));
+    this.#applyVerticalMovement(deltaInSeconds);
+    this.#applyHorizontalMovement(deltaInSeconds);
   }
 
   #updatePlayerSpeed(deltaInSeconds: number) {
@@ -103,23 +92,37 @@ export default class Character extends GameClass {
     }
 
     // GRAVITY
-    if (this._isJumping) this._velocity.y = this._velocity.y += GRAVITY * deltaInSeconds;
+    this._velocity.y = this._velocity.y += GRAVITY * deltaInSeconds;
 
     // MAX VELOCITY
     this._velocity.x = Math.max(Math.min(this._velocity.x, this._maxVelocity.x), -this._maxVelocity.x);
     this._velocity.y = Math.max(Math.min(this._velocity.y, this._maxVelocity.y), -this._maxVelocity.y);
   }
 
-  // #applyPlayerMovement(deltaInSeconds: number) {
-  //   if (this._global.controller.interaction.isKeyPressed('w')) this._position.y -= this._movementSpeed * deltaInSeconds;
-  //   if (this._global.controller.interaction.isKeyPressed('a')) this._position.x -= this._movementSpeed * deltaInSeconds;
-  //   if (this._global.controller.interaction.isKeyPressed('s')) this._position.y += this._movementSpeed * deltaInSeconds;
-  //   if (this._global.controller.interaction.isKeyPressed('d')) this._position.x += this._movementSpeed * deltaInSeconds;
-  // }
+  #applyVerticalMovement(deltaInSeconds: number) {
+    const velocity = this._velocity.y;
+    const prevPosition = this._position.clone();
+    const newPosition = new Vector2(this._position.x, this._position.y + velocity * deltaInSeconds);
+    this.#moveCharacterToPosition(newPosition);
 
-  // #applyPhysics(deltaInSeconds: number) {
-  //   this._position.y += GRAVITY * deltaInSeconds;
-  // }
+    if (this.#isCollidingWithEnviroment()) {
+      this._isJumping = false;
+      this._velocity.y = 0;
+      this.#moveCharacterToPosition(prevPosition);
+    }
+  }
+
+  #applyHorizontalMovement(deltaInSeconds: number) {
+    const velocity = this._velocity.x;
+    const prevPosition = this._position.clone();
+    const newPosition = new Vector2(this._position.x + velocity * deltaInSeconds, this._position.y);
+    this.#moveCharacterToPosition(newPosition);
+
+    if (this.#isCollidingWithEnviroment()) {
+      this._velocity.x = 0;
+      this.#moveCharacterToPosition(prevPosition);
+    }
+  }
 
   #moveCharacterToPosition(position: Vector2) {
     this._position.x = position.x;
@@ -135,37 +138,9 @@ export default class Character extends GameClass {
     const minY = Math.floor(y);
     const maxY = Math.ceil(y);
 
-    for (let i = minX; i <= maxX; i++) {
-      for (let j = minY; j <= maxY; j++) {
-        if (this.#isCollidingWithTile(new Vector2(i, j))) return true;
-      }
-    }
+    for (let i = minX; i <= maxX; i++)
+      for (let j = minY; j <= maxY; j++) if (this.#isCollidingWithTile(new Vector2(i, j))) return true;
   }
-
-  // #isCollidingWithEnviroment() {
-
-  //   const topLeft = this.#isCollidingWithTile(new Vector2(x - 1, y - 2));
-  //   const top = this.#isCollidingWithTile(new Vector2(x, y - 2));
-  //   const topRight = this.#isCollidingWithTile(new Vector2(x + 1, y - 2));
-
-  //   const upperLeft = this.#isCollidingWithTile(new Vector2(x - 1, y - 1));
-  //   const lowerLeft = this.#isCollidingWithTile(new Vector2(x - 1, y));
-  //   const upperRight = this.#isCollidingWithTile(new Vector2(x + 1, y - 1));
-  //   const lowerRight = this.#isCollidingWithTile(new Vector2(x + 1, y));
-
-  //   const bottomLeft = this.#isCollidingWithTile(new Vector2(x - 1, y + 1));
-  //   const bottom = this.#isCollidingWithTile(new Vector2(x, y + 1));
-  //   const bottomRight = this.#isCollidingWithTile(new Vector2(x + 1, y + 1));
-
-  //   const isCollidingHorizontally =
-  //     topLeft || topRight || upperLeft || lowerLeft || upperRight || lowerRight || bottomLeft || bottomRight;
-  //   const isCollidingVertically = topLeft || top || topRight || bottomLeft || bottom || bottomRight;
-
-  //   // console.log(bottomLeft, bottom, bottomRight);
-  //   // const isCollidingVertically = bottomLeft || bottom || bottomRight;
-
-  //   return { horizontal: isCollidingHorizontally, vertical: isCollidingVertically };
-  // }
 
   #isCollidingWithTile(tileCoords: Vector2) {
     const playerBox = this._sprite.getBounds();
