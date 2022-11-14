@@ -54,11 +54,11 @@ export default class Interaction extends GameClass {
   }
 
   #handleKeyDown(e: KeyboardEvent) {
-    this._keyPressed[e.key] = true;
+    this._keyPressed[e.code] = true;
   }
 
   #handleKeyUp(e: KeyboardEvent) {
-    this._keyPressed[e.key] = false;
+    this._keyPressed[e.code] = false;
   }
 
   // #################################################

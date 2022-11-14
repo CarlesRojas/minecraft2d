@@ -3,4 +3,4 @@ export const SAFTY_TILES = 5;
 
 export const SEED = 3445455345;
 
-export const GRAVITY = 6; // tiles per second
+export const GRAVITY = 100; // tiles per second
