@@ -35,7 +35,7 @@ const textures = {
     },
     {
       name: 'characters',
-      assets: [{ name: CharacterType.STEVE, srcs: 'src/asset/texture/block/magenta_shulker_box.png' }],
+      assets: [{ name: CharacterType.STEVE, srcs: 'src/asset/texture/entity/steve_front.png' }],
     },
   ],
 };

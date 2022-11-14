@@ -36,7 +36,6 @@ export default class Character extends GameClass {
 
     this._sprite = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE));
     this._sprite.zIndex = 1;
-    this._sprite.anchor.set(0.5);
     this.handleResize(dimensions);
 
     this._container.addChild(this._sprite);
@@ -55,8 +54,9 @@ export default class Character extends GameClass {
     const { tile } = dimensions;
 
     this._sprite.position.set(this._position.x * tile, this._position.y * tile);
-    this._sprite.height = tile;
-    this._sprite.width = tile;
+    this._sprite.height = tile * 1.9;
+    this._sprite.width = tile * 0.95;
+    this._sprite.anchor.set(0.5, 0.75);
   }
 
   // #################################################
