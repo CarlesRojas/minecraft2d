@@ -30,6 +30,7 @@ export default class DevTools extends GameClass {
 
   gameLoop(deltaInSeconds: number) {
     this.#updateFrameRate(deltaInSeconds);
+    this.#updateMousePosition();
   }
 
   #updateFrameRate(deltaInSeconds: number) {
@@ -38,5 +39,10 @@ export default class DevTools extends GameClass {
       this._frameRate = frameRate;
       this._global.events.emit(Event.ON_FRAME_RATE_CHANGE, { frameRate: this._frameRate });
     }
+  }
+
+  #updateMousePosition() {
+    const mousePosition = this._global.controller.interaction.mousePosition;
+    this._global.events.emit(Event.ON_MOUSE_POSITION_CHANGE, { mouseCoords: mousePosition });
   }
 }
