@@ -89,7 +89,7 @@ export default class Character extends GameClass {
     const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
 
     // JUMP
-    // TODO deactivate jump until player releases the space bar
+    // TODO deactivate jump until player releases the space bar or with a timer
     if (jumbButtonClicked && !this._isJumping && this._isGrounded) {
       this._isJumping = true;
       this._isGrounded = false;
