@@ -13,6 +13,15 @@ export interface CharacterProps {
   dimensions: Dimensions;
 }
 
+interface Collision {
+  isColliding: boolean;
+  left: boolean;
+  right: boolean;
+  top: boolean;
+  bottom: boolean;
+  correction: Vector2;
+}
+
 export default class Character extends GameClass {
   private _global: Global;
   private _sprite: PIXI.Sprite;
@@ -23,9 +32,11 @@ export default class Character extends GameClass {
   private _acceleration = 200;
   private _velocity: Vector2 = new Vector2(0, 0); // Tiles per second
   private _maxVelocity: Vector2 = new Vector2(10, 20); // Tiles per second
-  private _isGrounded = true;
+  private _isGrounded = false;
   private _isJumping = false;
   private _jumpingVelocity = 50;
+
+  // TODO create transparent sprite just for the bounds
 
   constructor({ global, dimensions }: CharacterProps) {
     super();
@@ -54,8 +65,8 @@ export default class Character extends GameClass {
     const { tile } = dimensions;
 
     this._sprite.position.set(this._position.x * tile, this._position.y * tile);
-    this._sprite.height = tile * 1.9;
-    this._sprite.width = tile * 0.95;
+    this._sprite.height = tile * 1.8;
+    this._sprite.width = tile * 0.9;
     this._sprite.anchor.set(0.5, 0.75);
   }
 
@@ -66,8 +77,9 @@ export default class Character extends GameClass {
   gameLoop(deltaInSeconds: number) {
     this.#updatePlayerSpeed(deltaInSeconds);
 
-    this.#applyVerticalMovement(deltaInSeconds);
     this.#applyHorizontalMovement(deltaInSeconds);
+    this.#applyVerticalMovement(deltaInSeconds);
+    this.#checkIfGrounded();
   }
 
   #updatePlayerSpeed(deltaInSeconds: number) {
@@ -76,8 +88,9 @@ export default class Character extends GameClass {
     const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
 
     // JUMP
-    if (jumbButtonClicked && !this._isJumping) {
+    if (jumbButtonClicked && !this._isJumping && this._isGrounded) {
       this._isJumping = true;
+      this._isGrounded = false;
       this._velocity.y = -this._jumpingVelocity;
     }
 
@@ -91,8 +104,8 @@ export default class Character extends GameClass {
       if (this._velocity.x < 0) this._velocity.x = Math.min(this._velocity.x + this._acceleration * deltaInSeconds, 0);
     }
 
-    // GRAVITY
-    this._velocity.y = this._velocity.y += GRAVITY * deltaInSeconds;
+    // // GRAVITY
+    if (!this._isGrounded) this._velocity.y = this._velocity.y += GRAVITY * deltaInSeconds;
 
     // MAX VELOCITY
     this._velocity.x = Math.max(Math.min(this._velocity.x, this._maxVelocity.x), -this._maxVelocity.x);
@@ -101,27 +114,34 @@ export default class Character extends GameClass {
 
   #applyVerticalMovement(deltaInSeconds: number) {
     const velocity = this._velocity.y;
-    const prevPosition = this._position.clone();
     const newPosition = new Vector2(this._position.x, this._position.y + velocity * deltaInSeconds);
-    this.#moveCharacterToPosition(newPosition);
 
-    if (this.#isCollidingWithEnviroment()) {
+    const collision = this.#isCollidingWithEnviroment();
+    if (collision && collision.isColliding) {
       this._isJumping = false;
       this._velocity.y = 0;
-      this.#moveCharacterToPosition(prevPosition);
-    }
+      this.#moveCharacterToPosition(new Vector2(this._position.x, collision.correction.y));
+    } else this.#moveCharacterToPosition(newPosition);
   }
 
   #applyHorizontalMovement(deltaInSeconds: number) {
     const velocity = this._velocity.x;
-    const prevPosition = this._position.clone();
     const newPosition = new Vector2(this._position.x + velocity * deltaInSeconds, this._position.y);
-    this.#moveCharacterToPosition(newPosition);
 
-    if (this.#isCollidingWithEnviroment()) {
+    const collision = this.#isCollidingWithEnviroment();
+    if (collision && collision.isColliding) {
+      console.log(collision);
       this._velocity.x = 0;
-      this.#moveCharacterToPosition(prevPosition);
-    }
+      this.#moveCharacterToPosition(new Vector2(collision.correction.x, this._position.y));
+    } else this.#moveCharacterToPosition(newPosition);
+  }
+
+  #checkIfGrounded() {
+    const newPosition = new Vector2(this._position.x, this._position.y + 0.1);
+
+    const collision = this.#isCollidingWithEnviroment();
+    this._isGrounded = collision && collision.isColliding;
+    console.log(this._isGrounded);
   }
 
   #moveCharacterToPosition(position: Vector2) {
@@ -133,13 +153,28 @@ export default class Character extends GameClass {
 
   #isCollidingWithEnviroment() {
     const { x, y } = this.position;
-    const minX = Math.floor(x);
-    const maxX = Math.ceil(x);
-    const minY = Math.floor(y);
-    const maxY = Math.ceil(y);
+    let minX = Math.floor(x);
+    let maxX = Math.ceil(x);
+    let minY = Math.floor(y);
+    let maxY = Math.ceil(y);
+
+    if (minX === maxX) {
+      minX -= 1;
+      maxX += 1;
+    }
+
+    if (minY === maxY) {
+      minY -= 1;
+      maxY += 1;
+    }
 
     for (let i = minX; i <= maxX; i++)
-      for (let j = minY; j <= maxY; j++) if (this.#isCollidingWithTile(new Vector2(i, j))) return true;
+      for (let j = minY; j <= maxY; j++) {
+        const collision = this.#isCollidingWithTile(new Vector2(i, j));
+        if (collision.isColliding) return collision;
+      }
+
+    return false;
   }
 
   #isCollidingWithTile(tileCoords: Vector2) {
@@ -147,14 +182,49 @@ export default class Character extends GameClass {
     const tile = this._global.controller.world.ground.tileAtCoords(tileCoords);
     const tileBox = tile?.bounds;
 
-    if (!tileBox) return false;
+    const noCollision: Collision = {
+      isColliding: false,
+      left: false,
+      right: false,
+      top: false,
+      bottom: false,
+      correction: new Vector2(0, 0),
+    };
 
-    return (
+    if (!tileBox) return noCollision;
+
+    const collides =
       playerBox.x < tileBox.x + tileBox.width &&
       playerBox.x + playerBox.width > tileBox.x &&
       playerBox.y < tileBox.y + tileBox.height &&
-      playerBox.y + playerBox.height > tileBox.y
-    );
+      playerBox.y + playerBox.height > tileBox.y;
+
+    if (!collides) return noCollision;
+
+    const playerCenter = new Vector2(playerBox.x + playerBox.width / 2, playerBox.y + playerBox.height / 2);
+    const tileCenter = new Vector2(tileBox.x + tileBox.width / 2, tileBox.y + tileBox.height / 2);
+
+    const horizontal = playerCenter.x - tileCenter.x;
+    const vertical = playerCenter.y - tileCenter.y;
+
+    const left = horizontal > 0;
+    const right = horizontal < 0;
+    const top = vertical > 0;
+    const bottom = vertical < 0;
+
+    const leftCorrection = tileCoords.x + 1;
+    const rightCorrection = tileCoords.x - 1;
+    const topCorrection = tileCoords.y + 1;
+    const bottomCorrection = tileCoords.y - 1;
+
+    return {
+      isColliding: true,
+      left,
+      right,
+      top,
+      bottom,
+      correction: new Vector2(left ? leftCorrection : rightCorrection, top ? topCorrection : bottomCorrection),
+    } as Collision;
   }
 
   // #################################################
