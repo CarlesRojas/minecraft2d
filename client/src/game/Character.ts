@@ -1,12 +1,12 @@
 import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';
-import { CharacterType, getCharacterTexture } from '@game/tools/Textures';
+import { CharacterType, getCharacterTexture, TileType } from '@game/tools/Textures';
 import Vector2 from '@util/Vector2';
 import { getTerrainElevation } from '@game/tools/Noise';
 import { GRAVITY } from '@game/constant/constants';
 import { Event } from '@util/Events';
-import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
+import { CODE_A, CODE_D, CODE_S, CODE_SPACE, CODE_W } from 'keycode-js';
 
 export interface CharacterProps {
   global: Global;
@@ -22,6 +22,9 @@ interface Collision {
   correction: Vector2;
 }
 
+const HEIGHT = 1.8;
+const WIDTH = 0.9;
+
 export default class Character extends GameClass {
   private _global: Global;
   private _sprite: PIXI.Sprite;
@@ -35,8 +38,6 @@ export default class Character extends GameClass {
   private _isGrounded = false;
   private _isJumping = false;
   private _jumpingVelocity = 50;
-
-  // TODO create transparent sprite just for the bounds
 
   constructor({ global, dimensions }: CharacterProps) {
     super();
@@ -65,8 +66,8 @@ export default class Character extends GameClass {
     const { tile } = dimensions;
 
     this._sprite.position.set(this._position.x * tile, this._position.y * tile);
-    this._sprite.height = tile * 1.8;
-    this._sprite.width = tile * 0.9;
+    this._sprite.height = tile * HEIGHT;
+    this._sprite.width = tile * WIDTH;
     this._sprite.anchor.set(0.5, 0.5);
   }
 
@@ -88,6 +89,7 @@ export default class Character extends GameClass {
     const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
 
     // JUMP
+    // TODO deactivate jump until player releases the space bar
     if (jumbButtonClicked && !this._isJumping && this._isGrounded) {
       this._isJumping = true;
       this._isGrounded = false;
@@ -104,8 +106,7 @@ export default class Character extends GameClass {
       if (this._velocity.x < 0) this._velocity.x = Math.min(this._velocity.x + this._acceleration * deltaInSeconds, 0);
     }
 
-    // // GRAVITY
-    console.log(this._isGrounded);
+    // GRAVITY
     if (!this._isGrounded) this._velocity.y = this._velocity.y += GRAVITY * deltaInSeconds;
 
     // MAX VELOCITY
@@ -160,20 +161,10 @@ export default class Character extends GameClass {
     const x = this._position.x + deltaPosition.x;
     const y = this._position.y + deltaPosition.y;
 
-    let minX = Math.floor(x);
-    let maxX = Math.ceil(x);
-    let minY = Math.floor(y);
-    let maxY = Math.ceil(y);
-
-    if (minX === maxX) {
-      minX -= 1;
-      maxX += 1;
-    }
-
-    if (minY === maxY) {
-      minY -= 1;
-      maxY += 1;
-    }
+    let minX = Math.floor(x - WIDTH / 2);
+    let maxX = Math.ceil(x + WIDTH / 2);
+    let minY = Math.floor(y - HEIGHT / 2);
+    let maxY = Math.ceil(y + HEIGHT / 2);
 
     for (let i = minX; i <= maxX; i++)
       for (let j = minY; j <= maxY; j++) {
@@ -185,16 +176,6 @@ export default class Character extends GameClass {
   }
 
   #isCollidingWithTile(tileCoords: Vector2, deltaPosition: Vector2) {
-    const tileSize = this._global.dimensions.tile;
-    const playerBounds = this._sprite.getBounds();
-    const playerBox = {
-      ...playerBounds,
-      x: playerBounds.x + deltaPosition.x * tileSize,
-      y: playerBounds.y + deltaPosition.y * tileSize,
-    };
-    const tile = this._global.controller.world.ground.tileAtCoords(tileCoords);
-    const tileBox = tile?.bounds;
-
     const noCollision: Collision = {
       isColliding: false,
       left: false,
@@ -204,33 +185,48 @@ export default class Character extends GameClass {
       correction: new Vector2(0, 0),
     };
 
-    if (!tileBox) return noCollision;
+    const tileSprite = this._global.controller.world.ground.tileAtCoords(tileCoords);
+    if (!tileSprite || tileSprite.type === TileType.NONE) return noCollision;
+
+    const tile = {
+      x: tileCoords.x,
+      y: tileCoords.y,
+      width: 1,
+      height: 1,
+    };
+
+    const player = {
+      x: this._position.x + deltaPosition.x,
+      y: this._position.y + deltaPosition.y,
+      width: WIDTH,
+      height: HEIGHT,
+    };
+
+    const halfPlayerWidth = player.width / 2;
+    const halfPlayerHeight = player.height / 2;
+    const halfTileWidth = tile.width / 2;
+    const halfTileHeight = tile.height / 2;
 
     const collides =
-      playerBox.x < tileBox.x + tileBox.width &&
-      playerBox.x + playerBox.width > tileBox.x &&
-      playerBox.y < tileBox.y + tileBox.height &&
-      playerBox.y + playerBox.height > tileBox.y;
+      player.x - halfPlayerWidth < tile.x + halfTileWidth &&
+      player.x + halfPlayerWidth > tile.x - halfTileWidth &&
+      player.y - halfPlayerHeight < tile.y + halfTileHeight &&
+      player.y + halfPlayerHeight > tile.y - halfTileHeight;
 
     if (!collides) return noCollision;
 
-    const playerCenter = new Vector2(playerBox.x + playerBox.width / 2, playerBox.y + playerBox.height / 2);
-    const tileCenter = new Vector2(tileBox.x + tileBox.width / 2, tileBox.y + tileBox.height / 2);
-
-    const horizontal = playerCenter.x - tileCenter.x;
-    const vertical = playerCenter.y - tileCenter.y;
+    const horizontal = player.x - tile.x;
+    const vertical = player.y - tile.y;
 
     const left = horizontal > 0;
     const right = horizontal < 0;
     const top = vertical > 0;
     const bottom = vertical < 0;
 
-    const playerWidthInTiles = playerBox.width / tileSize;
-    const playerHeightInTiles = playerBox.height / tileSize;
-    const leftCorrection = tileCoords.x + 0.5 + playerWidthInTiles / 2;
-    const rightCorrection = tileCoords.x - 0.5 - playerWidthInTiles / 2;
-    const topCorrection = tileCoords.y + 0.5 + playerHeightInTiles / 2;
-    const bottomCorrection = tileCoords.y - 0.5 - playerHeightInTiles / 2;
+    const leftCorrection = tile.x + 0.5 + halfPlayerWidth;
+    const rightCorrection = tile.x - 0.5 - halfPlayerWidth;
+    const topCorrection = tile.y + 0.5 + halfPlayerHeight;
+    const bottomCorrection = tile.y - 0.5 - halfPlayerHeight;
 
     return {
       isColliding: true,
