@@ -1,15 +1,17 @@
 export interface TimerOptions {
   resetOnEnd?: boolean;
   callOnStart?: boolean;
+  startRightAway?: boolean;
 }
 
 const defaultOptions: TimerOptions = {
   resetOnEnd: false,
   callOnStart: false,
+  startRightAway: true,
 };
 
 export default class Timer {
-  private _running = true;
+  private _running: boolean;
   private _amountInSeconds: number;
   private _initialAmountInSeconds: number;
   private _resetOnEnd: boolean;
@@ -21,7 +23,13 @@ export default class Timer {
     this._initialAmountInSeconds = amountInSeconds;
     this._resetOnEnd = options?.resetOnEnd ?? false;
     this._callOnStart = options?.callOnStart ?? false;
+    this._running = options?.startRightAway ?? false;
     this._callback = callback;
+
+    if (this._callOnStart) {
+      this._callback();
+      this._callOnStart = false;
+    }
   }
 
   // #################################################
@@ -30,11 +38,6 @@ export default class Timer {
 
   gameLoop(deltaInSeconds: number) {
     if (!this._running) return;
-
-    if (this._callOnStart) {
-      this._callback();
-      this._callOnStart = false;
-    }
 
     this._amountInSeconds -= deltaInSeconds;
 

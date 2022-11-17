@@ -7,6 +7,7 @@ import { getTerrainElevation } from '@game/tools/Noise';
 import { GRAVITY } from '@game/constant/constants';
 import { Event } from '@util/Events';
 import { CODE_A, CODE_D, CODE_S, CODE_SPACE, CODE_W } from 'keycode-js';
+import Timer from '@util/Timer';
 
 export interface CharacterProps {
   global: Global;
@@ -37,8 +38,9 @@ export default class Character extends GameClass {
   private _velocity: Vector2 = new Vector2(0, 0); // Tiles per second
   private _maxVelocity: Vector2 = new Vector2(10, 20); // Tiles per second
   private _isGrounded = false;
-  private _isJumping = false;
   private _jumpingVelocity = 50;
+  private _canJump = false;
+  private _jumpTimer: Timer;
 
   constructor({ global, dimensions }: CharacterProps) {
     super();
@@ -56,6 +58,11 @@ export default class Character extends GameClass {
 
     this._container.addChild(this._sprite);
     this._container.addChild(this._hitBoxSprite);
+
+    this._jumpTimer = new Timer(0.3, this.#handleJumpTimerFinished.bind(this), {
+      startRightAway: false,
+      callOnStart: true,
+    });
   }
 
   destructor() {
@@ -87,6 +94,7 @@ export default class Character extends GameClass {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
+    this._jumpTimer.gameLoop(deltaInSeconds);
     this.#updatePlayerSpeed(deltaInSeconds);
 
     this.#applyHorizontalMovement(deltaInSeconds);
@@ -100,9 +108,9 @@ export default class Character extends GameClass {
     const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
 
     // JUMP
-    // TODO deactivate jump until player releases the space bar or with a timer
-    if (jumbButtonClicked && !this._isJumping && this._isGrounded) {
-      this._isJumping = true;
+    if (jumbButtonClicked && this._canJump && this._isGrounded) {
+      this._canJump = false;
+      this._jumpTimer.reset();
       this._isGrounded = false;
       this._velocity.y = -this._jumpingVelocity;
     }
@@ -155,10 +163,7 @@ export default class Character extends GameClass {
     const collision = this.#isCollidingWithEnviroment(deltaPosition);
     this._isGrounded = collision && collision.isColliding;
 
-    if (this._isGrounded) {
-      this._velocity.y = 0;
-      this._isJumping = false;
-    }
+    if (this._isGrounded) this._velocity.y = 0;
   }
 
   #moveCharacterToPosition(position: Vector2) {
@@ -248,6 +253,10 @@ export default class Character extends GameClass {
       bottom,
       correction: new Vector2(left ? leftCorrection : rightCorrection, top ? topCorrection : bottomCorrection),
     } as Collision;
+  }
+
+  #handleJumpTimerFinished() {
+    this._canJump = true;
   }
 
   // #################################################
