@@ -141,9 +141,6 @@ export default class Character extends GameClass {
 
     this._container.addChild(this._spriteContainer);
 
-    // TODO do this on the fly when the character changes action
-    this.#showAnimation(Animation.WALK_LEFT);
-
     this._hitBoxSprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
     this._hitBoxSprite.visible = false;
     this._container.addChild(this._hitBoxSprite);
