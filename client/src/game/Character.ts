@@ -47,7 +47,7 @@ export default class Character extends GameClass {
     this._global = global;
     this._container = new PIXI.Container();
     this._global.app.stage.addChild(this._container);
-    this._position = new Vector2(0, getTerrainElevation(0) - 2);
+    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - HEIGHT / 2);
 
     this._sprite = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE));
     this._sprite.zIndex = 1;
