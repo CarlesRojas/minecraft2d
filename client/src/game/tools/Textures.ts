@@ -35,7 +35,7 @@ const textures = {
     },
     {
       name: 'characters',
-      assets: [{ name: CharacterType.STEVE, srcs: '/texture/entity/steve_front.png' }],
+      assets: [{ name: CharacterType.STEVE, srcs: '/texture/entity/steve.png', frame: { x: 0, y: 0, w: 32, h: 32 } }],
     },
   ],
 };
@@ -46,10 +46,12 @@ export const getTileTexture = (name: TileType) => {
   return texture;
 };
 
-export const getCharacterTexture = (name: CharacterType) => {
+export const getCharacterTexture = (name: CharacterType, rectangle?: PIXI.Rectangle) => {
   const texture = PIXI.Assets.get(name) as PIXI.Texture;
-  texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-  return texture;
+  const newTexture = new PIXI.Texture(texture.baseTexture, rectangle);
+  newTexture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+
+  return newTexture;
 };
 
 export default textures;

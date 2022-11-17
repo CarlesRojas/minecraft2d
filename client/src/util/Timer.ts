@@ -4,12 +4,6 @@ export interface TimerOptions {
   startRightAway?: boolean;
 }
 
-const defaultOptions: TimerOptions = {
-  resetOnEnd: false,
-  callOnStart: false,
-  startRightAway: true,
-};
-
 export default class Timer {
   private _running: boolean;
   private _amountInSeconds: number;
@@ -23,7 +17,7 @@ export default class Timer {
     this._initialAmountInSeconds = amountInSeconds;
     this._resetOnEnd = options?.resetOnEnd ?? false;
     this._callOnStart = options?.callOnStart ?? false;
-    this._running = options?.startRightAway ?? false;
+    this._running = options?.startRightAway ?? true;
     this._callback = callback;
 
     if (this._callOnStart) {
