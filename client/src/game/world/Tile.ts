@@ -78,8 +78,8 @@ export default class Tile extends GameClass {
 
     if (this._shadowSprite) {
       this._shadowSprite.position.set(this._coords.x * tile, this._coords.y * tile);
-      this._shadowSprite.width = tile + 6;
-      this._shadowSprite.height = tile + 6;
+      this._shadowSprite.width = tile * 1.1;
+      this._shadowSprite.height = tile * 1.1;
     }
 
     if (this._text) {

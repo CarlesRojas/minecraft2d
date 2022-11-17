@@ -23,11 +23,12 @@ interface Collision {
 }
 
 const HEIGHT = 1.8;
-const WIDTH = 0.9;
+const WIDTH = 0.6;
 
 export default class Character extends GameClass {
   private _global: Global;
   private _sprite: PIXI.Sprite;
+  private _hitBoxSprite: PIXI.Sprite;
   private _container: PIXI.Container;
 
   // MOVEMENT
@@ -48,13 +49,18 @@ export default class Character extends GameClass {
 
     this._sprite = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE));
     this._sprite.zIndex = 1;
+
+    this._hitBoxSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    this._hitBoxSprite.visible = false;
     this.handleResize(dimensions);
 
     this._container.addChild(this._sprite);
+    this._container.addChild(this._hitBoxSprite);
   }
 
   destructor() {
     if (this._sprite) this._container.removeChild(this._sprite);
+    if (this._hitBoxSprite) this._container.removeChild(this._hitBoxSprite);
     this._global.app.stage.removeChild(this._container);
   }
 
@@ -67,8 +73,13 @@ export default class Character extends GameClass {
 
     this._sprite.position.set(this._position.x * tile, this._position.y * tile);
     this._sprite.height = tile * HEIGHT;
-    this._sprite.width = tile * WIDTH;
+    this._sprite.width = tile * (HEIGHT / 2);
     this._sprite.anchor.set(0.5, 0.5);
+
+    this._hitBoxSprite.position.set(this._position.x * tile, this._position.y * tile);
+    this._hitBoxSprite.height = tile * HEIGHT;
+    this._hitBoxSprite.width = tile * WIDTH;
+    this._hitBoxSprite.anchor.set(0.5, 0.5);
   }
 
   // #################################################
@@ -155,6 +166,7 @@ export default class Character extends GameClass {
     this._position.y = position.y;
     const tileSize = this._global.dimensions.tile;
     this._sprite.position.set(position.x * tileSize, position.y * tileSize);
+    this._hitBoxSprite.position.set(position.x * tileSize, position.y * tileSize);
   }
 
   #isCollidingWithEnviroment(deltaPosition: Vector2) {
