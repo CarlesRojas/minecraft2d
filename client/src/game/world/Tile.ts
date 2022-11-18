@@ -1,8 +1,8 @@
-import * as PIXI from 'pixi.js';
 import { Dimensions } from '@game/Controller';
+import { getTileTexture, TileType } from '@game/tool/Textures';
 import GameClass from '@util/GameClass';
 import Vector2 from '@util/Vector2';
-import { getTileTexture, TileType } from '@game/tools/Textures';
+import * as PIXI from 'pixi.js';
 
 export interface TileProps {
   coords: Vector2;

@@ -1,7 +1,7 @@
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
-import { getTerrainElevation } from '@game/tools/Noise';
-import { CharacterType, getCharacterTexture, TileType } from '@game/tools/Textures';
+import { getTerrainElevation } from '@game/tool/Noise';
+import { CharacterType, getCharacterTexture, TileType } from '@game/tool/Textures';
 import GameClass from '@util/GameClass';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
@@ -67,7 +67,7 @@ export default class Character extends GameClass {
 
   private _idleAnimationSpeed = 4; // Seconds per cycle
   private _idleArmsYPosition = 0; // Seconds per cycle
-  private _idleArmsYAmplitude = 0.5; // Amplitude of animation in texture px
+  private _idleArmsYAmplitude = 0.3; // Amplitude of animation in texture px
 
   private _walkingAnimationSpeed = 6; // Seconds per cycle
   private _walkingArmsYAmplitude = 30; // Amplitude of animation in degrees

@@ -18,19 +18,19 @@ export interface WorldProps {
 }
 
 export default class World extends GameClass {
-  global: Global;
-  container: PIXI.Container;
+  _global: Global;
+  _container: PIXI.Container;
 
   constructor({ global }: WorldProps) {
     super();
-    this.global = global;
+    this._global = global;
 
-    this.container = new PIXI.Container();
-    this.global.app.stage.addChild(this.container);
+    this._container = new PIXI.Container();
+    this._global.app.stage.addChild(this._container);
   }
 
   destructor() {
-    this.global.app.stage.removeChild(this.container);
+    this._global.app.stage.removeChild(this._container);
   }
 
   // #################################################

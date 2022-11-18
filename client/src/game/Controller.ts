@@ -1,15 +1,14 @@
 import * as PIXI from 'pixi.js';
-import { EventSystem } from '@pixi/events';
 
-import Vector2 from '@util/Vector2';
-import GameClass from '@util/GameClass';
+import Camera from '@game/Camera';
+import Character from '@game/Character';
 import DevTools from '@game/DevTools';
+import Interaction from '@game/Interaction';
+import textures from '@game/tool/Textures';
 import World from '@game/world/World';
 import { Events } from '@util/Events';
-import textures from '@game/tools/Textures';
-import Character from '@game/Character';
-import Camera from '@game/Camera';
-import Interaction from '@game/Interaction';
+import GameClass from '@util/GameClass';
+import Vector2 from '@util/Vector2';
 
 export enum Child {
   DEV_TOOLS = 'dev-tools',

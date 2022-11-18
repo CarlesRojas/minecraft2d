@@ -15,6 +15,8 @@ export enum TileType {
 
 export enum CharacterType {
   STEVE = 'steve',
+  ALEX = 'alex',
+  MARIO = 'mario',
 }
 
 const textures = {
@@ -35,7 +37,11 @@ const textures = {
     },
     {
       name: 'characters',
-      assets: [{ name: CharacterType.STEVE, srcs: '/texture/entity/steve.png', frame: { x: 0, y: 0, w: 32, h: 32 } }],
+      assets: [
+        { name: CharacterType.STEVE, srcs: '/texture/entity/steve.png' },
+        { name: CharacterType.ALEX, srcs: '/texture/entity/alex.png' },
+        { name: CharacterType.MARIO, srcs: '/texture/entity/mario.png' },
+      ],
     },
   ],
 };

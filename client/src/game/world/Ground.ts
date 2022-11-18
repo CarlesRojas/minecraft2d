@@ -1,12 +1,11 @@
-import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
-import GameClass from '@util/GameClass';
-import { RenderArea } from '@game/world/World';
+import { getTileTypeInCoords } from '@game/tool/Terrain';
+import { TileType } from '@game/tool/Textures';
 import Tile from '@game/world/Tile';
+import { RenderArea } from '@game/world/World';
+import GameClass from '@util/GameClass';
 import Vector2 from '@util/Vector2';
-import { getTileTypeInCoords } from '@game/tools/Terrain';
-import { TileType } from '@game/tools/Textures';
-import { Event } from '@util/Events';
+import * as PIXI from 'pixi.js';
 
 export interface GroundProps {
   global: Global;

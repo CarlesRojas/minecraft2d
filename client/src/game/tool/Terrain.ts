@@ -1,6 +1,6 @@
+import { addNoiseToTerrain, getTerrainElevation, hasOre, isCave } from '@game/tool/Noise';
+import { TileType } from '@game/tool/Textures';
 import Vector2 from '@util/Vector2';
-import { addNoiseToTerrain, getTerrainElevation, hasOre, isCave } from '@game/tools/Noise';
-import { TileType } from '@game/tools/Textures';
 
 interface TileInfo {
   groundType: TileType;
