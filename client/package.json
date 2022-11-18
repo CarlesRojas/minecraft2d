@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stitches/react": "^1.2.8",
     "fontfaceobserver": "^2.3.0",
     "keycode-js": "^3.1.0",
     "lodash": "^4.17.21",

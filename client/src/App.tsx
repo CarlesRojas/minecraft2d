@@ -1,19 +1,29 @@
-import { useEffect, useRef, useState } from 'react';
+import Cursor from '@component/Cursor';
 import DevToolsUI from '@component/DevToolsUI';
+import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
 import Controller from '@game/Controller';
 import useDidMount from '@hook/useDidMount';
 import useResize from '@hook/useResize';
-import Vector2 from '@util/Vector2';
+import globalStyles from '@style/global';
+import { styled } from '@style/stitches.config';
 import { Event, useEvents } from '@util/Events';
-import s from '@style/App.module.scss';
-import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
+import Vector2 from '@util/Vector2';
+import { useEffect, useRef, useState } from 'react';
 
 const getGameDimensions = (dimensions: Vector2) => ({
   screen: dimensions,
   tile: dimensions.x / HORIZONTAL_TILES_PER_SCREEN,
 });
 
+const Game = styled('main', {
+  position: 'relative',
+  width: '100%',
+  height: '100%',
+  overflow: 'hidden',
+});
+
 const App = () => {
+  globalStyles();
   const events = useEvents();
 
   // #################################################
@@ -75,7 +85,8 @@ const App = () => {
   return (
     <>
       <DevToolsUI />
-      <main className={s.game} ref={container} />
+      <Cursor />
+      <Game ref={container} />
     </>
   );
 };

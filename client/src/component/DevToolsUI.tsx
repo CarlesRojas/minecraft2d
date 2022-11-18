@@ -1,7 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useEvents, Event } from '@util/Events';
-import s from '@style/component/DevToolsUI.module.scss';
+import { styled } from '@style/stitches.config';
+import { Event, useEvents } from '@util/Events';
 import Vector2 from '@util/Vector2';
+import { useEffect, useState } from 'react';
+
+const DevTools = styled('section', {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  zIndex: 10,
+  display: 'flex',
+  justifyContent: 'flex-end',
+
+  p: {
+    color: 'greenyellow',
+    textShadow: '0 0 0.1rem black, 0 0 0.1rem black, 0 0 0.1rem black',
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    padding: '0.2rem 0.5rem',
+  },
+});
 
 const DevToolsUI = () => {
   const { sub, unsub } = useEvents();
@@ -36,10 +55,10 @@ const DevToolsUI = () => {
   // #################################################
 
   return (
-    <section className={s.devToolsUI}>
+    <DevTools>
       <p>{`(${mouseCoords.x} - ${mouseCoords.y})`}</p>
       <p>{frameRate}</p>
-    </section>
+    </DevTools>
   );
 };
 
