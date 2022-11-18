@@ -100,14 +100,14 @@ export default class Character extends GameClass {
     this._leftLeg = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(4, 20, 4, 12)));
     this._rightLeg = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(20, 52, 4, 12)));
 
-    this._headLSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(12, 8, 8, 8)));
+    this._headLSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(16, 8, 8, 8)));
     this._torsoLSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(28, 20, 4, 12)));
     this._leftArmLSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(48, 20, 4, 12)));
     this._rightArmLSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(40, 52, 4, 12)));
     this._leftLegLSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(8, 20, 4, 12)));
     this._rightLegLSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(24, 52, 4, 12)));
 
-    this._headRSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(4, 8, 8, 8)));
+    this._headRSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(0, 8, 8, 8)));
     this._torsoRSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(16, 20, 4, 12)));
     this._leftArmRSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(40, 20, 4, 12)));
     this._rightArmRSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(32, 52, 4, 12)));
@@ -117,6 +117,8 @@ export default class Character extends GameClass {
     this._spriteContainer = new PIXI.Container();
     this._spriteContainer.zIndex = 1;
     this._spriteContainer.sortableChildren = true;
+
+    this.#showAnimation(Animation.IDLE, true);
 
     this._spriteContainer.addChild(this._head);
     this._spriteContainer.addChild(this._torso);
@@ -522,8 +524,8 @@ export default class Character extends GameClass {
     else this.#showAnimation(Animation.IDLE);
   }
 
-  #showAnimation(animation: Animation) {
-    if (this._currentAnimation === animation) return;
+  #showAnimation(animation: Animation, force = false) {
+    if (!force && this._currentAnimation === animation) return;
     this._currentAnimation = animation;
 
     this._torso.visible = animation === Animation.IDLE;
