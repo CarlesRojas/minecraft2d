@@ -1,4 +1,5 @@
-export interface Entity {
+export default interface Entity {
+  info: Info;
   parts: {
     [key: string]: {
       size: Size;
@@ -10,31 +11,38 @@ export interface Entity {
   states: { [key: string]: State };
 }
 
-export interface State {
-  visibleParts: string[];
-  animations: Animation[];
+interface Info {
+  pixelHeight: number;
+  tileHeight: number;
+  tileWidth: number;
 }
 
-export interface Animation {
-  speed: number;
-  amplidude: number;
-  parts: string[];
-  type: string;
-}
-
-export interface Size {
+interface Size {
   x: number;
   y: number;
   width: number;
   height: number;
 }
 
-export interface Origin {
+interface Origin {
   x: number;
   y: number;
 }
 
-export interface Anchor {
+interface Anchor {
   x: number;
   y: number;
+}
+
+interface State {
+  visibleParts: string[];
+  animations: Animation[];
+}
+
+interface Animation {
+  speed: number;
+  amplidude: number;
+  parts: string[];
+  type: string;
+  inverted: boolean[];
 }

@@ -2,14 +2,14 @@ import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { getTerrainElevation } from '@game/tool/Noise';
 import { CharacterType, TileType } from '@game/tool/Textures';
-import { Entity } from '@util/EntityTypes';
+import Entity from '@util/EntityTypes';
 import GameClass from '@util/GameClass';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 import CharacterJSON from '../../public/texture/entity/character.json';
-import CharacterSprite from './sprite/CharacterSprite';
+import SpritesManager from './sprite/SpritesManager';
 
 export interface CharacterProps {
   global: Global;
@@ -25,8 +25,8 @@ interface Collision {
   correction: Vector2;
 }
 
-const HEIGHT = 1.8;
-const WIDTH = 0.6;
+// const HEIGHT = 1.8;
+// const WIDTH = 0.6;
 
 export default class Character extends GameClass {
   // GLOBAL
@@ -35,7 +35,7 @@ export default class Character extends GameClass {
 
   // SPRITES
   private _spriteContainer: PIXI.Container;
-  private _sprite: CharacterSprite;
+  private _spritesManager: SpritesManager;
   private _hitBoxSprite: PIXI.Sprite;
 
   // MOVEMENT
@@ -55,17 +55,16 @@ export default class Character extends GameClass {
     this._global = global;
     this._container = new PIXI.Container();
     this._global.app.stage.addChild(this._container);
-    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - HEIGHT / 2);
+    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - CharacterJSON.info.tileHeight / 2);
 
     // SPRITES
     this._spriteContainer = new PIXI.Container();
     this._spriteContainer.zIndex = 1;
     this._spriteContainer.sortableChildren = true;
-    this._sprite = new CharacterSprite({
+    this._spritesManager = new SpritesManager({
       global,
       container: this._spriteContainer,
-      HEIGHT,
-      WIDTH,
+      pixel: CharacterJSON.info.tileHeight * (1 / CharacterJSON.info.pixelHeight), // Total number of height pixels
       texture: CharacterType.STEVE,
       info: CharacterJSON as Entity,
     });
@@ -85,7 +84,7 @@ export default class Character extends GameClass {
   }
 
   destructor() {
-    this._sprite.destructor();
+    this._spritesManager.destructor();
     this._container.removeChildren();
     this._global.app.stage.removeChild(this._container);
   }
@@ -99,11 +98,11 @@ export default class Character extends GameClass {
 
     this._spriteContainer.position.set(this._position.x * tile, this._position.y * tile);
 
-    this._sprite.handleResize(dimensions);
+    this._spritesManager.handleResize(dimensions);
 
     this._hitBoxSprite.position.set(this._position.x * tile, this._position.y * tile);
-    this._hitBoxSprite.height = tile * HEIGHT;
-    this._hitBoxSprite.width = tile * WIDTH;
+    this._hitBoxSprite.height = tile * CharacterJSON.info.tileHeight;
+    this._hitBoxSprite.width = tile * CharacterJSON.info.tileWidth;
     this._hitBoxSprite.anchor.set(0.5, 0.5);
   }
 
@@ -121,7 +120,7 @@ export default class Character extends GameClass {
 
     this.#changeAnimation();
 
-    this._sprite.gameLoop(deltaInSeconds);
+    this._spritesManager.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -212,10 +211,10 @@ export default class Character extends GameClass {
     const x = this._position.x + deltaPosition.x;
     const y = this._position.y + deltaPosition.y;
 
-    let minX = Math.floor(x - WIDTH / 2);
-    let maxX = Math.ceil(x + WIDTH / 2);
-    let minY = Math.floor(y - HEIGHT / 2);
-    let maxY = Math.ceil(y + HEIGHT / 2);
+    let minX = Math.floor(x - CharacterJSON.info.tileWidth / 2);
+    let maxX = Math.ceil(x + CharacterJSON.info.tileWidth / 2);
+    let minY = Math.floor(y - CharacterJSON.info.tileHeight / 2);
+    let maxY = Math.ceil(y + CharacterJSON.info.tileHeight / 2);
 
     for (let i = minX; i <= maxX; i++)
       for (let j = minY; j <= maxY; j++) {
@@ -249,8 +248,8 @@ export default class Character extends GameClass {
     const player = {
       x: this._position.x + deltaPosition.x,
       y: this._position.y + deltaPosition.y,
-      width: WIDTH,
-      height: HEIGHT,
+      width: CharacterJSON.info.tileWidth,
+      height: CharacterJSON.info.tileHeight,
     };
 
     const halfPlayerWidth = player.width / 2;
@@ -293,9 +292,9 @@ export default class Character extends GameClass {
     const leftButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_A);
     const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
 
-    if (leftButtonClicked) this._sprite.setAnimation('walk_left');
-    else if (rightButtonClicked) this._sprite.setAnimation('walk_right');
-    else this._sprite.setAnimation('idle');
+    if (leftButtonClicked) this._spritesManager.setAnimation('walk_left');
+    else if (rightButtonClicked) this._spritesManager.setAnimation('walk_right');
+    else this._spritesManager.setAnimation('idle');
   }
 
   // #################################################
