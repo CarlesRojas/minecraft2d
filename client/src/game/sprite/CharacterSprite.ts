@@ -2,7 +2,6 @@ import { Dimensions, Global } from '@game/Controller';
 import { CharacterType, getCharacterTexture } from '@game/tool/Textures';
 import GameClass from '@util/GameClass';
 import Vector2 from '@util/Vector2';
-import { CODE_A, CODE_D } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 
 export interface CharacterSpriteProps {
@@ -10,13 +9,6 @@ export interface CharacterSpriteProps {
   container: PIXI.Container;
   HEIGHT: number;
   WIDTH: number;
-}
-
-enum Animation {
-  IDLE,
-  WALK_RIGHT,
-  WALK_LEFT,
-  JUMP,
 }
 
 export default class CharacterSprite extends GameClass {
@@ -49,7 +41,7 @@ export default class CharacterSprite extends GameClass {
   private _rightLegRSide: PIXI.Sprite;
 
   // ANIMATION
-  private _currentAnimation: Animation = Animation.IDLE;
+  private _currentAnimation: string = 'idle';
 
   private _idleAnimationSpeed = 4; // Seconds per cycle
   private _idleArmsYPosition = 0; // Seconds per cycle
@@ -90,7 +82,7 @@ export default class CharacterSprite extends GameClass {
     this._leftLegRSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(0, 20, 4, 12)));
     this._rightLegRSide = new PIXI.Sprite(getCharacterTexture(CharacterType.STEVE, new PIXI.Rectangle(16, 52, 4, 12)));
 
-    this.#showAnimation(Animation.IDLE, true);
+    this.setAnimation('idle', true);
 
     this._container.addChild(this._head);
     this._container.addChild(this._torso);
@@ -133,7 +125,7 @@ export default class CharacterSprite extends GameClass {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    this.#updateAnimations(deltaInSeconds);
+    this.#updateAnimations();
   }
 
   // #################################################
@@ -265,65 +257,65 @@ export default class CharacterSprite extends GameClass {
   //   ANIMATIONS
   // #################################################
 
-  #updateAnimations(deltaInSeconds: number) {
+  setAnimation(animation: string, force = false) {
+    if (!force && this._currentAnimation === animation) return;
+    this._currentAnimation = animation;
+
+    this._torso.visible = animation === 'idle';
+    this._head.visible = animation === 'idle';
+    this._leftArm.visible = animation === 'idle';
+    this._rightArm.visible = animation === 'idle';
+    this._leftLeg.visible = animation === 'idle';
+    this._rightLeg.visible = animation === 'idle';
+
+    this._torsoLSide.visible = animation === 'walk_left';
+    this._headLSide.visible = animation === 'walk_left';
+    this._leftArmLSide.visible = animation === 'walk_left';
+    this._rightArmLSide.visible = animation === 'walk_left';
+    this._leftLegLSide.visible = animation === 'walk_left';
+    this._rightLegLSide.visible = animation === 'walk_left';
+
+    this._torsoRSide.visible = animation === 'walk_right';
+    this._headRSide.visible = animation === 'walk_right';
+    this._leftArmRSide.visible = animation === 'walk_right';
+    this._rightArmRSide.visible = animation === 'walk_right';
+    this._leftLegRSide.visible = animation === 'walk_right';
+    this._rightLegRSide.visible = animation === 'walk_right';
+  }
+
+  #updateAnimations() {
     const time = Date.now();
     const pixelSize = this._global.dimensions.tile / 16;
 
     // IDLE
-    const idleSin = Math.sin((time / 1000) * this._idleAnimationSpeed);
-    this._leftArm.position = new Vector2(
-      this._leftArm.x,
-      this._idleArmsYPosition + idleSin * this._idleArmsYAmplitude * pixelSize
-    );
-    this._rightArm.position = new Vector2(
-      this._rightArm.x,
-      this._idleArmsYPosition + idleSin * this._idleArmsYAmplitude * pixelSize
-    );
+    if (this._currentAnimation === 'idle') {
+      const idleSin = Math.sin((time / 1000) * this._idleAnimationSpeed);
+      this._leftArm.position = new Vector2(
+        this._leftArm.x,
+        this._idleArmsYPosition + idleSin * this._idleArmsYAmplitude * pixelSize
+      );
+      this._rightArm.position = new Vector2(
+        this._rightArm.x,
+        this._idleArmsYPosition + idleSin * this._idleArmsYAmplitude * pixelSize
+      );
+    }
 
-    // WALK
-    const walkingSin = Math.sin((time / 1000) * this._walkingAnimationSpeed);
-    this._leftArmLSide.rotation = walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
-    this._rightArmLSide.rotation = -walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
-    this._leftLegLSide.rotation = -walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
-    this._rightLegLSide.rotation = walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
+    // WALK LEFT
+    else if (this._currentAnimation === 'walk_left') {
+      const walkingSin = Math.sin((time / 1000) * this._walkingAnimationSpeed);
+      this._leftArmLSide.rotation = walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
+      this._rightArmLSide.rotation = -walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
+      this._leftLegLSide.rotation = -walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
+      this._rightLegLSide.rotation = walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
+    }
 
-    this._leftArmRSide.rotation = walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
-    this._rightArmRSide.rotation = -walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
-    this._leftLegRSide.rotation = -walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
-    this._rightLegRSide.rotation = walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
-
-    // SHOW CORRECT SPRITES
-    const leftButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_A);
-    const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
-
-    if (rightButtonClicked) this.#showAnimation(Animation.WALK_RIGHT);
-    else if (leftButtonClicked) this.#showAnimation(Animation.WALK_LEFT);
-    else this.#showAnimation(Animation.IDLE);
-  }
-
-  #showAnimation(animation: Animation, force = false) {
-    if (!force && this._currentAnimation === animation) return;
-    this._currentAnimation = animation;
-
-    this._torso.visible = animation === Animation.IDLE;
-    this._head.visible = animation === Animation.IDLE;
-    this._leftArm.visible = animation === Animation.IDLE;
-    this._rightArm.visible = animation === Animation.IDLE;
-    this._leftLeg.visible = animation === Animation.IDLE;
-    this._rightLeg.visible = animation === Animation.IDLE;
-
-    this._torsoLSide.visible = animation === Animation.WALK_LEFT;
-    this._headLSide.visible = animation === Animation.WALK_LEFT;
-    this._leftArmLSide.visible = animation === Animation.WALK_LEFT;
-    this._rightArmLSide.visible = animation === Animation.WALK_LEFT;
-    this._leftLegLSide.visible = animation === Animation.WALK_LEFT;
-    this._rightLegLSide.visible = animation === Animation.WALK_LEFT;
-
-    this._torsoRSide.visible = animation === Animation.WALK_RIGHT;
-    this._headRSide.visible = animation === Animation.WALK_RIGHT;
-    this._leftArmRSide.visible = animation === Animation.WALK_RIGHT;
-    this._rightArmRSide.visible = animation === Animation.WALK_RIGHT;
-    this._leftLegRSide.visible = animation === Animation.WALK_RIGHT;
-    this._rightLegRSide.visible = animation === Animation.WALK_RIGHT;
+    // WALK RIGHT
+    else if (this._currentAnimation === 'walk_right') {
+      const walkingSin = Math.sin((time / 1000) * this._walkingAnimationSpeed);
+      this._leftArmRSide.rotation = walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
+      this._rightArmRSide.rotation = -walkingSin * this._walkingArmsYAmplitude * (Math.PI / 180);
+      this._leftLegRSide.rotation = -walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
+      this._rightLegRSide.rotation = walkingSin * this._walkingLegsYAmplitude * (Math.PI / 180);
+    }
   }
 }

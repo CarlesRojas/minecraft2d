@@ -110,6 +110,8 @@ export default class Character extends GameClass {
     this.#applyVerticalMovement(deltaInSeconds);
     this.#checkIfGrounded();
 
+    this.#changeAnimation();
+
     this._sprite.gameLoop(deltaInSeconds);
   }
 
@@ -276,6 +278,15 @@ export default class Character extends GameClass {
       bottom,
       correction: new Vector2(left ? leftCorrection : rightCorrection, top ? topCorrection : bottomCorrection),
     } as Collision;
+  }
+
+  #changeAnimation() {
+    const leftButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_A);
+    const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
+
+    if (leftButtonClicked) this._sprite.setAnimation('walk_left');
+    else if (rightButtonClicked) this._sprite.setAnimation('walk_right');
+    else this._sprite.setAnimation('idle');
   }
 
   // #################################################
