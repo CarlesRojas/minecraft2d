@@ -1,12 +1,14 @@
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { getTerrainElevation } from '@game/tool/Noise';
-import { TileType } from '@game/tool/Textures';
+import { CharacterType, TileType } from '@game/tool/Textures';
+import { Entity } from '@util/EntityTypes';
 import GameClass from '@util/GameClass';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
+import CharacterJSON from '../../public/texture/entity/character.json';
 import CharacterSprite from './sprite/CharacterSprite';
 
 export interface CharacterProps {
@@ -59,7 +61,14 @@ export default class Character extends GameClass {
     this._spriteContainer = new PIXI.Container();
     this._spriteContainer.zIndex = 1;
     this._spriteContainer.sortableChildren = true;
-    this._sprite = new CharacterSprite({ global, container: this._spriteContainer, HEIGHT, WIDTH });
+    this._sprite = new CharacterSprite({
+      global,
+      container: this._spriteContainer,
+      HEIGHT,
+      WIDTH,
+      texture: CharacterType.STEVE,
+      info: CharacterJSON as Entity,
+    });
     this._container.addChild(this._spriteContainer);
 
     this._hitBoxSprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
