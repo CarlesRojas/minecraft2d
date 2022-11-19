@@ -1,4 +1,19 @@
+import AndesiteImage from '@asset/texture/block/andesite.png';
+import CoalOreImage from '@asset/texture/block/coal_ore.png';
+import DiamondOreImage from '@asset/texture/block/diamond_ore.png';
+import DioriteImage from '@asset/texture/block/diorite.png';
 import DirtImage from '@asset/texture/block/dirt.png';
+import GraniteImage from '@asset/texture/block/granite.png';
+import GrassBlockSideImage from '@asset/texture/block/grass_block_side.png';
+import IronOreImage from '@asset/texture/block/iron_ore.png';
+import StoneImage from '@asset/texture/block/stone.png';
+
+import AlexImage from '@asset/texture/entity/alex.png';
+import MarioImage from '@asset/texture/entity/mario.png';
+import PartsImage from '@asset/texture/entity/parts64.png';
+import PinyaImage from '@asset/texture/entity/pinya.png';
+import SteveImage from '@asset/texture/entity/steve.png';
+
 import * as PIXI from 'pixi.js';
 
 export enum TileType {
@@ -28,24 +43,24 @@ const textures = {
       name: 'blocks',
       assets: [
         { name: TileType.DIRT, srcs: DirtImage },
-        { name: TileType.GRASS, srcs: 'src/asset/texture/block/grass_block_side.png' },
-        { name: TileType.STONE, srcs: 'src/asset/texture/block/stone.png' },
-        { name: TileType.COAL, srcs: 'src/asset/texture/block/coal_ore.png' },
-        { name: TileType.IRON, srcs: 'src/asset/texture/block/iron_ore.png' },
-        { name: TileType.DIAMOND, srcs: 'src/asset/texture/block/diamond_ore.png' },
-        { name: TileType.ANDESITE, srcs: 'src/asset/texture/block/andesite.png' },
-        { name: TileType.DIORITE, srcs: 'src/asset/texture/block/diorite.png' },
-        { name: TileType.GRANITE, srcs: 'src/asset/texture/block/granite.png' },
+        { name: TileType.GRASS, srcs: GrassBlockSideImage },
+        { name: TileType.STONE, srcs: StoneImage },
+        { name: TileType.COAL, srcs: CoalOreImage },
+        { name: TileType.IRON, srcs: IronOreImage },
+        { name: TileType.DIAMOND, srcs: DiamondOreImage },
+        { name: TileType.ANDESITE, srcs: AndesiteImage },
+        { name: TileType.DIORITE, srcs: DioriteImage },
+        { name: TileType.GRANITE, srcs: GraniteImage },
       ],
     },
     {
       name: 'characters',
       assets: [
-        { name: CharacterType.STEVE, srcs: 'src/asset/texture/entity/steve.png' },
-        { name: CharacterType.ALEX, srcs: 'src/asset/texture/entity/alex.png' },
-        { name: CharacterType.MARIO, srcs: 'src/asset/texture/entity/mario.png' },
-        { name: CharacterType.PINYA, srcs: 'src/asset/texture/entity/pinya.png' },
-        { name: CharacterType.PARTS, srcs: 'src/asset/texture/entity/parts64.png' },
+        { name: CharacterType.STEVE, srcs: AlexImage },
+        { name: CharacterType.ALEX, srcs: MarioImage },
+        { name: CharacterType.MARIO, srcs: PartsImage },
+        { name: CharacterType.PINYA, srcs: PinyaImage },
+        { name: CharacterType.PARTS, srcs: SteveImage },
       ],
     },
   ],
