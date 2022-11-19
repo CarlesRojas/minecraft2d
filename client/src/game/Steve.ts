@@ -1,3 +1,4 @@
+import CharacterJSON from '@asset/texture/entity/character.json';
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { getTerrainElevation } from '@game/tool/Noise';
@@ -10,7 +11,6 @@ import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
-import CharacterJSON from '../../public/texture/entity/character.json';
 import SpritesManager from './sprite/SpritesManager';
 
 export interface SteveProps {
