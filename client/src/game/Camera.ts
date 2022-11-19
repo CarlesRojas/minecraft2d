@@ -27,7 +27,9 @@ export default class Camera implements Mono {
   //   HANDLE RESIZE
   // #################################################
 
-  handleResize(dimensions: Dimensions) {}
+  handleResize(dimensions: Dimensions) {
+    this.#moveCameraTo(this._targetPositionInTiles);
+  }
 
   // #################################################
   //   GAME LOOP
@@ -35,7 +37,6 @@ export default class Camera implements Mono {
 
   gameLoop(deltaInSeconds: number) {
     this.#panCameraToTargetPosition(deltaInSeconds);
-    // this.#moveCameraTo(this._targetPositionInTiles);
   }
 
   // #################################################
