@@ -65,16 +65,22 @@ const App = () => {
   const handleMouseMove = (e: MouseEvent) => events.emit(Event.ON_MOUSE_MOVE, e);
   const handleKeyDown = (e: KeyboardEvent) => events.emit(Event.ON_KEY_DOWN, e);
   const handleKeyUp = (e: KeyboardEvent) => events.emit(Event.ON_KEY_UP, e);
+  const handleMouseDown = (e: MouseEvent) => events.emit(Event.ON_MOUSE_DOWN, e);
+  const handleMouseUp = (e: MouseEvent) => events.emit(Event.ON_MOUSE_UP, e);
 
   useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
 

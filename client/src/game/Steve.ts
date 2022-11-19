@@ -1,6 +1,7 @@
 import CharacterJSON from '@asset/texture/entity/character.json';
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
+import { MouseButton } from '@game/Interaction';
 import { getTerrainElevation } from '@game/tool/Noise';
 import castRay, { RayCollision } from '@game/tool/Ray';
 import { CharacterType, TileType } from '@game/tool/Textures';
@@ -9,7 +10,7 @@ import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
-import { CODE_A, CODE_D, CODE_E, CODE_SPACE } from 'keycode-js';
+import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 import SpritesManager from './sprite/SpritesManager';
 
@@ -347,7 +348,7 @@ export default class Steve implements Mono {
   }
 
   #interact(collision: RayCollision | false) {
-    const interactButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_E);
+    const interactButtonClicked = this._global.controller.interaction.isKeyPressed(MouseButton.LEFT);
 
     if (interactButtonClicked && collision) {
       if (collision.interactible !== this.interactedInteractible) {

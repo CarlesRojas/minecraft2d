@@ -8,6 +8,12 @@ export interface InteractionProps {
   global: Global;
 }
 
+export enum MouseButton {
+  LEFT = 'mouseLeft',
+  MIDDLE = 'mouseMiddle',
+  RIGHT = 'mouseRight',
+}
+
 export default class Interaction implements Mono {
   private _global: Global;
   private _prevKeyPressed: { [key: string]: boolean } = {};
@@ -25,12 +31,16 @@ export default class Interaction implements Mono {
     this._global.events.sub(Event.ON_MOUSE_MOVE, this.#handleMouseMove.bind(this));
     this._global.events.sub(Event.ON_KEY_DOWN, this.#handleKeyDown.bind(this));
     this._global.events.sub(Event.ON_KEY_UP, this.#handleKeyUp.bind(this));
+    this._global.events.sub(Event.ON_MOUSE_DOWN, this.#handleMouseDown.bind(this));
+    this._global.events.sub(Event.ON_MOUSE_UP, this.#handleMouseUp.bind(this));
   }
 
   destructor() {
     this._global.events.unsub(Event.ON_MOUSE_MOVE, this.#handleMouseMove.bind(this));
     this._global.events.unsub(Event.ON_KEY_DOWN, this.#handleKeyDown.bind(this));
     this._global.events.unsub(Event.ON_KEY_UP, this.#handleKeyUp.bind(this));
+    this._global.events.unsub(Event.ON_MOUSE_DOWN, this.#handleMouseDown.bind(this));
+    this._global.events.unsub(Event.ON_MOUSE_UP, this.#handleMouseUp.bind(this));
   }
 
   // #################################################
@@ -68,6 +78,16 @@ export default class Interaction implements Mono {
 
   #handleKeyUp(e: KeyboardEvent) {
     this._keyPressed[e.code] = false;
+  }
+
+  #handleMouseDown(e: MouseEvent) {
+    const code = e.button === 0 ? MouseButton.LEFT : e.button === 1 ? MouseButton.MIDDLE : MouseButton.RIGHT;
+    this._keyPressed[code] = true;
+  }
+
+  #handleMouseUp(e: MouseEvent) {
+    const code = e.button === 0 ? MouseButton.LEFT : e.button === 1 ? MouseButton.MIDDLE : MouseButton.RIGHT;
+    this._keyPressed[code] = false;
   }
 
   // #################################################
