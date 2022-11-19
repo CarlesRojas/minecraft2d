@@ -12,7 +12,7 @@ export default class Camera implements Mono {
 
   // CAMERA MOVEMENT
   private _targetPositionInTiles: Vector2;
-  private _minTilesPerSecond = 8;
+  private _minTilesPerSecond = 4;
 
   constructor({ global }: CameraProps) {
     this._global = global;
@@ -50,7 +50,7 @@ export default class Camera implements Mono {
     if (targetPositionInTiles.equals(invertedPositionInTiles)) return;
 
     const magnitude = Vector2.sub(targetPositionInTiles, invertedPositionInTiles).magnitude;
-    let stepMagnitude = Math.pow(magnitude, 1.85) * deltaInSeconds;
+    let stepMagnitude = Math.pow(magnitude, 2) * deltaInSeconds;
     stepMagnitude = Math.max(stepMagnitude, this._minTilesPerSecond * deltaInSeconds);
 
     if (magnitude < stepMagnitude) {
