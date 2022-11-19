@@ -1,5 +1,6 @@
 import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@util/abstract/Mono';
+import screenToTiles from '@util/ScreenToTiles';
 import Vector2 from '@util/Vector2';
 
 export interface CameraProps {
@@ -39,5 +40,16 @@ export default class Camera implements Mono {
     );
 
     this._global.app.stage.position.set(newPos.x, newPos.y);
+  }
+
+  // #################################################
+  //   GETTER
+  // #################################################
+
+  get positionInTiles() {
+    const stageX = this._global.app.stage.position.x;
+    const stageY = this._global.app.stage.position.y;
+
+    return screenToTiles(new Vector2(stageX, stageY), this._global.dimensions);
   }
 }

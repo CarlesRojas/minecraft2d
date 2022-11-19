@@ -41,7 +41,7 @@ export default class DevTools implements Mono {
   }
 
   #updateMousePosition() {
-    const mousePosition = this._global.controller.interaction.mousePosition;
+    const mousePosition = this._global.controller.interaction.mousePositionInTiles;
     this._global.events.emit(Event.ON_MOUSE_POSITION_CHANGE, { mouseCoords: mousePosition });
   }
 }

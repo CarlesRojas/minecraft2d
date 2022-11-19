@@ -55,7 +55,6 @@ export default class Controller implements Mono {
       controller: this,
     };
 
-    this.#enableInteraction();
     this.addViewToWindow(container);
     this.#loadAssets();
   }
@@ -90,10 +89,6 @@ export default class Controller implements Mono {
   // #################################################
   //   ENABLE INTERACTION
   // #################################################
-
-  #enableInteraction() {
-    this._global.app.stage.interactive = false;
-  }
 
   // #################################################
   //   ADD VIEW

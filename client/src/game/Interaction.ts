@@ -1,6 +1,7 @@
 import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@util/abstract/Mono';
 import { Event } from '@util/Events';
+import screenToTiles from '@util/ScreenToTiles';
 import Vector2 from '@util/Vector2';
 
 export interface InteractionProps {
@@ -11,12 +12,15 @@ export default class Interaction implements Mono {
   private _global: Global;
   private _prevKeyPressed: { [key: string]: boolean } = {};
   private _keyPressed: { [key: string]: boolean } = {};
-  private _mousePosition: Vector2;
+  private _mousePositionInTiles: Vector2;
+  private _mouseScreenPosition: Vector2;
 
   constructor({ global }: InteractionProps) {
     this._global = global;
+    this._global.app.stage.interactive = false;
 
-    this._mousePosition = new Vector2(0, 0);
+    this._mousePositionInTiles = new Vector2(0, 0);
+    this._mouseScreenPosition = new Vector2(0, 0);
 
     this._global.events.sub(Event.ON_MOUSE_MOVE, this.#handleMouseMove.bind(this));
     this._global.events.sub(Event.ON_KEY_DOWN, this.#handleKeyDown.bind(this));
@@ -48,7 +52,14 @@ export default class Interaction implements Mono {
   // #################################################
 
   #handleMouseMove(e: MouseEvent) {
-    this._mousePosition = new Vector2(e.clientX, e.clientY);
+    const cameraPosition = this._global.controller.camera.positionInTiles;
+    const mousePositionInTiles = screenToTiles(new Vector2(e.clientX, e.clientY), this._global.dimensions);
+
+    this._mouseScreenPosition = new Vector2(e.clientX, e.clientY);
+    this._mousePositionInTiles = new Vector2(
+      mousePositionInTiles.x - cameraPosition.x,
+      mousePositionInTiles.y - cameraPosition.y
+    );
   }
 
   #handleKeyDown(e: KeyboardEvent) {
@@ -71,7 +82,11 @@ export default class Interaction implements Mono {
     return (key: string) => this._keyPressed[key];
   }
 
-  get mousePosition() {
-    return this._mousePosition;
+  get mouseScreenPosition() {
+    return this._mouseScreenPosition;
+  }
+
+  get mousePositionInTiles() {
+    return this._mousePositionInTiles;
   }
 }

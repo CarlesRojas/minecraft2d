@@ -56,7 +56,7 @@ const DevToolsUI = () => {
 
   return (
     <DevTools>
-      <p>{`(${mouseCoords.x} - ${mouseCoords.y})`}</p>
+      <p>{`(${mouseCoords.x.toFixed(2)} - ${mouseCoords.y.toFixed(2)})`}</p>
       <p>{frameRate}</p>
     </DevTools>
   );

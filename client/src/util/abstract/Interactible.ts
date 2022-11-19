@@ -1,7 +1,14 @@
 import { Bounds } from '@util/EntityTypes';
 
-export abstract class Interactible {
-  abstract highlight(): void;
-  abstract interact(): void;
-  abstract get getBounds(): Bounds;
+export enum InteractionLayer {
+  BACKGROUND = 'background',
+  GROUND = 'ground',
+}
+
+export interface Interactible {
+  interactionLayer: InteractionLayer;
+  highlight(): void;
+  unhighlight(): void;
+  interact(): void;
+  get getBounds(): Bounds; // In tile space
 }

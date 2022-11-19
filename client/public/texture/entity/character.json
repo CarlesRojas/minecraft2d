@@ -1,8 +1,8 @@
 {
   "info": {
-    "pixelHeight": 32,
-    "tileHeight": 1.8,
-    "tileWidth": 0.6
+    "heightInPixels": 32,
+    "heightInTiles": 1.8,
+    "widthInTiles": 0.6
   },
   "parts": {
     "head": {

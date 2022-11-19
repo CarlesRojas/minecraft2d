@@ -2,6 +2,7 @@ import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { getTerrainElevation } from '@game/tool/Noise';
 import { CharacterType, TileType } from '@game/tool/Textures';
+import { InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
 import Timer from '@util/Timer';
@@ -53,7 +54,7 @@ export default class Steve implements Mono {
     this._global = global;
     this._container = new PIXI.Container();
     this._global.app.stage.addChild(this._container);
-    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - CharacterJSON.info.tileHeight / 2);
+    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - CharacterJSON.info.heightInTiles / 2);
 
     // SPRITES
     this._spriteContainer = new PIXI.Container();
@@ -62,7 +63,7 @@ export default class Steve implements Mono {
     this._spritesManager = new SpritesManager({
       global,
       container: this._spriteContainer,
-      pixel: CharacterJSON.info.tileHeight * (1 / CharacterJSON.info.pixelHeight), // Total number of height pixels
+      pixel: CharacterJSON.info.heightInTiles * (1 / CharacterJSON.info.heightInPixels), // Total number of height pixels
       texture: CharacterType.STEVE,
       info: CharacterJSON as Entity,
     });
@@ -79,6 +80,15 @@ export default class Steve implements Mono {
       startRightAway: false,
       callOnStart: true,
     });
+
+    // TODO DELETE
+    const middleOfWorld = new PIXI.Sprite(PIXI.Texture.WHITE);
+    middleOfWorld.width = 10;
+    middleOfWorld.height = 10;
+    middleOfWorld.anchor.set(0.5, 0.5);
+    middleOfWorld.zIndex = 100;
+    middleOfWorld.position.set(0, 0);
+    this._container.addChild(middleOfWorld);
   }
 
   destructor() {
@@ -99,8 +109,8 @@ export default class Steve implements Mono {
     this._spritesManager.handleResize(dimensions);
 
     this._hitBoxSprite.position.set(this._position.x * tile, this._position.y * tile);
-    this._hitBoxSprite.height = tile * CharacterJSON.info.tileHeight;
-    this._hitBoxSprite.width = tile * CharacterJSON.info.tileWidth;
+    this._hitBoxSprite.height = tile * CharacterJSON.info.heightInTiles;
+    this._hitBoxSprite.width = tile * CharacterJSON.info.widthInTiles;
     this._hitBoxSprite.anchor.set(0.5, 0.5);
   }
 
@@ -117,6 +127,8 @@ export default class Steve implements Mono {
     this.#checkIfGrounded();
 
     this.#changeAnimation();
+
+    this.#castRay();
 
     this._spritesManager.gameLoop(deltaInSeconds);
   }
@@ -209,10 +221,10 @@ export default class Steve implements Mono {
     const x = this._position.x + deltaPosition.x;
     const y = this._position.y + deltaPosition.y;
 
-    let minX = Math.floor(x - CharacterJSON.info.tileWidth / 2);
-    let maxX = Math.ceil(x + CharacterJSON.info.tileWidth / 2);
-    let minY = Math.floor(y - CharacterJSON.info.tileHeight / 2);
-    let maxY = Math.ceil(y + CharacterJSON.info.tileHeight / 2);
+    let minX = Math.floor(x - CharacterJSON.info.widthInTiles / 2);
+    let maxX = Math.ceil(x + CharacterJSON.info.widthInTiles / 2);
+    let minY = Math.floor(y - CharacterJSON.info.heightInTiles / 2);
+    let maxY = Math.ceil(y + CharacterJSON.info.heightInTiles / 2);
 
     for (let i = minX; i <= maxX; i++)
       for (let j = minY; j <= maxY; j++) {
@@ -233,7 +245,7 @@ export default class Steve implements Mono {
       correction: new Vector2(0, 0),
     };
 
-    const tileSprite = this._global.controller.world.ground.tileAtCoords(tileCoords);
+    const tileSprite = this._global.controller.world.ground.elementAtCoords(tileCoords);
     if (!tileSprite || tileSprite.type === TileType.NONE) return noCollision;
 
     const tile = {
@@ -246,20 +258,20 @@ export default class Steve implements Mono {
     const player = {
       x: this._position.x + deltaPosition.x,
       y: this._position.y + deltaPosition.y,
-      width: CharacterJSON.info.tileWidth,
-      height: CharacterJSON.info.tileHeight,
+      width: CharacterJSON.info.widthInTiles,
+      height: CharacterJSON.info.heightInTiles,
     };
 
     const halfPlayerWidth = player.width / 2;
     const halfPlayerHeight = player.height / 2;
-    const halfTileWidth = tile.width / 2;
-    const halfTileHeight = tile.height / 2;
+    const halfWidthInTiles = tile.width / 2;
+    const halfHeightInTiles = tile.height / 2;
 
     const collides =
-      player.x - halfPlayerWidth < tile.x + halfTileWidth &&
-      player.x + halfPlayerWidth > tile.x - halfTileWidth &&
-      player.y - halfPlayerHeight < tile.y + halfTileHeight &&
-      player.y + halfPlayerHeight > tile.y - halfTileHeight;
+      player.x - halfPlayerWidth < tile.x + halfWidthInTiles &&
+      player.x + halfPlayerWidth > tile.x - halfWidthInTiles &&
+      player.y - halfPlayerHeight < tile.y + halfHeightInTiles &&
+      player.y + halfPlayerHeight > tile.y - halfHeightInTiles;
 
     if (!collides) return noCollision;
 
@@ -293,6 +305,23 @@ export default class Steve implements Mono {
     if (leftButtonClicked) this._spritesManager.setAnimation('walk_left');
     else if (rightButtonClicked) this._spritesManager.setAnimation('walk_right');
     else this._spritesManager.setAnimation('idle');
+  }
+
+  // #################################################
+  //   CAST RAY
+  // #################################################
+
+  #castRay() {
+    const origin = this._position;
+    const mousePosition = this._global.controller.interaction.mousePositionInTiles;
+    const direction = Vector2.direction(origin, mousePosition);
+    const maxDistanceInTiles = 4;
+    const layers = [InteractionLayer.GROUND];
+
+    // console.log('');
+    // console.log(origin.toString(), mousePosition.toString(), direction.toString());
+
+    // castRay(origin, direction, maxDistanceInTiles, layers, this._global);
   }
 
   // #################################################

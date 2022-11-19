@@ -12,9 +12,9 @@ export default interface Entity {
 }
 
 interface Info {
-  pixelHeight: number;
-  tileHeight: number;
-  tileWidth: number;
+  heightInPixels: number;
+  heightInTiles: number;
+  widthInTiles: number;
 }
 
 export interface Bounds {

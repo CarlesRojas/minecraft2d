@@ -16,6 +16,11 @@ export default class Vector2 {
     return new Vector2(parseInt(x), parseInt(y));
   }
 
+  public static direction(from: Vector2, to: Vector2): Vector2 {
+    const direction = new Vector2(to.x - from.x, to.y - from.y);
+    return direction.normalized;
+  }
+
   public x: number;
   public y: number;
 

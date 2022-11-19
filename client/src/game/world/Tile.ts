@@ -1,6 +1,8 @@
 import { Dimensions } from '@game/Controller';
 import { getTileTexture, TileType } from '@game/tool/Textures';
+import { Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
+import { Bounds } from '@util/EntityTypes';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
@@ -13,8 +15,9 @@ export interface TileProps {
 }
 
 const roundToNearestEven = (num: number) => Math.round(num / 2) * 2;
+const BACKGROUND_TINT = 0x999999;
 
-export default class Tile implements Mono {
+export default class Tile implements Mono, Interactible {
   private _coords: Vector2;
   private _type: TileType = TileType.NONE;
   private _sprite: PIXI.Sprite | null = null;
@@ -23,12 +26,14 @@ export default class Tile implements Mono {
   private _isBackground: boolean;
   private _debug: boolean = false;
   private _text: PIXI.Text | null = null;
+  interactionLayer: InteractionLayer;
 
   constructor({ coords, container, dimensions, type, isBackground }: TileProps) {
     this._coords = coords;
     this._container = container;
     this._type = type;
     this._isBackground = isBackground;
+    this.interactionLayer = isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
 
     if (type === TileType.NONE) return;
 
@@ -38,7 +43,7 @@ export default class Tile implements Mono {
     this._sprite.anchor.set(0.5);
     this._sprite.zIndex = 0;
 
-    if (this._isBackground) this._sprite.tint = 0x999999;
+    if (this._isBackground) this._sprite.tint = BACKGROUND_TINT;
     else {
       this._shadowSprite = new PIXI.Sprite(texture);
       this._shadowSprite.zIndex = -1;
@@ -95,6 +100,33 @@ export default class Tile implements Mono {
   gameLoop(deltaInSeconds: number) {}
 
   // #################################################
+  //   INTERACTIBLE
+  // #################################################
+
+  highlight(): void {
+    if (this._sprite) this._sprite.tint = 0x0000ff;
+  }
+
+  unhighlight(): void {
+    if (this._sprite) this._sprite.tint = this._isBackground ? BACKGROUND_TINT : 0xffffff;
+  }
+
+  interact(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  get getBounds(): Bounds {
+    const bounds: Bounds = {
+      x: this._coords.x - 0.5,
+      y: this._coords.y - 0.5,
+      width: 1,
+      height: 1,
+    };
+
+    return bounds;
+  }
+
+  // #################################################
   //   GETTERS
   // #################################################
 
@@ -104,10 +136,5 @@ export default class Tile implements Mono {
 
   get type() {
     return this._type;
-  }
-
-  get bounds() {
-    if (!this._sprite) return null;
-    return this._sprite.getBounds();
   }
 }

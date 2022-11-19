@@ -4,6 +4,7 @@ import { TileType } from '@game/tool/Textures';
 import Tile from '@game/world/Tile';
 import { RenderArea } from '@game/world/World';
 import { Mono } from '@util/abstract/Mono';
+import { CoordsMap, TileMap } from '@util/abstract/TileMap';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
@@ -11,10 +12,10 @@ export interface GroundProps {
   global: Global;
 }
 
-export default class Ground implements Mono {
+export default class Ground implements Mono, TileMap<Tile> {
   private _global: Global;
   private _container: PIXI.Container;
-  private _renderedTiles: { [key: string]: Tile };
+  tilemap: CoordsMap<Tile>;
 
   constructor({ global }: GroundProps) {
     this._global = global;
@@ -23,11 +24,11 @@ export default class Ground implements Mono {
     this._container.sortableChildren = true;
     this._global.app.stage.addChild(this._container);
 
-    this._renderedTiles = {};
+    this.tilemap = {};
   }
 
   destructor() {
-    for (const tile of Object.values(this._renderedTiles)) tile.destructor();
+    for (const tile of Object.values(this.tilemap)) tile.destructor();
     this._global.app.stage.removeChild(this._container);
   }
 
@@ -36,7 +37,7 @@ export default class Ground implements Mono {
   // #################################################
 
   handleResize(dimensions: Dimensions) {
-    for (const tile of Object.values(this._renderedTiles)) tile.handleResize(dimensions);
+    for (const tile of Object.values(this.tilemap)) tile.handleResize(dimensions);
   }
 
   // #################################################
@@ -44,7 +45,7 @@ export default class Ground implements Mono {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    for (const tile of Object.values(this._renderedTiles)) tile.gameLoop(deltaInSeconds);
+    for (const tile of Object.values(this.tilemap)) tile.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -54,7 +55,7 @@ export default class Ground implements Mono {
   async #instantiateTile(key: string, coords: Vector2) {
     const { groundType, isCave } = await getTileTypeInCoords(coords);
 
-    this._renderedTiles[key] = new Tile({
+    this.tilemap[key] = new Tile({
       coords: new Vector2(coords.x, coords.y),
       container: this._container,
       dimensions: this._global.dimensions,
@@ -69,12 +70,12 @@ export default class Ground implements Mono {
     const { x: endX, y: endY } = end;
 
     // Remove tiles that are no longer in the render area
-    for (const key in this._renderedTiles) {
-      const tile = this._renderedTiles[key];
+    for (const key in this.tilemap) {
+      const tile = this.tilemap[key];
       const { x, y } = tile.coords;
       if (x < startX || x > endX || y < startY || y > endY) {
         tile.destructor();
-        delete this._renderedTiles[key];
+        delete this.tilemap[key];
       }
     }
 
@@ -83,20 +84,20 @@ export default class Ground implements Mono {
       for (let y = startY; y <= endY; y++) {
         const coords = new Vector2(x, y);
         const key = coords.toString();
-        if (this._renderedTiles[key]) continue;
+        if (this.tilemap[key]) continue;
         this.#instantiateTile(key, coords);
       }
     }
   }
 
   // #################################################
-  //   GETTERS
+  //   TILE MAP
   // #################################################
 
-  get tileAtCoords() {
+  get elementAtCoords() {
     return (coords: Vector2) => {
       const key = coords.toString();
-      return key in this._renderedTiles ? this._renderedTiles[key] : null;
+      return key in this.tilemap ? this.tilemap[key] : null;
     };
   }
 }

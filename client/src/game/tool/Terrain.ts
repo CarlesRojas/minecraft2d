@@ -1,5 +1,6 @@
 import { addNoiseToTerrain, getTerrainElevation, hasOre, isCave } from '@game/tool/Noise';
 import { TileType } from '@game/tool/Textures';
+import { CoordsMap } from '@util/abstract/TileMap';
 import Vector2 from '@util/Vector2';
 
 interface TileInfo {
@@ -9,13 +10,13 @@ interface TileInfo {
   isSurface: boolean;
 }
 
-const tileTypeCache: { [key: string]: TileInfo } = {};
+const tileTypeCache: CoordsMap<TileInfo> = {};
 
 export const getTileTypeInCoords = async (coords: Vector2) => {
   const { x, y } = coords;
-  const key = coords.toString();
+  const coordsKey = coords.toString();
 
-  if (tileTypeCache[key]) return tileTypeCache[key];
+  if (tileTypeCache[coordsKey]) return tileTypeCache[coordsKey];
 
   const elevation = getTerrainElevation(x);
   const stoneElevation = elevation + 1 + addNoiseToTerrain(x, 0.1);
@@ -36,12 +37,12 @@ export const getTileTypeInCoords = async (coords: Vector2) => {
     else backgroundTileType = groundTileType = TileType.STONE;
   } else if (y > elevation) backgroundTileType = groundTileType = TileType.DIRT;
 
-  tileTypeCache[key] = {
+  tileTypeCache[coordsKey] = {
     groundType: backgroundTileType,
     backgroundType: backgroundTileType,
     isCave: cave,
     isSurface: y === elevation,
   };
 
-  return tileTypeCache[key];
+  return tileTypeCache[coordsKey];
 };
