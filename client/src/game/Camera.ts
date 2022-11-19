@@ -7,15 +7,18 @@ export interface CameraProps {
   global: Global;
 }
 
-const CAMERA_SCALE = 1;
-
 export default class Camera implements Mono {
   private _global: Global;
+
+  // CAMERA MOVEMENT
+  private _targetPositionInTiles: Vector2;
+  private _minTilesPerSecond = 2;
 
   constructor({ global }: CameraProps) {
     this._global = global;
 
-    this._global.stage.scale.set(CAMERA_SCALE);
+    this._targetPositionInTiles = this._global.controller.character.position;
+    this.#moveCameraTo(this._targetPositionInTiles);
   }
 
   destructor() {}
@@ -31,12 +34,42 @@ export default class Camera implements Mono {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    const characterPosition = this._global.controller.character.position;
+    this.#panCameraToTargetPosition(deltaInSeconds);
+    // this.#moveCameraTo(this._targetPositionInTiles);
+  }
+
+  // #################################################
+  //   CAMERA MOVEMENT
+  // #################################################
+
+  #panCameraToTargetPosition(deltaInSeconds: number) {
+    const targetPositionInTiles = this._targetPositionInTiles;
+    const invertedPositionInTiles = Vector2.mul(this.positionInTiles, -1);
+
+    if (targetPositionInTiles.equals(invertedPositionInTiles)) return;
+
+    const magnitude = Vector2.sub(targetPositionInTiles, invertedPositionInTiles).magnitude;
+    let stepMagnitude = Math.pow(magnitude, 1.85) * deltaInSeconds;
+    stepMagnitude = Math.max(stepMagnitude, this._minTilesPerSecond * deltaInSeconds);
+
+    if (magnitude < stepMagnitude) {
+      this.#moveCameraTo(targetPositionInTiles);
+      return;
+    }
+
+    const direction = Vector2.direction(invertedPositionInTiles, targetPositionInTiles);
+    const step = Vector2.mul(direction, stepMagnitude);
+    const newPosition = Vector2.add(invertedPositionInTiles, step);
+
+    this.#moveCameraTo(newPosition);
+  }
+
+  #moveCameraTo(newPositionInTiles: Vector2) {
     const { tile, screen } = this._global.dimensions;
 
     const newPos = new Vector2(
-      (-characterPosition.x * tile + screen.x / (2 * CAMERA_SCALE)) * CAMERA_SCALE,
-      (-characterPosition.y * tile + screen.y / (2 * CAMERA_SCALE)) * CAMERA_SCALE
+      -newPositionInTiles.x * tile + screen.x / 2,
+      -newPositionInTiles.y * tile + screen.y / 2
     );
 
     this._global.stage.position.set(newPos.x, newPos.y);
