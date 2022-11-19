@@ -114,7 +114,7 @@ export default class Tile implements Mono, Interactible {
     if (!this._isBreaking && !this._isReparing) return;
 
     if (this._isBreaking) this._currentBreakingTime += deltaInSeconds;
-    else if (this._isReparing) this._currentBreakingTime -= deltaInSeconds;
+    else if (this._isReparing) this._currentBreakingTime -= deltaInSeconds * 0.5;
 
     const destroyState = Math.floor((this._currentBreakingTime / this._breakingTime) * this._destroySprites.length);
     for (let i = 0; i < this._destroySprites.length; i++) this._destroySprites[i].visible = i === destroyState;
