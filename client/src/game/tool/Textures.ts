@@ -17,6 +17,7 @@ export enum CharacterType {
   STEVE = 'steve',
   ALEX = 'alex',
   MARIO = 'mario',
+  PINYA = 'pinya',
 }
 
 const textures = {
@@ -41,6 +42,7 @@ const textures = {
         { name: CharacterType.STEVE, srcs: '/texture/entity/steve.png' },
         { name: CharacterType.ALEX, srcs: '/texture/entity/alex.png' },
         { name: CharacterType.MARIO, srcs: '/texture/entity/mario.png' },
+        { name: CharacterType.PINYA, srcs: '/texture/entity/pinya.png' },
       ],
     },
   ],
