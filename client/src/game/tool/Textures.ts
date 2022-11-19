@@ -1,5 +1,15 @@
 import AndesiteImage from '@asset/texture/block/andesite.png';
 import CoalOreImage from '@asset/texture/block/coal_ore.png';
+import DestroyStage0Image from '@asset/texture/block/destroy_stage_0.png';
+import DestroyStage1Image from '@asset/texture/block/destroy_stage_1.png';
+import DestroyStage2Image from '@asset/texture/block/destroy_stage_2.png';
+import DestroyStage3Image from '@asset/texture/block/destroy_stage_3.png';
+import DestroyStage4Image from '@asset/texture/block/destroy_stage_4.png';
+import DestroyStage5Image from '@asset/texture/block/destroy_stage_5.png';
+import DestroyStage6Image from '@asset/texture/block/destroy_stage_6.png';
+import DestroyStage7Image from '@asset/texture/block/destroy_stage_7.png';
+import DestroyStage8Image from '@asset/texture/block/destroy_stage_8.png';
+import DestroyStage9Image from '@asset/texture/block/destroy_stage_9.png';
 import DiamondOreImage from '@asset/texture/block/diamond_ore.png';
 import DioriteImage from '@asset/texture/block/diorite.png';
 import DirtImage from '@asset/texture/block/dirt.png';
@@ -27,6 +37,16 @@ export enum TileType {
   ANDESITE = 'andesite',
   DIORITE = 'diorite',
   GRANITE = 'granite',
+  DESTROY_STATE_0 = 'destroy_stage_0',
+  DESTROY_STATE_1 = 'destroy_stage_1',
+  DESTROY_STATE_2 = 'destroy_stage_2',
+  DESTROY_STATE_3 = 'destroy_stage_3',
+  DESTROY_STATE_4 = 'destroy_stage_4',
+  DESTROY_STATE_5 = 'destroy_stage_5',
+  DESTROY_STATE_6 = 'destroy_stage_6',
+  DESTROY_STATE_7 = 'destroy_stage_7',
+  DESTROY_STATE_8 = 'destroy_stage_8',
+  DESTROY_STATE_9 = 'destroy_stage_9',
 }
 
 export enum CharacterType {
@@ -51,6 +71,16 @@ const textures = {
         { name: TileType.ANDESITE, srcs: AndesiteImage },
         { name: TileType.DIORITE, srcs: DioriteImage },
         { name: TileType.GRANITE, srcs: GraniteImage },
+        { name: TileType.DESTROY_STATE_0, srcs: DestroyStage0Image },
+        { name: TileType.DESTROY_STATE_1, srcs: DestroyStage1Image },
+        { name: TileType.DESTROY_STATE_2, srcs: DestroyStage2Image },
+        { name: TileType.DESTROY_STATE_3, srcs: DestroyStage3Image },
+        { name: TileType.DESTROY_STATE_4, srcs: DestroyStage4Image },
+        { name: TileType.DESTROY_STATE_5, srcs: DestroyStage5Image },
+        { name: TileType.DESTROY_STATE_6, srcs: DestroyStage6Image },
+        { name: TileType.DESTROY_STATE_7, srcs: DestroyStage7Image },
+        { name: TileType.DESTROY_STATE_8, srcs: DestroyStage8Image },
+        { name: TileType.DESTROY_STATE_9, srcs: DestroyStage9Image },
       ],
     },
     {

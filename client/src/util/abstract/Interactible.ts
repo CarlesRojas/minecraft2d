@@ -9,7 +9,8 @@ export enum InteractionLayer {
 export interface Interactible {
   interactionLayer: InteractionLayer;
   highlight(): void;
-  unhighlight(): void;
+  stopHighlighting(): void;
   interact(): void;
+  stopInteracting(): void;
   get getBounds(): Bounds; // In tile space
 }

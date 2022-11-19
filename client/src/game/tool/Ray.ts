@@ -35,7 +35,7 @@ const castRay = (
   }
 
   prevCheckedTile = null;
-  highlightedInteractible?.unhighlight();
+  highlightedInteractible?.stopInteracting();
   return false;
 };
 

@@ -9,7 +9,7 @@ import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
-import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
+import { CODE_A, CODE_D, CODE_E, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 import SpritesManager from './sprite/SpritesManager';
 
@@ -50,6 +50,7 @@ export default class Steve implements Mono {
   // INTERACTION
   private _reachInTiles = 5;
   highlightedInteractible: Interactible | null = null;
+  interactedInteractible: Interactible | null = null;
 
   // DEBUG
   private _debug = false;
@@ -317,7 +318,7 @@ export default class Steve implements Mono {
   }
 
   // #################################################
-  //   CAST RAY
+  //   INTERACT
   // #################################################
 
   #castRay() {
@@ -329,16 +330,34 @@ export default class Steve implements Mono {
     const collision = castRay(origin, direction, this._reachInTiles, layers, this._global);
     this.#moveCollisionPoint(collision);
     this.#interact(collision);
+    this.#highlight(collision);
+  }
+
+  #highlight(collision: RayCollision | false) {
+    if (collision) {
+      if (collision.interactible !== this.highlightedInteractible) {
+        this.highlightedInteractible?.stopHighlighting();
+        collision.interactible.highlight();
+        this.highlightedInteractible = collision.interactible;
+      }
+    } else {
+      this.highlightedInteractible?.stopHighlighting();
+      this.highlightedInteractible = null;
+    }
   }
 
   #interact(collision: RayCollision | false) {
-    if (collision) {
-      this.highlightedInteractible?.unhighlight();
-      collision.interactible.highlight();
-      this.highlightedInteractible = collision.interactible;
+    const interactButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_E);
+
+    if (interactButtonClicked && collision) {
+      if (collision.interactible !== this.interactedInteractible) {
+        this.interactedInteractible?.stopInteracting();
+        collision.interactible.interact();
+        this.interactedInteractible = collision.interactible;
+      }
     } else {
-      this.highlightedInteractible?.unhighlight();
-      this.highlightedInteractible = null;
+      this.interactedInteractible?.stopInteracting();
+      this.interactedInteractible = null;
     }
   }
 

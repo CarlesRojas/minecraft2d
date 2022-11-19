@@ -82,6 +82,8 @@ export default class Interaction implements Mono {
     return (key: string) => this._keyPressed[key];
   }
 
+  // TODO fix bug when the player moves without moving the mouse-> The mouse position should update
+
   get mouseScreenPosition() {
     return this._mouseScreenPosition;
   }
