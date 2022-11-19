@@ -11,35 +11,71 @@
       "zIndex": 0,
       "origin": { "x": -4, "y": -16 }
     },
+    "head2": {
+      "bounds": { "x": 40, "y": 8, "width": 8, "height": 8 },
+      "anchor": { "x": 0, "y": 0 },
+      "zIndex": 0,
+      "origin": { "x": -4, "y": -16 }
+    },
     "torso": {
       "bounds": { "x": 20, "y": 20, "width": 8, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -4, "y": -8 }
     },
-    "leftArm": {
-      "bounds": { "x": 44, "y": 20, "width": 4, "height": 12 },
+    "torso2": {
+      "bounds": { "x": 20, "y": 36, "width": 8, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
-      "origin": { "x": -8, "y": -8 }
+      "origin": { "x": -4, "y": -8 }
     },
-    "rightArm": {
+    "leftArm": {
       "bounds": { "x": 36, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": 4, "y": -8 }
     },
+    "leftArm2": {
+      "bounds": { "x": 52, "y": 52, "width": 4, "height": 12 },
+      "anchor": { "x": 0, "y": 0 },
+      "zIndex": 0,
+      "origin": { "x": 4, "y": -8 }
+    },
+    "rightArm": {
+      "bounds": { "x": 44, "y": 20, "width": 4, "height": 12 },
+      "anchor": { "x": 0, "y": 0 },
+      "zIndex": 0,
+      "origin": { "x": -8, "y": -8 }
+    },
+    "rightArm2": {
+      "bounds": { "x": 44, "y": 36, "width": 4, "height": 12 },
+      "anchor": { "x": 0, "y": 0 },
+      "zIndex": 0,
+      "origin": { "x": -8, "y": -8 }
+    },
     "leftLeg": {
+      "bounds": { "x": 20, "y": 52, "width": 4, "height": 12 },
+      "anchor": { "x": 0, "y": 0 },
+      "zIndex": 0,
+      "origin": { "x": 0, "y": 4 }
+    },
+    "leftLeg2": {
+      "bounds": { "x": 4, "y": 52, "width": 4, "height": 12 },
+      "anchor": { "x": 0, "y": 0 },
+      "zIndex": 0,
+      "origin": { "x": 0, "y": 4 }
+    },
+    "rightLeg": {
       "bounds": { "x": 4, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -4, "y": 4 }
     },
-    "rightLeg": {
-      "bounds": { "x": 20, "y": 52, "width": 4, "height": 12 },
+    "rightLeg2": {
+      "bounds": { "x": 4, "y": 36, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
-      "origin": { "x": 0, "y": 4 }
+      "origin": { "x": -4, "y": 4 }
     },
     "headLSide": {
       "bounds": { "x": 16, "y": 8, "width": 8, "height": 8 },
@@ -54,25 +90,25 @@
       "origin": { "x": -2, "y": -8 }
     },
     "leftArmLSide": {
-      "bounds": { "x": 48, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 40, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": 1,
       "origin": { "x": 0, "y": -6 }
     },
     "rightArmLSide": {
-      "bounds": { "x": 40, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 48, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": -1,
       "origin": { "x": 0, "y": -6 }
     },
     "leftLegLSide": {
-      "bounds": { "x": 8, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 24, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": 1,
       "origin": { "x": 0, "y": 4 }
     },
     "rightLegLSide": {
-      "bounds": { "x": 24, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 8, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": -1,
       "origin": { "x": 0, "y": 4 }
@@ -90,25 +126,25 @@
       "origin": { "x": -2, "y": -8 }
     },
     "leftArmRSide": {
-      "bounds": { "x": 40, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 32, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": -1,
       "origin": { "x": 0, "y": -6 }
     },
     "rightArmRSide": {
-      "bounds": { "x": 32, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 40, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": 1,
       "origin": { "x": 0, "y": -6 }
     },
     "leftLegRSide": {
-      "bounds": { "x": 0, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 16, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": -1,
       "origin": { "x": 0, "y": 4 }
     },
     "rightLegRSide": {
-      "bounds": { "x": 16, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 0, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": 1,
       "origin": { "x": 0, "y": 4 }
@@ -116,12 +152,25 @@
   },
   "states": {
     "idle": {
-      "visibleParts": ["head", "torso", "leftArm", "rightArm", "leftLeg", "rightLeg"],
+      "visibleParts": [
+        "head",
+        "torso",
+        "leftArm",
+        "rightArm",
+        "leftLeg",
+        "rightLeg",
+        "head2",
+        "torso2",
+        "leftArm2",
+        "rightArm2",
+        "leftLeg2",
+        "rightLeg2"
+      ],
       "animations": [
         {
           "speed": 4,
           "amplidude": 0.3,
-          "parts": ["leftArm", "rightArm"],
+          "parts": ["leftArm", "leftArm2", "rightArm", "rightArm2"],
           "type": "y",
           "inverted": [false, false]
         }
