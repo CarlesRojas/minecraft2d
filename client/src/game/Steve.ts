@@ -16,7 +16,6 @@ import SpritesManager from './sprite/SpritesManager';
 
 export interface SteveProps {
   global: Global;
-  dimensions: Dimensions;
 }
 
 interface Collision {
@@ -57,11 +56,11 @@ export default class Steve implements Mono {
   private _debug = false;
   collisionPoint: PIXI.Sprite | null = null;
 
-  constructor({ global, dimensions }: SteveProps) {
+  constructor({ global }: SteveProps) {
     // GLOBAL
     this._global = global;
     this._container = new PIXI.Container();
-    this._global.app.stage.addChild(this._container);
+    this._global.stage.addChild(this._container);
     this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - CharacterJSON.info.heightInTiles / 2);
 
     // SPRITES
@@ -81,7 +80,7 @@ export default class Steve implements Mono {
     this._hitBoxSprite.visible = false;
     this._container.addChild(this._hitBoxSprite);
 
-    this.handleResize(dimensions);
+    this.handleResize(this._global.dimensions);
 
     // MOVEMENT
     this._jumpTimer = new Timer(0.3, this.#handleJumpTimerFinished.bind(this), {
@@ -105,7 +104,7 @@ export default class Steve implements Mono {
   destructor() {
     this._spritesManager.destructor();
     this._container.removeChildren();
-    this._global.app.stage.removeChild(this._container);
+    this._global.stage.removeChild(this._container);
   }
 
   // #################################################

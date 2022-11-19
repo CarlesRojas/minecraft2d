@@ -15,7 +15,7 @@ export default class Camera implements Mono {
   constructor({ global }: CameraProps) {
     this._global = global;
 
-    this._global.app.stage.scale.set(CAMERA_SCALE);
+    this._global.stage.scale.set(CAMERA_SCALE);
   }
 
   destructor() {}
@@ -39,7 +39,7 @@ export default class Camera implements Mono {
       (-characterPosition.y * tile + screen.y / (2 * CAMERA_SCALE)) * CAMERA_SCALE
     );
 
-    this._global.app.stage.position.set(newPos.x, newPos.y);
+    this._global.stage.position.set(newPos.x, newPos.y);
   }
 
   // #################################################
@@ -47,8 +47,8 @@ export default class Camera implements Mono {
   // #################################################
 
   get positionInTiles() {
-    const stageX = this._global.app.stage.position.x;
-    const stageY = this._global.app.stage.position.y;
+    const stageX = this._global.stage.position.x;
+    const stageY = this._global.stage.position.y;
 
     return screenToTiles(new Vector2(stageX, stageY), this._global.dimensions);
   }

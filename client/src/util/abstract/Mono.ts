@@ -26,11 +26,11 @@ export default class World extends GameClass {
     this._global = global;
 
     this._container = new PIXI.Container();
-    this._global.app.stage.addChild(this._container);
+    this._global.stage.addChild(this._container);
   }
 
   destructor() {
-    this._global.app.stage.removeChild(this._container);
+    this._global.stage.removeChild(this._container);
   }
 
   // #################################################

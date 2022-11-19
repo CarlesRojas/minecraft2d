@@ -21,14 +21,14 @@ export default class Background implements Mono, TileMap<Tile> {
 
     this._container = new PIXI.Container();
     this._container.sortableChildren = true;
-    this._global.app.stage.addChild(this._container);
+    this._global.stage.addChild(this._container);
 
     this.tilemap = {};
   }
 
   destructor() {
     for (const tile of Object.values(this.tilemap)) tile.destructor();
-    this._global.app.stage.removeChild(this._container);
+    this._global.stage.removeChild(this._container);
   }
 
   // #################################################

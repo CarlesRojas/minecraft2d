@@ -26,7 +26,7 @@ export default class Ground implements Mono, TileMap<Tile> {
 
     this._container = new PIXI.Container();
     this._container.sortableChildren = true;
-    this._global.app.stage.addChild(this._container);
+    this._global.stage.addChild(this._container);
 
     if (this._debug) {
       this._middleOfWorld = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -45,7 +45,7 @@ export default class Ground implements Mono, TileMap<Tile> {
   destructor() {
     for (const tile of Object.values(this.tilemap)) tile.destructor();
     if (this._middleOfWorld) this._container.removeChild(this._middleOfWorld);
-    this._global.app.stage.removeChild(this._container);
+    this._global.stage.removeChild(this._container);
   }
 
   // #################################################

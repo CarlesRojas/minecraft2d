@@ -30,7 +30,7 @@ export default class World implements Mono {
   constructor({ global }: WorldProps) {
     this._global = global;
     this._container = new PIXI.Container();
-    this._global.app.stage.addChild(this._container);
+    this._global.stage.addChild(this._container);
 
     this._layers = {
       background: new Background({ global: this._global }),
@@ -46,7 +46,7 @@ export default class World implements Mono {
 
   destructor() {
     for (const value of Object.values(this._layers)) value.destructor();
-    this._global.app.stage.removeChild(this._container);
+    this._global.stage.removeChild(this._container);
   }
 
   // #################################################

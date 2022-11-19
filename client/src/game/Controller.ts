@@ -29,6 +29,7 @@ export interface Global {
   childs: { [key in Child]?: Mono };
   events: Events;
   controller: Controller;
+  stage: PIXI.Container;
 }
 
 export interface ControllerProps {
@@ -53,7 +54,10 @@ export default class Controller implements Mono {
       childs: {},
       events,
       controller: this,
+      stage: new PIXI.Container(),
     };
+
+    this._global.app.stage.addChild(this._global.stage);
 
     this.addViewToWindow(container);
     this.#loadAssets();
@@ -61,6 +65,7 @@ export default class Controller implements Mono {
 
   destructor() {
     for (const value of Object.values(this._global.childs)) value.destructor();
+    this._global.app.stage.removeChild(this._global.stage);
   }
 
   // #################################################
@@ -87,10 +92,6 @@ export default class Controller implements Mono {
   }
 
   // #################################################
-  //   ENABLE INTERACTION
-  // #################################################
-
-  // #################################################
   //   ADD VIEW
   // #################################################
 
@@ -114,7 +115,7 @@ export default class Controller implements Mono {
   #handleLoadingComplete() {
     this._global.childs[Child.DEV_TOOLS] = new DevTools({ global: this._global });
     this._global.childs[Child.WORLD] = new World({ global: this._global });
-    this._global.childs[Child.CHARACTER] = new Steve({ global: this._global, dimensions: this._global.dimensions });
+    this._global.childs[Child.CHARACTER] = new Steve({ global: this._global });
     this._global.childs[Child.CAMERA] = new Camera({ global: this._global });
     this._global.childs[Child.INTERACTION] = new Interaction({ global: this._global });
 
