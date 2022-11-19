@@ -1,6 +1,7 @@
 import { Bounds } from '@util/EntityTypes';
 
 export enum InteractionLayer {
+  AIR = 'air',
   BACKGROUND = 'background',
   GROUND = 'ground',
 }

@@ -35,7 +35,10 @@ export default class Tile implements Mono, Interactible {
     this._isBackground = isBackground;
     this.interactionLayer = isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
 
-    if (type === TileType.NONE) return;
+    if (type === TileType.NONE) {
+      this.interactionLayer = InteractionLayer.AIR;
+      return;
+    }
 
     const texture = getTileTexture(this._type);
 

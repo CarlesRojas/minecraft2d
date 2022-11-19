@@ -64,8 +64,16 @@ export default class Vector2 {
     return new Vector2(-this.x, -this.y);
   }
 
+  public get rounded(): Vector2 {
+    return new Vector2(Math.round(this.x), Math.round(this.y));
+  }
+
   public toString(): string {
     return `${this.x} ${this.y}`;
+  }
+
+  public toReadableString(): string {
+    return `${this.x.toFixed(2)} ${this.y.toFixed(2)}`;
   }
 
   public equals(v: Vector2): boolean {

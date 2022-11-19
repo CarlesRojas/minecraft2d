@@ -1,6 +1,7 @@
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { getTerrainElevation } from '@game/tool/Noise';
+import castRay from '@game/tool/Ray';
 import { CharacterType, TileType } from '@game/tool/Textures';
 import { InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
@@ -318,10 +319,7 @@ export default class Steve implements Mono {
     const maxDistanceInTiles = 4;
     const layers = [InteractionLayer.GROUND];
 
-    // console.log('');
-    // console.log(origin.toString(), mousePosition.toString(), direction.toString());
-
-    // castRay(origin, direction, maxDistanceInTiles, layers, this._global);
+    castRay(origin, direction, maxDistanceInTiles, layers, this._global);
   }
 
   // #################################################
