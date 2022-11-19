@@ -55,6 +55,20 @@ export default class Interaction implements Mono {
 
   gameLoop(deltaInSeconds: number) {
     this._prevKeyPressed = { ...this._keyPressed };
+    this.#getMousePositionInTiles();
+  }
+
+  #getMousePositionInTiles() {
+    const mousePositionInTiles = screenToTiles(
+      new Vector2(this._mouseScreenPosition.x, this._mouseScreenPosition.y),
+      this._global.dimensions
+    );
+    const cameraPosition = this._global.controller.camera.positionInTiles;
+
+    this._mousePositionInTiles = new Vector2(
+      mousePositionInTiles.x - cameraPosition.x,
+      mousePositionInTiles.y - cameraPosition.y
+    );
   }
 
   // #################################################
@@ -62,14 +76,7 @@ export default class Interaction implements Mono {
   // #################################################
 
   #handleMouseMove(e: MouseEvent) {
-    const cameraPosition = this._global.controller.camera.positionInTiles;
-    const mousePositionInTiles = screenToTiles(new Vector2(e.clientX, e.clientY), this._global.dimensions);
-
     this._mouseScreenPosition = new Vector2(e.clientX, e.clientY);
-    this._mousePositionInTiles = new Vector2(
-      mousePositionInTiles.x - cameraPosition.x,
-      mousePositionInTiles.y - cameraPosition.y
-    );
   }
 
   #handleKeyDown(e: KeyboardEvent) {
@@ -101,8 +108,6 @@ export default class Interaction implements Mono {
   get isKeyPressed() {
     return (key: string) => this._keyPressed[key];
   }
-
-  // TODO fix bug when the player moves without moving the mouse-> The mouse position should update
 
   get mouseScreenPosition() {
     return this._mouseScreenPosition;
