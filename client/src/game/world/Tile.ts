@@ -12,6 +12,8 @@ export interface TileProps {
   isBackground: boolean;
 }
 
+const roundToNearestEven = (num: number) => Math.round(num / 2) * 2;
+
 export default class Tile extends GameClass {
   private _coords: Vector2;
   private _type: TileType = TileType.NONE;
@@ -41,7 +43,7 @@ export default class Tile extends GameClass {
     else {
       this._shadowSprite = new PIXI.Sprite(texture);
       this._shadowSprite.zIndex = -1;
-      this._shadowSprite.tint = 0x444444;
+      this._shadowSprite.tint = 0x222222;
       this._shadowSprite.anchor.set(0.5);
       this._container.addChild(this._shadowSprite);
     }
@@ -78,8 +80,8 @@ export default class Tile extends GameClass {
 
     if (this._shadowSprite) {
       this._shadowSprite.position.set(this._coords.x * tile, this._coords.y * tile);
-      this._shadowSprite.width = tile * 1.1;
-      this._shadowSprite.height = tile * 1.1;
+      this._shadowSprite.width = tile + roundToNearestEven(tile * 0.12);
+      this._shadowSprite.height = tile + roundToNearestEven(tile * 0.12);
     }
 
     if (this._text) {
