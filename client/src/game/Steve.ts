@@ -70,7 +70,7 @@ export default class Steve implements Mono {
       global,
       container: this._spriteContainer,
       pixel: CharacterJSON.info.heightInTiles * (1 / CharacterJSON.info.heightInPixels), // Total number of height pixels
-      texture: CharacterType.PARTS,
+      texture: CharacterType.PINYA,
       info: CharacterJSON as Entity,
     });
     this._container.addChild(this._spriteContainer);
