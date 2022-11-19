@@ -1,10 +1,10 @@
 import { Dimensions } from '@game/Controller';
 
-export default abstract class Controller {
-  constructor() {}
-  abstract destructor(): void;
-  abstract handleResize(dimensions: Dimensions): void;
-  abstract gameLoop(deltaInSeconds: number): void;
+export interface Mono {
+  constructor: Function;
+  destructor(): void;
+  handleResize(dimensions: Dimensions): void;
+  gameLoop(deltaInSeconds: number): void;
 }
 
 /*

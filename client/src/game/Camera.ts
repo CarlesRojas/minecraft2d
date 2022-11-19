@@ -1,5 +1,5 @@
 import { Dimensions, Global } from '@game/Controller';
-import GameClass from '@util/GameClass';
+import { Mono } from '@util/abstract/Mono';
 import Vector2 from '@util/Vector2';
 
 export interface CameraProps {
@@ -8,11 +8,10 @@ export interface CameraProps {
 
 const CAMERA_SCALE = 1;
 
-export default class Camera extends GameClass {
+export default class Camera implements Mono {
   private _global: Global;
 
   constructor({ global }: CameraProps) {
-    super();
     this._global = global;
 
     this._global.app.stage.scale.set(CAMERA_SCALE);

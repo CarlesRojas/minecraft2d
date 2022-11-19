@@ -1,10 +1,10 @@
-import * as PIXI from 'pixi.js';
-import { Dimensions, Global } from '@game/Controller';
-import GameClass from '@util/GameClass';
-import Ground from '@game/world/Ground';
-import Background from '@game/world/Background';
-import Vector2 from '@util/Vector2';
 import { SAFTY_TILES } from '@game/constant/constants';
+import { Dimensions, Global } from '@game/Controller';
+import Background from '@game/world/Background';
+import Ground from '@game/world/Ground';
+import { Mono } from '@util/abstract/Mono';
+import Vector2 from '@util/Vector2';
+import * as PIXI from 'pixi.js';
 
 export interface Layers {
   ground: Ground;
@@ -20,7 +20,7 @@ export interface WorldProps {
   global: Global;
 }
 
-export default class World extends GameClass {
+export default class World implements Mono {
   private _global: Global;
   private _container: PIXI.Container;
   private _layers: Layers;
@@ -28,7 +28,6 @@ export default class World extends GameClass {
   private _lastRenderArea: RenderArea | null;
 
   constructor({ global }: WorldProps) {
-    super();
     this._global = global;
     this._container = new PIXI.Container();
     this._global.app.stage.addChild(this._container);

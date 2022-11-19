@@ -6,109 +6,109 @@
   },
   "parts": {
     "head": {
-      "size": { "x": 8, "y": 8, "width": 8, "height": 8 },
+      "bounds": { "x": 8, "y": 8, "width": 8, "height": 8 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -4, "y": -16 }
     },
     "torso": {
-      "size": { "x": 20, "y": 20, "width": 8, "height": 12 },
+      "bounds": { "x": 20, "y": 20, "width": 8, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -4, "y": -8 }
     },
     "leftArm": {
-      "size": { "x": 44, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 44, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -8, "y": -8 }
     },
     "rightArm": {
-      "size": { "x": 36, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 36, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": 4, "y": -8 }
     },
     "leftLeg": {
-      "size": { "x": 4, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 4, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -4, "y": 4 }
     },
     "rightLeg": {
-      "size": { "x": 20, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 20, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": 0, "y": 4 }
     },
     "headLSide": {
-      "size": { "x": 16, "y": 8, "width": 8, "height": 8 },
+      "bounds": { "x": 16, "y": 8, "width": 8, "height": 8 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -4, "y": -16 }
     },
     "torsoLSide": {
-      "size": { "x": 28, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 28, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -2, "y": -8 }
     },
     "leftArmLSide": {
-      "size": { "x": 48, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 48, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": 1,
       "origin": { "x": 0, "y": -6 }
     },
     "rightArmLSide": {
-      "size": { "x": 40, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 40, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": -1,
       "origin": { "x": 0, "y": -6 }
     },
     "leftLegLSide": {
-      "size": { "x": 8, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 8, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": 1,
       "origin": { "x": 0, "y": 4 }
     },
     "rightLegLSide": {
-      "size": { "x": 24, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 24, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": -1,
       "origin": { "x": 0, "y": 4 }
     },
     "headRSide": {
-      "size": { "x": 0, "y": 8, "width": 8, "height": 8 },
+      "bounds": { "x": 0, "y": 8, "width": 8, "height": 8 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -4, "y": -16 }
     },
     "torsoRSide": {
-      "size": { "x": 16, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 16, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0, "y": 0 },
       "zIndex": 0,
       "origin": { "x": -2, "y": -8 }
     },
     "leftArmRSide": {
-      "size": { "x": 40, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 40, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": -1,
       "origin": { "x": 0, "y": -6 }
     },
     "rightArmRSide": {
-      "size": { "x": 32, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 32, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0.16666666666 },
       "zIndex": 1,
       "origin": { "x": 0, "y": -6 }
     },
     "leftLegRSide": {
-      "size": { "x": 0, "y": 20, "width": 4, "height": 12 },
+      "bounds": { "x": 0, "y": 20, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": -1,
       "origin": { "x": 0, "y": 4 }
     },
     "rightLegRSide": {
-      "size": { "x": 16, "y": 52, "width": 4, "height": 12 },
+      "bounds": { "x": 16, "y": 52, "width": 4, "height": 12 },
       "anchor": { "x": 0.5, "y": 0 },
       "zIndex": 1,
       "origin": { "x": 0, "y": 4 }

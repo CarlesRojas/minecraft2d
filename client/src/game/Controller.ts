@@ -1,13 +1,13 @@
 import * as PIXI from 'pixi.js';
 
 import Camera from '@game/Camera';
-import Character from '@game/Character';
 import DevTools from '@game/DevTools';
 import Interaction from '@game/Interaction';
+import Steve from '@game/Steve';
 import textures from '@game/tool/Textures';
 import World from '@game/world/World';
+import { Mono } from '@util/abstract/Mono';
 import { Events } from '@util/Events';
-import GameClass from '@util/GameClass';
 import Vector2 from '@util/Vector2';
 
 export enum Child {
@@ -26,7 +26,7 @@ export interface Dimensions {
 export interface Global {
   app: PIXI.Application;
   dimensions: Dimensions;
-  childs: { [key in Child]?: GameClass };
+  childs: { [key in Child]?: Mono };
   events: Events;
   controller: Controller;
 }
@@ -37,12 +37,10 @@ export interface ControllerProps {
   events: Events;
 }
 
-export default class Controller extends GameClass {
+export default class Controller implements Mono {
   private _global: Global;
 
   constructor({ container, dimensions, events }: ControllerProps) {
-    super();
-
     this._global = {
       app: new PIXI.Application({
         width: dimensions.screen.x,
@@ -121,7 +119,7 @@ export default class Controller extends GameClass {
   #handleLoadingComplete() {
     this._global.childs[Child.DEV_TOOLS] = new DevTools({ global: this._global });
     this._global.childs[Child.WORLD] = new World({ global: this._global });
-    this._global.childs[Child.CHARACTER] = new Character({ global: this._global, dimensions: this._global.dimensions });
+    this._global.childs[Child.CHARACTER] = new Steve({ global: this._global, dimensions: this._global.dimensions });
     this._global.childs[Child.CAMERA] = new Camera({ global: this._global });
     this._global.childs[Child.INTERACTION] = new Interaction({ global: this._global });
 
@@ -142,7 +140,7 @@ export default class Controller extends GameClass {
   }
 
   get character() {
-    return this._global.childs[Child.CHARACTER] as Character;
+    return this._global.childs[Child.CHARACTER] as Steve;
   }
 
   get camera() {

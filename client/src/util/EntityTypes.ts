@@ -2,7 +2,7 @@ export default interface Entity {
   info: Info;
   parts: {
     [key: string]: {
-      size: Size;
+      bounds: Bounds;
       origin: Origin;
       anchor: Anchor;
       zIndex: number;
@@ -17,7 +17,7 @@ interface Info {
   tileWidth: number;
 }
 
-interface Size {
+export interface Bounds {
   x: number;
   y: number;
   width: number;

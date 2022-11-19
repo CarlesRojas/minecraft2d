@@ -1,17 +1,16 @@
 import { Dimensions, Global } from '@game/Controller';
-import GameClass from '@util/GameClass';
+import { Mono } from '@util/abstract/Mono';
 import { Event } from '@util/Events';
 
 export interface DevToolsProps {
   global: Global;
 }
 
-export default class DevTools extends GameClass {
+export default class DevTools implements Mono {
   private _global: Global;
   private _frameRate: number;
 
   constructor({ global }: DevToolsProps) {
-    super();
     this._global = global;
     this._frameRate = 0;
   }

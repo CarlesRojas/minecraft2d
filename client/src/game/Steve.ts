@@ -2,8 +2,8 @@ import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { getTerrainElevation } from '@game/tool/Noise';
 import { CharacterType, TileType } from '@game/tool/Textures';
+import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
-import GameClass from '@util/GameClass';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
@@ -11,7 +11,7 @@ import * as PIXI from 'pixi.js';
 import CharacterJSON from '../../public/texture/entity/character.json';
 import SpritesManager from './sprite/SpritesManager';
 
-export interface CharacterProps {
+export interface SteveProps {
   global: Global;
   dimensions: Dimensions;
 }
@@ -28,7 +28,7 @@ interface Collision {
 // const HEIGHT = 1.8;
 // const WIDTH = 0.6;
 
-export default class Character extends GameClass {
+export default class Steve implements Mono {
   // GLOBAL
   private _global: Global;
   private _container: PIXI.Container;
@@ -48,9 +48,7 @@ export default class Character extends GameClass {
   private _canJump = false;
   private _jumpTimer: Timer;
 
-  constructor({ global, dimensions }: CharacterProps) {
-    super();
-
+  constructor({ global, dimensions }: SteveProps) {
     // GLOBAL
     this._global = global;
     this._container = new PIXI.Container();

@@ -1,6 +1,6 @@
 import { Dimensions } from '@game/Controller';
 import { getTileTexture, TileType } from '@game/tool/Textures';
-import GameClass from '@util/GameClass';
+import { Mono } from '@util/abstract/Mono';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
@@ -14,7 +14,7 @@ export interface TileProps {
 
 const roundToNearestEven = (num: number) => Math.round(num / 2) * 2;
 
-export default class Tile extends GameClass {
+export default class Tile implements Mono {
   private _coords: Vector2;
   private _type: TileType = TileType.NONE;
   private _sprite: PIXI.Sprite | null = null;
@@ -25,7 +25,6 @@ export default class Tile extends GameClass {
   private _text: PIXI.Text | null = null;
 
   constructor({ coords, container, dimensions, type, isBackground }: TileProps) {
-    super();
     this._coords = coords;
     this._container = container;
     this._type = type;

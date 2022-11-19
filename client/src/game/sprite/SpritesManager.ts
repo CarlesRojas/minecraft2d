@@ -1,7 +1,7 @@
 import { Dimensions, Global } from '@game/Controller';
 import { CharacterType, getCharacterTexture } from '@game/tool/Textures';
+import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
-import GameClass from '@util/GameClass';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
@@ -13,7 +13,7 @@ export interface SpritesManagerProps {
   info: Entity;
 }
 
-export default class SpritesManager extends GameClass {
+export default class SpritesManager implements Mono {
   // GLOBAL
   private _global: Global;
   private _container: PIXI.Container;
@@ -29,8 +29,6 @@ export default class SpritesManager extends GameClass {
   private _basePosition: { [key: string]: { [key: string]: number }[] } = {};
 
   constructor({ global, container, pixel, texture, info }: SpritesManagerProps) {
-    super();
-
     // GLOBAL
     this._global = global;
     this._container = container;
@@ -39,7 +37,7 @@ export default class SpritesManager extends GameClass {
 
     // SPRITES
     for (const part in this._info.parts) {
-      const { x, y, width, height } = this._info.parts[part].size;
+      const { x, y, width, height } = this._info.parts[part].bounds;
       this._sprites[part] = new PIXI.Sprite(getCharacterTexture(texture, new PIXI.Rectangle(x, y, width, height)));
       this._container.addChild(this._sprites[part]);
     }
@@ -76,7 +74,7 @@ export default class SpritesManager extends GameClass {
 
   #positionSprites(tile: number) {
     for (const part in this._info.parts) {
-      const { width, height } = this._info.parts[part].size;
+      const { width, height } = this._info.parts[part].bounds;
       const { x: originX, y: originY } = this._info.parts[part].origin;
       const { x: anchorX, y: anchorY } = this._info.parts[part].anchor;
       const zIndex = this._info.parts[part].zIndex;

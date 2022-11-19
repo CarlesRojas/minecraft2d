@@ -3,7 +3,7 @@ import { getTileTypeInCoords } from '@game/tool/Terrain';
 import { TileType } from '@game/tool/Textures';
 import Tile from '@game/world/Tile';
 import { RenderArea } from '@game/world/World';
-import GameClass from '@util/GameClass';
+import { Mono } from '@util/abstract/Mono';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
@@ -11,13 +11,12 @@ export interface GroundProps {
   global: Global;
 }
 
-export default class Ground extends GameClass {
+export default class Ground implements Mono {
   private _global: Global;
   private _container: PIXI.Container;
   private _renderedTiles: { [key: string]: Tile };
 
   constructor({ global }: GroundProps) {
-    super();
     this._global = global;
 
     this._container = new PIXI.Container();

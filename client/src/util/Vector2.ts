@@ -1,14 +1,14 @@
 export default class Vector2 {
   public static add(a: Vector2, b: Vector2): Vector2 {
-    return new Vector2(a.x + b.x, b.y + b.y);
+    return new Vector2(a.x + b.x, a.y + b.y);
   }
 
-  public static mul(a: Vector2, b: Vector2): Vector2 {
-    return new Vector2(a.x * b.x, b.y * b.y);
+  public static mul(a: Vector2, b: number): Vector2 {
+    return new Vector2(a.x * b, a.y * b);
   }
 
   public static dot(a: Vector2, b: Vector2): Vector2 {
-    return new Vector2(a.x * b.x + b.y * b.y);
+    return new Vector2(a.x * b.x + a.y * b.y);
   }
 
   public static toCoords(coords: string): Vector2 {

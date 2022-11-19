@@ -1,6 +1,5 @@
-import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
-import GameClass from '@util/GameClass';
+import { Mono } from '@util/abstract/Mono';
 import { Event } from '@util/Events';
 import Vector2 from '@util/Vector2';
 
@@ -8,14 +7,13 @@ export interface InteractionProps {
   global: Global;
 }
 
-export default class Interaction extends GameClass {
+export default class Interaction implements Mono {
   private _global: Global;
   private _prevKeyPressed: { [key: string]: boolean } = {};
   private _keyPressed: { [key: string]: boolean } = {};
   private _mousePosition: Vector2;
 
   constructor({ global }: InteractionProps) {
-    super();
     this._global = global;
 
     this._mousePosition = new Vector2(0, 0);
