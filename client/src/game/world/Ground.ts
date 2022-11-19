@@ -17,6 +17,10 @@ export default class Ground implements Mono, TileMap<Tile> {
   private _container: PIXI.Container;
   tilemap: CoordsMap<Tile>;
 
+  // DEBUG
+  private _debug = true;
+  private _middleOfWorld: PIXI.Sprite | null = null;
+
   constructor({ global }: GroundProps) {
     this._global = global;
 
@@ -24,11 +28,23 @@ export default class Ground implements Mono, TileMap<Tile> {
     this._container.sortableChildren = true;
     this._global.app.stage.addChild(this._container);
 
+    if (this._debug) {
+      this._middleOfWorld = new PIXI.Sprite(PIXI.Texture.WHITE);
+      this._middleOfWorld.width = 8;
+      this._middleOfWorld.height = 8;
+      this._middleOfWorld.anchor.set(0.5, 0.5);
+      this._middleOfWorld.zIndex = 100;
+      this._middleOfWorld.position.set(0, 0);
+      this._middleOfWorld.tint = 0x00ff00;
+      this._container.addChild(this._middleOfWorld);
+    }
+
     this.tilemap = {};
   }
 
   destructor() {
     for (const tile of Object.values(this.tilemap)) tile.destructor();
+    if (this._middleOfWorld) this._container.removeChild(this._middleOfWorld);
     this._global.app.stage.removeChild(this._container);
   }
 

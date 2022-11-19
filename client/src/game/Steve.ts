@@ -1,9 +1,9 @@
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { getTerrainElevation } from '@game/tool/Noise';
-import castRay from '@game/tool/Ray';
+import castRay, { RayCollision } from '@game/tool/Ray';
 import { CharacterType, TileType } from '@game/tool/Textures';
-import { InteractionLayer } from '@util/abstract/Interactible';
+import { Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
 import Timer from '@util/Timer';
@@ -27,9 +27,6 @@ interface Collision {
   correction: Vector2;
 }
 
-// const HEIGHT = 1.8;
-// const WIDTH = 0.6;
-
 export default class Steve implements Mono {
   // GLOBAL
   private _global: Global;
@@ -49,6 +46,14 @@ export default class Steve implements Mono {
   private _jumpingVelocity = 50;
   private _canJump = false;
   private _jumpTimer: Timer;
+
+  // INTERACTION
+  private _reachInTiles = 5;
+  highlightedInteractible: Interactible | null = null;
+
+  // DEBUG
+  private _debug = false;
+  collisionPoint: PIXI.Sprite | null = null;
 
   constructor({ global, dimensions }: SteveProps) {
     // GLOBAL
@@ -82,14 +87,17 @@ export default class Steve implements Mono {
       callOnStart: true,
     });
 
-    // TODO DELETE
-    const middleOfWorld = new PIXI.Sprite(PIXI.Texture.WHITE);
-    middleOfWorld.width = 10;
-    middleOfWorld.height = 10;
-    middleOfWorld.anchor.set(0.5, 0.5);
-    middleOfWorld.zIndex = 100;
-    middleOfWorld.position.set(0, 0);
-    this._container.addChild(middleOfWorld);
+    if (this._debug) {
+      this.collisionPoint = new PIXI.Sprite(PIXI.Texture.WHITE);
+      this.collisionPoint.tint = 0xff0000;
+      this.collisionPoint.width = 8;
+      this.collisionPoint.height = 8;
+      this.collisionPoint.anchor.set(0.5, 0.5);
+      this.collisionPoint.zIndex = 100;
+      this.collisionPoint.position.set(0, 0);
+      this.collisionPoint.visible = false;
+      this._container.addChild(this.collisionPoint);
+    }
   }
 
   destructor() {
@@ -316,10 +324,29 @@ export default class Steve implements Mono {
     const origin = this._position;
     const mousePosition = this._global.controller.interaction.mousePositionInTiles;
     const direction = Vector2.direction(origin, mousePosition);
-    const maxDistanceInTiles = 4;
     const layers = [InteractionLayer.GROUND];
 
-    castRay(origin, direction, maxDistanceInTiles, layers, this._global);
+    const collision = castRay(origin, direction, this._reachInTiles, layers, this._global);
+    this.#moveCollisionPoint(collision);
+    this.#interact(collision);
+  }
+
+  #interact(collision: RayCollision | false) {
+    if (collision) {
+      this.highlightedInteractible?.unhighlight();
+      collision.interactible.highlight();
+      this.highlightedInteractible = collision.interactible;
+    } else {
+      this.highlightedInteractible?.unhighlight();
+      this.highlightedInteractible = null;
+    }
+  }
+
+  #moveCollisionPoint(collision: RayCollision | false) {
+    if (!this.collisionPoint) return;
+    const { tile } = this._global.dimensions;
+    this.collisionPoint.visible = !!collision;
+    if (collision) this.collisionPoint.position.set(collision.point.x * tile, collision.point.y * tile);
   }
 
   // #################################################

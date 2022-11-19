@@ -18,15 +18,22 @@ const roundToNearestEven = (num: number) => Math.round(num / 2) * 2;
 const BACKGROUND_TINT = 0x999999;
 
 export default class Tile implements Mono, Interactible {
-  private _coords: Vector2;
-  private _type: TileType = TileType.NONE;
+  private _container: PIXI.Container;
+
+  // SPRITES
   private _sprite: PIXI.Sprite | null = null;
   private _shadowSprite: PIXI.Sprite | null = null;
-  private _container: PIXI.Container;
+  private _highlightSprite: PIXI.Sprite | null = null;
+
+  // PROPERTIES
+  private _coords: Vector2;
+  private _type: TileType = TileType.NONE;
   private _isBackground: boolean;
-  private _debug: boolean = false;
-  private _text: PIXI.Text | null = null;
   interactionLayer: InteractionLayer;
+
+  // DEBUG
+  private _debug = false;
+  private _text: PIXI.Text | null = null;
 
   constructor({ coords, container, dimensions, type, isBackground }: TileProps) {
     this._coords = coords;
@@ -45,15 +52,20 @@ export default class Tile implements Mono, Interactible {
     this._sprite = new PIXI.Sprite(texture);
     this._sprite.anchor.set(0.5);
     this._sprite.zIndex = 0;
-
     if (this._isBackground) this._sprite.tint = BACKGROUND_TINT;
-    else {
-      this._shadowSprite = new PIXI.Sprite(texture);
-      this._shadowSprite.zIndex = -1;
-      this._shadowSprite.tint = 0x222222;
-      this._shadowSprite.anchor.set(0.5);
-      this._container.addChild(this._shadowSprite);
-    }
+
+    this._shadowSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    this._shadowSprite.zIndex = -1;
+    this._shadowSprite.tint = 0x000000;
+    this._shadowSprite.anchor.set(0.5);
+    if (this._isBackground) this._shadowSprite.visible = false;
+
+    this._highlightSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    this._highlightSprite.zIndex = 1;
+    this._highlightSprite.tint = 0xffffff;
+    this._highlightSprite.alpha = 0.9;
+    this._highlightSprite.anchor.set(0.5);
+    this._highlightSprite.visible = false;
 
     if (this._debug) {
       this._text = new PIXI.Text(this._coords.toString(), { fill: 0x00ff00, fontSize: 14 });
@@ -62,6 +74,8 @@ export default class Tile implements Mono, Interactible {
       this._container.addChild(this._text);
     }
 
+    this._container.addChild(this._shadowSprite);
+    this._container.addChild(this._highlightSprite);
     this._container.addChild(this._sprite);
     this.handleResize(dimensions);
   }
@@ -87,8 +101,16 @@ export default class Tile implements Mono, Interactible {
 
     if (this._shadowSprite) {
       this._shadowSprite.position.set(this._coords.x * tile, this._coords.y * tile);
-      this._shadowSprite.width = tile + roundToNearestEven(tile * 0.12);
-      this._shadowSprite.height = tile + roundToNearestEven(tile * 0.12);
+      const shadowWidth = tile + roundToNearestEven(tile * 0.1);
+      this._shadowSprite.width = shadowWidth;
+      this._shadowSprite.height = shadowWidth;
+    }
+
+    if (this._highlightSprite) {
+      this._highlightSprite.position.set(this._coords.x * tile, this._coords.y * tile);
+      const highlightWidth = tile + roundToNearestEven(tile * 0.04);
+      this._highlightSprite.width = highlightWidth;
+      this._highlightSprite.height = highlightWidth;
     }
 
     if (this._text) {
@@ -107,11 +129,15 @@ export default class Tile implements Mono, Interactible {
   // #################################################
 
   highlight(): void {
-    if (this._sprite) this._sprite.tint = 0x0000ff;
+    if (!this._sprite || !this._highlightSprite) return;
+    this._sprite.zIndex = 2;
+    this._highlightSprite.visible = true;
   }
 
   unhighlight(): void {
-    if (this._sprite) this._sprite.tint = this._isBackground ? BACKGROUND_TINT : 0xffffff;
+    if (!this._sprite || !this._highlightSprite) return;
+    this._highlightSprite.visible = false;
+    this._sprite.zIndex = 0;
   }
 
   interact(): void {
