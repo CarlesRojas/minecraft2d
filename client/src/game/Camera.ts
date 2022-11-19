@@ -12,7 +12,7 @@ export default class Camera implements Mono {
 
   // CAMERA MOVEMENT
   private _targetPositionInTiles: Vector2;
-  private _minTilesPerSecond = 2;
+  private _minTilesPerSecond = 8;
 
   constructor({ global }: CameraProps) {
     this._global = global;
