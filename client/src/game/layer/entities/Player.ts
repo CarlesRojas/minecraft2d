@@ -57,7 +57,7 @@ export default class Player implements Mono, Interactible {
     this._global = global;
     this._container = new PIXI.Container();
     this._global.stage.addChild(this._container);
-    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - PlayerJson.info.heightInTiles / 2);
+    this._position = new Vector2(0, getTerrainElevation(0) - 1 - PlayerJson.info.heightInTiles / 2);
 
     // SPRITES
     this._spriteContainer = new PIXI.Container();
