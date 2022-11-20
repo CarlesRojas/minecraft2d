@@ -7,10 +7,7 @@ import Vector2 from '@util/Vector2';
 interface EntityMovement {
   position: Vector2;
   velocity: Vector2;
-  sizeInTiles: {
-    width: number;
-    height: number;
-  };
+  sizeInTiles: Vector2;
   layers: CollisionLayer[];
   deltaInSeconds: number;
   global: Global;
@@ -46,7 +43,7 @@ export const getMovementAfterCollisions = (movement: EntityMovement) => {
 const checkIfGrounded = (movement: EntityMovement) => {
   const deltaPosition = new Vector2(0, 0.1);
 
-  const collision = isCollidingWithEnviroment(movement, deltaPosition);
+  const collision = isEntityColliding(movement, deltaPosition);
   const isGrounded = collision && collision.isColliding;
 
   const newMovement: EntityMovement = {
@@ -63,7 +60,7 @@ const applyVerticalMovement = (movement: EntityMovement) => {
   if (velocity.y === 0) return movement;
 
   const deltaPosition = new Vector2(0, velocity.y * deltaInSeconds);
-  const collision = isCollidingWithEnviroment(movement, deltaPosition);
+  const collision = isEntityColliding(movement, deltaPosition);
 
   const newMovement: EntityMovement = {
     ...movement,
@@ -82,7 +79,7 @@ const applyHorizontalMovement = (movement: EntityMovement) => {
   if (velocity.x === 0) return movement;
 
   const deltaPosition = new Vector2(velocity.x * deltaInSeconds, 0);
-  const collision = isCollidingWithEnviroment(movement, deltaPosition);
+  const collision = isEntityColliding(movement, deltaPosition);
 
   const newMovement: EntityMovement = {
     ...movement,
@@ -96,88 +93,85 @@ const applyHorizontalMovement = (movement: EntityMovement) => {
   return newMovement;
 };
 
-const isCollidingWithEnviroment = (movement: EntityMovement, deltaPosition: Vector2) => {
-  const { position, sizeInTiles } = movement;
+const isEntityColliding = (movement: EntityMovement, deltaPosition: Vector2) => {
+  const { position, sizeInTiles, global, layers } = movement;
 
   const x = position.x + deltaPosition.x;
   const y = position.y + deltaPosition.y;
 
-  let minX = Math.floor(x - sizeInTiles.width / 2);
-  let maxX = Math.ceil(x + sizeInTiles.width / 2);
-  let minY = Math.floor(y - sizeInTiles.height / 2);
-  let maxY = Math.ceil(y + sizeInTiles.height / 2);
+  let minX = Math.floor(x - sizeInTiles.x / 2);
+  let maxX = Math.ceil(x + sizeInTiles.x / 2);
+  let minY = Math.floor(y - sizeInTiles.y / 2);
+  let maxY = Math.ceil(y + sizeInTiles.y / 2);
+
+  const tileMaps: TileMap<any>[] = [global.controller.world.ground];
 
   for (let i = minX; i <= maxX; i++)
     for (let j = minY; j <= maxY; j++) {
-      const collision = isCollidingAtCoords(movement, deltaPosition, new Vector2(i, j));
-      if (collision.isColliding) return collision;
+      const interactibles: Interactible[] = [];
+      const coords = new Vector2(i, j);
+
+      tileMaps.forEach((tileMap) => {
+        const interactible = tileMap.elementAtCoords(coords) as Interactible;
+        if (interactible && layers.includes(interactible.collisionLayer)) interactibles.push(interactible);
+      });
+
+      for (const interactible of interactibles) {
+        const interactibleBounds = interactible.bounds;
+        const newBounds: Bounds = {
+          x: position.x + deltaPosition.x - sizeInTiles.x / 2,
+          y: position.y + deltaPosition.y - sizeInTiles.y / 2,
+          width: sizeInTiles.x,
+          height: sizeInTiles.y,
+        };
+
+        const collision = areBoundsColliding(newBounds, interactibleBounds);
+        if (collision.isColliding) return collision;
+      }
     }
 
   return false;
 };
 
-const isCollidingAtCoords = (movement: EntityMovement, deltaPosition: Vector2, coords: Vector2) => {
-  const { global, layers } = movement;
-
-  const interactibles: Interactible[] = [];
-  const tileMaps: TileMap<any>[] = [global.controller.world.ground];
-
-  tileMaps.forEach((tileMap) => {
-    const interactible = tileMap.elementAtCoords(coords) as Interactible;
-    if (interactible && layers.includes(interactible.collisionLayer)) interactibles.push(interactible);
-  });
-
-  for (const interactible of interactibles) {
-    const interactibleBounds = interactible.bounds;
-    const collision = isCollidingWithInteractible(movement, deltaPosition, interactibleBounds);
-    if (collision.isColliding) return collision;
-  }
-
-  return noCollision;
-};
-
-const isCollidingWithInteractible = (movement: EntityMovement, deltaPosition: Vector2, interactibleBounds: Bounds) => {
-  const { position, sizeInTiles } = movement;
-
-  const interactible = {
-    x: interactibleBounds.x + interactibleBounds.width / 2,
-    y: interactibleBounds.y + interactibleBounds.height / 2,
-    width: interactibleBounds.width,
-    height: interactibleBounds.height,
+export const areBoundsColliding = (bounds1: Bounds, bounds2: Bounds) => {
+  const entity1 = {
+    x: bounds1.x + bounds1.width / 2,
+    y: bounds1.y + bounds1.height / 2,
+    width: bounds1.width,
+    height: bounds1.height,
+    halfWidth: bounds1.width / 2,
+    halfHeight: bounds1.height / 2,
   };
 
-  const player = {
-    x: position.x + deltaPosition.x,
-    y: position.y + deltaPosition.y,
-    width: sizeInTiles.width,
-    height: sizeInTiles.height,
+  const entity2 = {
+    x: bounds2.x + bounds2.width / 2,
+    y: bounds2.y + bounds2.height / 2,
+    width: bounds2.width,
+    height: bounds2.height,
+    halfWidth: bounds2.width / 2,
+    halfHeight: bounds2.height / 2,
   };
-
-  const halfPlayerWidth = player.width / 2;
-  const halfPlayerHeight = player.height / 2;
-  const halfWidthInTiles = interactible.width / 2;
-  const halfHeightInTiles = interactible.height / 2;
 
   const collides =
-    player.x - halfPlayerWidth < interactible.x + halfWidthInTiles &&
-    player.x + halfPlayerWidth > interactible.x - halfWidthInTiles &&
-    player.y - halfPlayerHeight < interactible.y + halfHeightInTiles &&
-    player.y + halfPlayerHeight > interactible.y - halfHeightInTiles;
+    entity1.x - entity1.halfWidth < entity2.x + entity2.halfWidth &&
+    entity1.x + entity1.halfWidth > entity2.x - entity2.halfWidth &&
+    entity1.y - entity1.halfHeight < entity2.y + entity2.halfHeight &&
+    entity1.y + entity1.halfHeight > entity2.y - entity2.halfHeight;
 
   if (!collides) return noCollision;
 
-  const horizontal = player.x - interactible.x;
-  const vertical = player.y - interactible.y;
+  const horizontal = entity1.x - entity2.x;
+  const vertical = entity1.y - entity2.y;
 
   const left = horizontal > 0;
   const right = horizontal < 0;
   const top = vertical > 0;
   const bottom = vertical < 0;
 
-  const leftCorrection = interactible.x + 0.5 + halfPlayerWidth;
-  const rightCorrection = interactible.x - 0.5 - halfPlayerWidth;
-  const topCorrection = interactible.y + 0.5 + halfPlayerHeight;
-  const bottomCorrection = interactible.y - 0.5 - halfPlayerHeight;
+  const leftCorrection = entity2.x + 0.5 + entity1.halfWidth;
+  const rightCorrection = entity2.x - 0.5 - entity1.halfWidth;
+  const topCorrection = entity2.y + 0.5 + entity1.halfHeight;
+  const bottomCorrection = entity2.y - 0.5 - entity1.halfHeight;
 
   return {
     isColliding: true,

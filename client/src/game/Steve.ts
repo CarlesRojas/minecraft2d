@@ -170,10 +170,7 @@ export default class Steve implements Mono {
     const finalMovement = getMovementAfterCollisions({
       position: this._position,
       velocity: this._velocity,
-      sizeInTiles: {
-        width: CharacterJSON.info.widthInTiles,
-        height: CharacterJSON.info.heightInTiles,
-      },
+      sizeInTiles: new Vector2(CharacterJSON.info.widthInTiles, CharacterJSON.info.heightInTiles),
       layers: [CollisionLayer.GROUND],
       deltaInSeconds,
       global: this._global,
