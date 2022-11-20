@@ -10,6 +10,7 @@ const globalStyles = globalCss({
     overflow: 'hidden',
     cursor: 'none',
     '-webkit-touch-callout': 'none',
+    touchAction: 'none',
   },
 
   html: {

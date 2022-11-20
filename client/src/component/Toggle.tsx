@@ -24,6 +24,7 @@ const Container = styled('div', {
   position: 'relative',
   width: '80%',
   aspectRatio: '2',
+  pointerEvents: 'none',
 });
 
 const ToggleImage = styled('img', {
@@ -33,6 +34,7 @@ const ToggleImage = styled('img', {
   width: '100%',
   height: '100%',
   imageRendering: 'pixelated',
+  pointerEvents: 'none',
 });
 
 const ToggleInner = styled('div', {
@@ -41,6 +43,7 @@ const ToggleInner = styled('div', {
   top: 0,
   height: '100%',
   aspectRatio: '1',
+  pointerEvents: 'none',
 });
 
 const Image = styled('img', {
