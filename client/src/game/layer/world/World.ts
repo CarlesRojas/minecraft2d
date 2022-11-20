@@ -1,9 +1,9 @@
 import { SAFTY_TILES } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
-import Background from '@game/world/Background';
-import Ground from '@game/world/Ground';
-import { Mono } from '@util/abstract/Mono';
-import Vector2 from '@util/Vector2';
+import { Mono } from '@game/interface/Mono';
+import Background from '@game/layer/world/Background';
+import Ground from '@game/layer/world/Ground';
+import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
 interface Layers {

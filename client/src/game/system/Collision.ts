@@ -1,8 +1,8 @@
 import { Global } from '@game/Controller';
-import { CollisionLayer, Interactible } from '@util/abstract/Interactible';
-import { TileMap } from '@util/abstract/TileMap';
-import { Bounds } from '@util/EntityTypes';
-import Vector2 from '@util/Vector2';
+import { CollisionLayer, Interactible } from '@game/interface/Interactible';
+import { TileMap } from '@game/interface/TileMap';
+import { Bounds } from '@game/util/EntityTypes';
+import Vector2 from '@game/util/Vector2';
 
 interface EntityMovement {
   position: Vector2;

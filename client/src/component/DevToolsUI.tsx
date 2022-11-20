@@ -1,6 +1,6 @@
+import Vector2 from '@game/util/Vector2';
 import { styled } from '@style/stitches.config';
 import { Event, useEvents } from '@util/Events';
-import Vector2 from '@util/Vector2';
 import { useEffect, useState } from 'react';
 
 const DevTools = styled('section', {

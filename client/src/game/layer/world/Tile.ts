@@ -1,10 +1,10 @@
 import { Dimensions, Global } from '@game/Controller';
+import { CollisionLayer, Interactible, InteractionLayer } from '@game/interface/Interactible';
+import { Mono } from '@game/interface/Mono';
 import { isCollidingWithLayers } from '@game/system/Collision';
 import { getTileTexture, TileType } from '@game/system/Textures';
-import { CollisionLayer, Interactible, InteractionLayer } from '@util/abstract/Interactible';
-import { Mono } from '@util/abstract/Mono';
-import { Bounds } from '@util/EntityTypes';
-import Vector2 from '@util/Vector2';
+import { Bounds } from '@game/util/EntityTypes';
+import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
 interface TileProps {

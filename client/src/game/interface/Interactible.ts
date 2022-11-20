@@ -1,4 +1,4 @@
-import { Bounds } from '@util/EntityTypes';
+import { Bounds } from '@game/util/EntityTypes';
 
 export enum InteractionLayer {
   NONE = 'none',

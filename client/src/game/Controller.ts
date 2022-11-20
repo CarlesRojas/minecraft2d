@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js';
 
-import Camera from '@game/Camera';
-import DevTools from '@game/DevTools';
-import Entities from '@game/Entities';
-import Interaction from '@game/Interaction';
+import { Mono } from '@game/interface/Mono';
+import Camera from '@game/layer/camera/Camera';
+import DevTools from '@game/layer/devtools/DevTools';
+import Entities from '@game/layer/entities/Entities';
+import Interaction from '@game/layer/interaction/Interaction';
+import World from '@game/layer/world/World';
 import textures from '@game/system/Textures';
-import World from '@game/world/World';
-import { Mono } from '@util/abstract/Mono';
+import Vector2 from '@game/util/Vector2';
 import { Events } from '@util/Events';
-import Vector2 from '@util/Vector2';
 
 interface Layers {
   devTools: Mono | null;

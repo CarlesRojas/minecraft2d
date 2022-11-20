@@ -1,17 +1,17 @@
 import PlayerJson from '@asset/json/entity/player.json';
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
-import { MouseButton } from '@game/Interaction';
+import { CollisionLayer, Interactible, InteractionLayer } from '@game/interface/Interactible';
+import { Mono } from '@game/interface/Mono';
+import { MouseButton } from '@game/layer/interaction/Interaction';
 import { getMovementAfterCollisions } from '@game/system/Collision';
 import { getTerrainElevation } from '@game/system/Noise';
 import castRay, { BlockSide, RayCollision } from '@game/system/Ray';
 import SpritesManager from '@game/system/SpritesManager';
 import { EntityType } from '@game/system/Textures';
-import { CollisionLayer, Interactible, InteractionLayer } from '@util/abstract/Interactible';
-import { Mono } from '@util/abstract/Mono';
-import Entity, { Bounds } from '@util/EntityTypes';
-import Timer from '@util/Timer';
-import Vector2 from '@util/Vector2';
+import Entity, { Bounds } from '@game/util/EntityTypes';
+import Timer from '@game/util/Timer';
+import Vector2 from '@game/util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 

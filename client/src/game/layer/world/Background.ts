@@ -1,50 +1,33 @@
 import { Dimensions, Global } from '@game/Controller';
+import { Mono } from '@game/interface/Mono';
+import { CoordsMap, TileMap } from '@game/interface/TileMap';
+import Tile from '@game/layer/world/Tile';
+import { RenderArea } from '@game/layer/world/World';
 import { getTileTypeInCoords } from '@game/system/Terrain';
-import { TileType } from '@game/system/Textures';
-import Tile from '@game/world/Tile';
-import { RenderArea } from '@game/world/World';
-import { Mono } from '@util/abstract/Mono';
-import { CoordsMap, TileMap } from '@util/abstract/TileMap';
-import Vector2 from '@util/Vector2';
+import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
-interface GroundProps {
+interface BackgroundProps {
   global: Global;
 }
 
-export default class Ground implements Mono, TileMap<Tile> {
+export default class Background implements Mono, TileMap<Tile> {
   private _global: Global;
   private _container: PIXI.Container;
   tilemap: CoordsMap<Tile>;
 
-  // DEBUG
-  private _debug = true;
-  private _middleOfWorld: PIXI.Sprite | null = null;
-
-  constructor({ global }: GroundProps) {
+  constructor({ global }: BackgroundProps) {
     this._global = global;
 
     this._container = new PIXI.Container();
     this._container.sortableChildren = true;
     this._global.stage.addChild(this._container);
 
-    if (this._debug) {
-      this._middleOfWorld = new PIXI.Sprite(PIXI.Texture.WHITE);
-      this._middleOfWorld.width = 8;
-      this._middleOfWorld.height = 8;
-      this._middleOfWorld.anchor.set(0.5, 0.5);
-      this._middleOfWorld.zIndex = 100;
-      this._middleOfWorld.position.set(0, 0);
-      this._middleOfWorld.tint = 0x00ff00;
-      this._container.addChild(this._middleOfWorld);
-    }
-
     this.tilemap = {};
   }
 
   destructor() {
     for (const tile of Object.values(this.tilemap)) tile.destructor();
-    if (this._middleOfWorld) this._container.removeChild(this._middleOfWorld);
     this._global.stage.removeChild(this._container);
   }
 
@@ -69,14 +52,14 @@ export default class Ground implements Mono, TileMap<Tile> {
   // #################################################
 
   async #instantiateTile(key: string, coords: Vector2) {
-    const { groundType, isCave } = await getTileTypeInCoords(coords);
+    const { backgroundType } = await getTileTypeInCoords(coords);
 
     this.tilemap[key] = new Tile({
       coords: new Vector2(coords.x, coords.y),
       container: this._container,
       dimensions: this._global.dimensions,
-      type: isCave ? TileType.NONE : groundType,
-      isBackground: false,
+      type: backgroundType,
+      isBackground: true,
       global: this._global,
     });
   }

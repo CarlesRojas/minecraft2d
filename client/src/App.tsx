@@ -2,12 +2,12 @@ import Cursor from '@component/Cursor';
 import DevToolsUI from '@component/DevToolsUI';
 import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
 import Controller from '@game/Controller';
+import Vector2 from '@game/util/Vector2';
 import useDidMount from '@hook/useDidMount';
 import useResize from '@hook/useResize';
 import globalStyles from '@style/global';
 import { styled } from '@style/stitches.config';
 import { Event, useEvents } from '@util/Events';
-import Vector2 from '@util/Vector2';
 import { useEffect, useRef, useState } from 'react';
 
 const getGameDimensions = (dimensions: Vector2) => ({

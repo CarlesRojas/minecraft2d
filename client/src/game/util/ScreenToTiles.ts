@@ -1,5 +1,5 @@
 import { Dimensions } from '@game/Controller';
-import Vector2 from '@util/Vector2';
+import Vector2 from '@game/util/Vector2';
 
 const screenToTiles = (screenPoint: Vector2, dimensions: Dimensions): Vector2 => {
   const { tile, screen } = dimensions;

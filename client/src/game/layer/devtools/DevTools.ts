@@ -1,5 +1,5 @@
 import { Dimensions, Global } from '@game/Controller';
-import { Mono } from '@util/abstract/Mono';
+import { Mono } from '@game/interface/Mono';
 import { Event } from '@util/Events';
 
 interface DevToolsProps {

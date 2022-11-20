@@ -1,8 +1,8 @@
 import { Global } from '@game/Controller';
-import { Interactible, InteractionLayer } from '@util/abstract/Interactible';
-import { TileMap } from '@util/abstract/TileMap';
-import { Bounds } from '@util/EntityTypes';
-import Vector2 from '@util/Vector2';
+import { Interactible, InteractionLayer } from '@game/interface/Interactible';
+import { TileMap } from '@game/interface/TileMap';
+import { Bounds } from '@game/util/EntityTypes';
+import Vector2 from '@game/util/Vector2';
 
 const STEP = 0.01;
 let prevCheckedTile: Vector2 | null = null;

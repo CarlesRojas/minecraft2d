@@ -1,7 +1,7 @@
+import { CoordsMap } from '@game/interface/TileMap';
 import { addNoiseToTerrain, getTerrainElevation, hasOre, isCave } from '@game/system/Noise';
 import { TileType } from '@game/system/Textures';
-import { CoordsMap } from '@util/abstract/TileMap';
-import Vector2 from '@util/Vector2';
+import Vector2 from '@game/util/Vector2';
 
 interface TileInfo {
   groundType: TileType;

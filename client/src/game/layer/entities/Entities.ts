@@ -1,6 +1,6 @@
 import { Dimensions, Global } from '@game/Controller';
-import Player from '@game/Player';
-import { Mono } from '@util/abstract/Mono';
+import { Mono } from '@game/interface/Mono';
+import Player from '@game/layer/entities/Player';
 import * as PIXI from 'pixi.js';
 
 interface EntitiesProps {

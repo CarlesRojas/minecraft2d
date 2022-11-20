@@ -1,8 +1,8 @@
 import { Dimensions, Global } from '@game/Controller';
-import { Mono } from '@util/abstract/Mono';
+import { Mono } from '@game/interface/Mono';
+import screenToTiles from '@game/util/ScreenToTiles';
+import Vector2 from '@game/util/Vector2';
 import { Event } from '@util/Events';
-import screenToTiles from '@util/ScreenToTiles';
-import Vector2 from '@util/Vector2';
 
 interface InteractionProps {
   global: Global;

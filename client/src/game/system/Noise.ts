@@ -1,6 +1,6 @@
 import { SEED } from '@game/constant/constants';
 import { TileType } from '@game/system/Textures';
-import Vector2 from '@util/Vector2';
+import Vector2 from '@game/util/Vector2';
 import p5 from 'p5';
 const p5Instance = new p5(() => {});
 p5Instance.noiseSeed(SEED);

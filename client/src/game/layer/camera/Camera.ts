@@ -1,7 +1,7 @@
 import { Dimensions, Global } from '@game/Controller';
-import { Mono } from '@util/abstract/Mono';
-import screenToTiles from '@util/ScreenToTiles';
-import Vector2 from '@util/Vector2';
+import { Mono } from '@game/interface/Mono';
+import screenToTiles from '@game/util/ScreenToTiles';
+import Vector2 from '@game/util/Vector2';
 
 interface CameraProps {
   global: Global;

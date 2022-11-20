@@ -1,8 +1,8 @@
 import { Dimensions, Global } from '@game/Controller';
+import { Mono } from '@game/interface/Mono';
 import { EntityType, getEntityTexture } from '@game/system/Textures';
-import { Mono } from '@util/abstract/Mono';
-import Entity from '@util/EntityTypes';
-import Vector2 from '@util/Vector2';
+import Entity from '@game/util/EntityTypes';
+import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
 interface SpritesManagerProps {
