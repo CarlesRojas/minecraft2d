@@ -67,6 +67,7 @@ const App = () => {
   const handleKeyUp = (e: KeyboardEvent) => events.emit(Event.ON_KEY_UP, e);
   const handleMouseDown = (e: MouseEvent) => events.emit(Event.ON_MOUSE_DOWN, e);
   const handleMouseUp = (e: MouseEvent) => events.emit(Event.ON_MOUSE_UP, e);
+  const handleContextMenu = (e: MouseEvent) => e.preventDefault();
 
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);
@@ -74,6 +75,7 @@ const App = () => {
     window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('contextmenu', handleContextMenu);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -81,6 +83,7 @@ const App = () => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('contextmenu', handleContextMenu);
     };
   }, []);
 
@@ -89,11 +92,11 @@ const App = () => {
   // #################################################
 
   return (
-    <div onContextMenu={(e) => e.preventDefault()}>
+    <>
       <DevToolsUI />
       <Cursor />
       <Game ref={container} />
-    </div>
+    </>
   );
 };
 

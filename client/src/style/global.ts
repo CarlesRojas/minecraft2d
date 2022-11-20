@@ -9,6 +9,7 @@ const globalStyles = globalCss({
     overscrollBehavior: 'none',
     overflow: 'hidden',
     cursor: 'none',
+    pointerEvents: 'none',
   },
 
   html: {
