@@ -1,6 +1,6 @@
 import { Dimensions } from '@game/Controller';
 import { getTileTexture, TileType } from '@game/tool/Textures';
-import { Interactible, InteractionLayer } from '@util/abstract/Interactible';
+import { CollisionLayer, Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
 import { Bounds } from '@util/EntityTypes';
 import Vector2 from '@util/Vector2';
@@ -32,7 +32,8 @@ export default class Tile implements Mono, Interactible {
   private _coords: Vector2;
   private _type: TileType = TileType.NONE;
   private _isBackground: boolean = false;
-  interactionLayer: InteractionLayer = InteractionLayer.AIR;
+  interactionLayer: InteractionLayer = InteractionLayer.NONE;
+  collisionLayer: CollisionLayer = CollisionLayer.NONE;
 
   // BREAKING
   private _isBreaking = false;
@@ -142,35 +143,39 @@ export default class Tile implements Mono, Interactible {
   //   INTERACTIBLE
   // #################################################
 
-  highlight(): void {
+  highlight() {
     if (!this._sprite || !this._highlightSprite) return;
     this._sprite.zIndex = 2;
     this._highlightSprite.visible = true;
   }
 
-  stopHighlighting(): void {
+  stopHighlighting() {
     if (!this._sprite || !this._highlightSprite) return;
     this._highlightSprite.visible = false;
     this._sprite.zIndex = 0;
   }
 
-  interact(): void {
+  interact() {
     this._isBreaking = true;
     this._isReparing = false;
   }
 
-  stopInteracting(): void {
+  stopInteracting() {
     this._isBreaking = false;
     this._isReparing = true;
   }
 
-  interactSecondary(): void {
+  interactSecondary() {
     if (this.type !== TileType.NONE) return;
 
     this.setTile(TileType.DIRT, false);
   }
 
-  get getBounds(): Bounds {
+  shouldCollide(): boolean {
+    return !!this._sprite && this.type !== TileType.NONE;
+  }
+
+  get bounds(): Bounds {
     const bounds: Bounds = {
       x: this._coords.x - 0.5,
       y: this._coords.y - 0.5,
@@ -202,9 +207,11 @@ export default class Tile implements Mono, Interactible {
     this._type = type;
     this._isBackground = isBackground;
     this.interactionLayer = isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
+    this.collisionLayer = isBackground ? CollisionLayer.NONE : CollisionLayer.GROUND;
 
     if (type === TileType.NONE) {
-      this.interactionLayer = InteractionLayer.AIR;
+      this.interactionLayer = InteractionLayer.NONE;
+      this.collisionLayer = CollisionLayer.NONE;
       return;
     }
 

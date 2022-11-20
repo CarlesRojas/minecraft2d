@@ -68,8 +68,7 @@ const checkCollisionInTile = (
   });
 
   for (const interactible of interactibles) {
-    if (!layers.includes(interactible.interactionLayer)) continue;
-    const intersectionPoint = getIntersectionPoint(point, Vector2.invert(direction), interactible.getBounds);
+    const intersectionPoint = getIntersectionPoint(point, Vector2.invert(direction), interactible.bounds);
     const blockSide = getCollisionPointSide(coords, intersectionPoint);
     if (intersectionPoint) return { coords, point: intersectionPoint, interactible, blockSide } as RayCollision;
   }

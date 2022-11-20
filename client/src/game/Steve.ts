@@ -2,29 +2,21 @@ import CharacterJSON from '@asset/texture/entity/character.json';
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { MouseButton } from '@game/Interaction';
+import SpritesManager from '@game/sprite/SpritesManager';
+import { getMovementAfterCollisions } from '@game/tool/Collision';
 import { getTerrainElevation } from '@game/tool/Noise';
 import castRay, { BlockSide, RayCollision } from '@game/tool/Ray';
-import { CharacterType, TileType } from '@game/tool/Textures';
-import { Interactible, InteractionLayer } from '@util/abstract/Interactible';
+import { CharacterType } from '@game/tool/Textures';
+import { CollisionLayer, Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
-import SpritesManager from './sprite/SpritesManager';
 
 export interface SteveProps {
   global: Global;
-}
-
-interface Collision {
-  isColliding: boolean;
-  left: boolean;
-  right: boolean;
-  top: boolean;
-  bottom: boolean;
-  correction: Vector2;
 }
 
 export default class Steve implements Mono {
@@ -130,14 +122,10 @@ export default class Steve implements Mono {
 
   gameLoop(deltaInSeconds: number) {
     this._jumpTimer.gameLoop(deltaInSeconds);
+
     this.#updatePlayerSpeed(deltaInSeconds);
-
-    this.#applyHorizontalMovement(deltaInSeconds);
-    this.#applyVerticalMovement(deltaInSeconds);
-    this.#checkIfGrounded();
-
+    this.#applyMovement(deltaInSeconds);
     this.#changeAnimation();
-
     this.#checkForInteraction();
 
     this._spritesManager.gameLoop(deltaInSeconds);
@@ -178,45 +166,24 @@ export default class Steve implements Mono {
     this._velocity.y = Math.max(Math.min(this._velocity.y, this._maxVelocity.y), -this._maxVelocity.y);
   }
 
-  #applyVerticalMovement(deltaInSeconds: number) {
-    const velocity = this._velocity.y;
-    if (velocity === 0) return;
-    const deltaPosition = new Vector2(0, velocity * deltaInSeconds);
+  #applyMovement(deltaInSeconds: number) {
+    const finalMovement = getMovementAfterCollisions({
+      position: this._position,
+      velocity: this._velocity,
+      sizeInTiles: {
+        width: CharacterJSON.info.widthInTiles,
+        height: CharacterJSON.info.heightInTiles,
+      },
+      layers: [CollisionLayer.GROUND],
+      deltaInSeconds,
+      global: this._global,
+      isGrounded: this._isGrounded,
+    });
 
-    const collision = this.#isCollidingWithEnviroment(deltaPosition);
-    if (collision && collision.isColliding) {
-      this._velocity.y = 0;
-      this.#moveCharacterToPosition(new Vector2(this._position.x, collision.correction.y));
-    } else this.#moveCharacterToPosition(new Vector2(this._position.x, this._position.y + velocity * deltaInSeconds));
-  }
-
-  #applyHorizontalMovement(deltaInSeconds: number) {
-    const velocity = this._velocity.x;
-    if (velocity === 0) return;
-    const deltaPosition = new Vector2(velocity * deltaInSeconds, 0);
-
-    const collision = this.#isCollidingWithEnviroment(deltaPosition);
-    if (collision && collision.isColliding) {
-      this._velocity.x = 0;
-      this.#moveCharacterToPosition(new Vector2(collision.correction.x, this._position.y));
-    } else this.#moveCharacterToPosition(new Vector2(this._position.x + velocity * deltaInSeconds, this._position.y));
-  }
-
-  #handleJumpTimerFinished() {
-    this._canJump = true;
-  }
-
-  // #################################################
-  //   COLLISIONS
-  // #################################################
-
-  #checkIfGrounded() {
-    const deltaPosition = new Vector2(0, 0.1);
-
-    const collision = this.#isCollidingWithEnviroment(deltaPosition);
-    this._isGrounded = collision && collision.isColliding;
-
-    if (this._isGrounded) this._velocity.y = 0;
+    const { position, velocity, isGrounded } = finalMovement;
+    this._velocity = velocity;
+    this._isGrounded = isGrounded;
+    this.#moveCharacterToPosition(position);
   }
 
   #moveCharacterToPosition(position: Vector2) {
@@ -227,87 +194,6 @@ export default class Steve implements Mono {
     this._hitBoxSprite.position.set(position.x * tileSize, position.y * tileSize);
   }
 
-  #isCollidingWithEnviroment(deltaPosition: Vector2) {
-    const x = this._position.x + deltaPosition.x;
-    const y = this._position.y + deltaPosition.y;
-
-    let minX = Math.floor(x - CharacterJSON.info.widthInTiles / 2);
-    let maxX = Math.ceil(x + CharacterJSON.info.widthInTiles / 2);
-    let minY = Math.floor(y - CharacterJSON.info.heightInTiles / 2);
-    let maxY = Math.ceil(y + CharacterJSON.info.heightInTiles / 2);
-
-    for (let i = minX; i <= maxX; i++)
-      for (let j = minY; j <= maxY; j++) {
-        const collision = this.#isCollidingWithTile(new Vector2(i, j), deltaPosition);
-        if (collision.isColliding) return collision;
-      }
-
-    return false;
-  }
-
-  #isCollidingWithTile(tileCoords: Vector2, deltaPosition: Vector2) {
-    const noCollision: Collision = {
-      isColliding: false,
-      left: false,
-      right: false,
-      top: false,
-      bottom: false,
-      correction: new Vector2(0, 0),
-    };
-
-    const tileSprite = this._global.controller.world.ground.elementAtCoords(tileCoords);
-    if (!tileSprite || tileSprite.type === TileType.NONE) return noCollision;
-
-    const tile = {
-      x: tileCoords.x,
-      y: tileCoords.y,
-      width: 1,
-      height: 1,
-    };
-
-    const player = {
-      x: this._position.x + deltaPosition.x,
-      y: this._position.y + deltaPosition.y,
-      width: CharacterJSON.info.widthInTiles,
-      height: CharacterJSON.info.heightInTiles,
-    };
-
-    const halfPlayerWidth = player.width / 2;
-    const halfPlayerHeight = player.height / 2;
-    const halfWidthInTiles = tile.width / 2;
-    const halfHeightInTiles = tile.height / 2;
-
-    const collides =
-      player.x - halfPlayerWidth < tile.x + halfWidthInTiles &&
-      player.x + halfPlayerWidth > tile.x - halfWidthInTiles &&
-      player.y - halfPlayerHeight < tile.y + halfHeightInTiles &&
-      player.y + halfPlayerHeight > tile.y - halfHeightInTiles;
-
-    if (!collides) return noCollision;
-
-    const horizontal = player.x - tile.x;
-    const vertical = player.y - tile.y;
-
-    const left = horizontal > 0;
-    const right = horizontal < 0;
-    const top = vertical > 0;
-    const bottom = vertical < 0;
-
-    const leftCorrection = tile.x + 0.5 + halfPlayerWidth;
-    const rightCorrection = tile.x - 0.5 - halfPlayerWidth;
-    const topCorrection = tile.y + 0.5 + halfPlayerHeight;
-    const bottomCorrection = tile.y - 0.5 - halfPlayerHeight;
-
-    return {
-      isColliding: true,
-      left,
-      right,
-      top,
-      bottom,
-      correction: new Vector2(left ? leftCorrection : rightCorrection, top ? topCorrection : bottomCorrection),
-    } as Collision;
-  }
-
   #changeAnimation() {
     const leftButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_A);
     const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
@@ -315,6 +201,10 @@ export default class Steve implements Mono {
     if (leftButtonClicked) this._spritesManager.setAnimation('walk_left');
     else if (rightButtonClicked) this._spritesManager.setAnimation('walk_right');
     else this._spritesManager.setAnimation('idle');
+  }
+
+  #handleJumpTimerFinished() {
+    this._canJump = true;
   }
 
   // #################################################
