@@ -1,5 +1,6 @@
 import button from '@asset/texture/gui/touch/button.png';
 import buttonArrow from '@asset/texture/gui/touch/buttonArrow.png';
+import buttonCancel from '@asset/texture/gui/touch/buttonCancel.png';
 import buttonShadow from '@asset/texture/gui/touch/buttonShadow.png';
 import { styled } from '@style/stitches.config';
 import { useState } from 'react';
@@ -7,6 +8,7 @@ import { useState } from 'react';
 export enum ButtonAction {
   JUMP = 'jump',
   CROUCH = 'crouch',
+  CANCEL = 'cancel',
 }
 
 const Area = styled('button', {
@@ -49,7 +51,7 @@ const ShadowImage = styled('img', {
   translate: '0 0',
 });
 
-const ArrowImage = styled('img', {
+const ButtonTypeImage = styled('img', {
   position: 'absolute',
   transformOrigin: 'center',
   left: '10%',
@@ -68,6 +70,7 @@ const ArrowImage = styled('img', {
       [ButtonAction.CROUCH]: {
         transform: 'rotate(180deg)',
       },
+      [ButtonAction.CANCEL]: {},
     },
     pressed: {
       true: {
@@ -104,7 +107,12 @@ const Button = ({ action }: ButtonProps) => {
     <Area onTouchStart={handleStart} onTouchEnd={handleStop} onTouchCancel={handleStop}>
       <ShadowImage src={buttonShadow} alt="button shadow" />
       <Image pressed={pressed} src={button} alt="button" />
-      <ArrowImage pressed={pressed} action={action} src={buttonArrow} alt="button arrow" />
+      <ButtonTypeImage
+        pressed={pressed}
+        action={action}
+        src={action === ButtonAction.CANCEL ? buttonCancel : buttonArrow}
+        alt="button arrow"
+      />
     </Area>
   );
 };

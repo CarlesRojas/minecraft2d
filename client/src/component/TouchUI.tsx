@@ -22,8 +22,9 @@ const Grid = styled('div', {
   bottom: 0,
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr) minmax(0, 1fr)',
-  gridTemplateRows: 'repeat(3, minmax(0, 1fr))',
+  gridTemplateRows: 'repeat(4, minmax(0, 1fr))',
   gridTemplateAreas: `
+    '. . . . x'
     'm m . c j'
     'm m . u u'
     'm m i u u'
@@ -53,10 +54,19 @@ const UseArea = styled('div', {
 const CrouchArea = styled('div', {
   gridArea: 'c',
   position: 'relative',
+  width: '100%',
+  aspectRatio: '1',
 });
 
 const JumpArea = styled('div', {
   gridArea: 'j',
+  position: 'relative',
+  width: '100%',
+  aspectRatio: '1',
+});
+
+const CancelArea = styled('div', {
+  gridArea: 'x',
   position: 'relative',
   width: '100%',
   aspectRatio: '1',
@@ -89,6 +99,10 @@ const TouchUI = () => {
         <JumpArea>
           <Button action={ButtonAction.JUMP} />
         </JumpArea>
+
+        <CancelArea>
+          <Button action={ButtonAction.CANCEL} />
+        </CancelArea>
       </Grid>
     </UI>
   );
