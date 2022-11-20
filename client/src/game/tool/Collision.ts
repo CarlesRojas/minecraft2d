@@ -41,9 +41,16 @@ export const getMovementAfterCollisions = (movement: EntityMovement) => {
 };
 
 const checkIfGrounded = (movement: EntityMovement) => {
-  const deltaPosition = new Vector2(0, 0.1);
+  const { position, sizeInTiles, layers, global } = movement;
 
-  const collision = isEntityColliding(movement, deltaPosition);
+  const deltaPosition = new Vector2(0, 0.1);
+  const newBounds: Bounds = {
+    x: position.x + deltaPosition.x - sizeInTiles.x / 2,
+    y: position.y + deltaPosition.y - sizeInTiles.y / 2,
+    width: sizeInTiles.x,
+    height: sizeInTiles.y,
+  };
+  const collision = isCollidingWithLayers(newBounds, layers, global);
   const isGrounded = collision && collision.isColliding;
 
   const newMovement: EntityMovement = {
@@ -56,11 +63,17 @@ const checkIfGrounded = (movement: EntityMovement) => {
 };
 
 const applyVerticalMovement = (movement: EntityMovement) => {
-  const { velocity, position, deltaInSeconds } = movement;
+  const { velocity, position, deltaInSeconds, sizeInTiles, layers, global } = movement;
   if (velocity.y === 0) return movement;
 
   const deltaPosition = new Vector2(0, velocity.y * deltaInSeconds);
-  const collision = isEntityColliding(movement, deltaPosition);
+  const newBounds: Bounds = {
+    x: position.x + deltaPosition.x - sizeInTiles.x / 2,
+    y: position.y + deltaPosition.y - sizeInTiles.y / 2,
+    width: sizeInTiles.x,
+    height: sizeInTiles.y,
+  };
+  const collision = isCollidingWithLayers(newBounds, layers, global);
 
   const newMovement: EntityMovement = {
     ...movement,
@@ -75,11 +88,17 @@ const applyVerticalMovement = (movement: EntityMovement) => {
 };
 
 const applyHorizontalMovement = (movement: EntityMovement) => {
-  const { velocity, position, deltaInSeconds } = movement;
+  const { velocity, position, deltaInSeconds, sizeInTiles, layers, global } = movement;
   if (velocity.x === 0) return movement;
 
   const deltaPosition = new Vector2(velocity.x * deltaInSeconds, 0);
-  const collision = isEntityColliding(movement, deltaPosition);
+  const newBounds: Bounds = {
+    x: position.x + deltaPosition.x - sizeInTiles.x / 2,
+    y: position.y + deltaPosition.y - sizeInTiles.y / 2,
+    width: sizeInTiles.x,
+    height: sizeInTiles.y,
+  };
+  const collision = isCollidingWithLayers(newBounds, layers, global);
 
   const newMovement: EntityMovement = {
     ...movement,
@@ -93,16 +112,11 @@ const applyHorizontalMovement = (movement: EntityMovement) => {
   return newMovement;
 };
 
-const isEntityColliding = (movement: EntityMovement, deltaPosition: Vector2) => {
-  const { position, sizeInTiles, global, layers } = movement;
-
-  const x = position.x + deltaPosition.x;
-  const y = position.y + deltaPosition.y;
-
-  let minX = Math.floor(x - sizeInTiles.x / 2);
-  let maxX = Math.ceil(x + sizeInTiles.x / 2);
-  let minY = Math.floor(y - sizeInTiles.y / 2);
-  let maxY = Math.ceil(y + sizeInTiles.y / 2);
+export const isCollidingWithLayers = (bounds: Bounds, layers: CollisionLayer[], global: Global) => {
+  let minX = Math.floor(bounds.x);
+  let maxX = Math.ceil(bounds.x + bounds.width);
+  let minY = Math.floor(bounds.y);
+  let maxY = Math.ceil(bounds.x + bounds.height);
 
   const tileMaps: TileMap<any>[] = [global.controller.world.ground];
 
@@ -118,14 +132,7 @@ const isEntityColliding = (movement: EntityMovement, deltaPosition: Vector2) => 
 
       for (const interactible of interactibles) {
         const interactibleBounds = interactible.bounds;
-        const newBounds: Bounds = {
-          x: position.x + deltaPosition.x - sizeInTiles.x / 2,
-          y: position.y + deltaPosition.y - sizeInTiles.y / 2,
-          width: sizeInTiles.x,
-          height: sizeInTiles.y,
-        };
-
-        const collision = areBoundsColliding(newBounds, interactibleBounds);
+        const collision = areBoundsColliding(bounds, interactibleBounds);
         if (collision.isColliding) return collision;
       }
     }
