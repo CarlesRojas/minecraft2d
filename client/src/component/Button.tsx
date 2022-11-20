@@ -1,5 +1,6 @@
 import button from '@asset/texture/gui/touch/button.png';
 import buttonArrow from '@asset/texture/gui/touch/buttonArrow.png';
+import buttonShadow from '@asset/texture/gui/touch/buttonShadow.png';
 import { styled } from '@style/stitches.config';
 import { useState } from 'react';
 
@@ -16,6 +17,7 @@ const Area = styled('button', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  opacity: 0.8,
 });
 
 const Image = styled('img', {
@@ -24,6 +26,27 @@ const Image = styled('img', {
   height: '80%',
   pointerEvents: 'none',
   imageRendering: 'pixelated',
+  translate: '0 0',
+
+  variants: {
+    pressed: {
+      true: {
+        translate: '0 calc(80% / 12)',
+      },
+    },
+  },
+});
+
+const ShadowImage = styled('img', {
+  position: 'absolute',
+  transformOrigin: 'center',
+  left: '10%',
+  right: '10%',
+  width: '80%',
+  height: '80%',
+  imageRendering: 'pixelated',
+  zIndex: 0,
+  translate: '0 0',
 });
 
 const ArrowImage = styled('img', {
@@ -44,6 +67,11 @@ const ArrowImage = styled('img', {
       },
       [ButtonAction.CROUCH]: {
         transform: 'rotate(180deg)',
+      },
+    },
+    pressed: {
+      true: {
+        translate: '0 calc(80% / 12)',
       },
     },
   },
@@ -73,14 +101,10 @@ const Button = ({ action }: ButtonProps) => {
   // #################################################
 
   return (
-    <Area
-      onTouchStart={handleStart}
-      onTouchEnd={handleStop}
-      onTouchCancel={handleStop}
-      css={{ opacity: pressed ? 1 : 0.7 }}
-    >
-      <Image src={button} alt="button" />
-      <ArrowImage action={action} src={buttonArrow} alt="button arrow" />
+    <Area onTouchStart={handleStart} onTouchEnd={handleStop} onTouchCancel={handleStop}>
+      <ShadowImage src={buttonShadow} alt="button shadow" />
+      <Image pressed={pressed} src={button} alt="button" />
+      <ArrowImage pressed={pressed} action={action} src={buttonArrow} alt="button arrow" />
     </Area>
   );
 };

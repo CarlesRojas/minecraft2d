@@ -9,6 +9,7 @@ const Area = styled('div', {
   width: '100%',
   height: '100%',
   pointerEvents: 'all',
+  opacity: 0.8,
 });
 
 const JoystickCircle = styled('img', {
@@ -76,10 +77,12 @@ const Joystick = () => {
       onTouchCancel={handleStop}
       ref={areaRef}
     >
-      <JoystickCircle src={joystickCircle} alt="joystick circle" css={{ opacity: arrowVisible ? 1 : 0.7 }} />
-      {arrowVisible && (
-        <JoystickArrow src={joystickArrow} alt="joystick arrow" css={{ transform: `rotate(${angle}deg)` }} />
-      )}
+      <JoystickCircle src={joystickCircle} alt="joystick circle" />
+      <JoystickArrow
+        src={joystickArrow}
+        alt="joystick arrow"
+        css={{ transform: `rotate(${angle}deg)`, opacity: arrowVisible ? 1 : 0 }}
+      />
     </Area>
   );
 };

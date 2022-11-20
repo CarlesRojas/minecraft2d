@@ -18,10 +18,12 @@ const Area = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  opacity: 0.8,
 });
 
 const Container = styled('div', {
   position: 'relative',
+  marginTop: '50%',
   width: '80%',
   aspectRatio: '2',
   pointerEvents: 'none',
@@ -38,8 +40,9 @@ const ToggleImage = styled('img', {
 });
 
 const ToggleInner = styled('div', {
+  transition: 'left 0.2s ease-in-out',
   position: 'absolute',
-  left: 0,
+  left: '0%',
   top: 0,
   height: '100%',
   aspectRatio: '1',
@@ -66,18 +69,20 @@ const ArrowImage = styled('img', {
   pointerEvents: 'none',
   imageRendering: 'pixelated',
   zIndex: 1,
-  transition: 'opacity 0.2s ease-in-out, transform 0.2s ease-in-out',
+  rotate: '90deg',
+  transition: 'opacity 0.2s ease-in-out, scale 0.3s ease-in-out',
 
   variants: {
     position: {
       [ToggleState.LEFT]: {
-        transform: 'rotate(-90deg)',
+        scale: '1 -1',
       },
       [ToggleState.CENTER]: {
+        scale: '1 0',
         opacity: 0,
       },
       [ToggleState.RIGHT]: {
-        transform: 'rotate(90deg)',
+        scale: '1 1',
       },
     },
   },
@@ -122,7 +127,6 @@ const Toggle = () => {
       onTouchEnd={handleStop}
       onTouchCancel={handleStop}
       ref={areaRef}
-      css={{ opacity: state !== ToggleState.CENTER ? 1 : 0.7 }}
     >
       <Container>
         <ToggleImage src={toggle} alt="toggle" />
