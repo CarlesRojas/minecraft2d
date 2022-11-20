@@ -101,6 +101,30 @@ const applyHorizontalMovement = (movement: EntityMovement) => {
 };
 
 export const isCollidingWithLayers = (bounds: Bounds, layers: CollisionLayer[], global: Global) => {
+  const entitiesCollision = isCollidingWithEntities(bounds, layers, global);
+  if (!!entitiesCollision) return entitiesCollision;
+
+  const tileMapsCollision = isCollidingWithTileMaps(bounds, layers, global);
+  if (!!tileMapsCollision) return tileMapsCollision;
+
+  return false;
+};
+
+const isCollidingWithEntities = (bounds: Bounds, layers: CollisionLayer[], global: Global) => {
+  const entities = [global.controller.entities.player];
+
+  for (const entity of entities) {
+    if (layers.includes(entity.collisionLayer)) {
+      const entityBounds = entity.bounds;
+      const collision = areBoundsColliding(bounds, entityBounds);
+      if (!!collision) return collision;
+    }
+  }
+
+  return false;
+};
+
+const isCollidingWithTileMaps = (bounds: Bounds, layers: CollisionLayer[], global: Global) => {
   let minX = Math.floor(bounds.x);
   let maxX = Math.ceil(bounds.x + bounds.width);
   let minY = Math.floor(bounds.y);
@@ -124,8 +148,6 @@ export const isCollidingWithLayers = (bounds: Bounds, layers: CollisionLayer[], 
         if (!!collision) return collision;
       }
     }
-
-  return false;
 };
 
 export const areBoundsColliding = (bounds1: Bounds, bounds2: Bounds) => {

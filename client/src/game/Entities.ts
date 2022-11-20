@@ -1,6 +1,5 @@
 import { Dimensions, Global } from '@game/Controller';
 import Player from '@game/Player';
-import { EntityArray } from '@util/abstract/EntityArray';
 import { Mono } from '@util/abstract/Mono';
 import * as PIXI from 'pixi.js';
 
@@ -8,23 +7,23 @@ export interface EntitiesProps {
   global: Global;
 }
 
-export default class Entities implements Mono, EntityArray<Player> {
+export default class Entities implements Mono {
   private _global: Global;
   private _container: PIXI.Container;
 
-  entityArray: Player[] = [];
+  _player: Player;
 
   constructor({ global }: EntitiesProps) {
     this._global = global;
     this._container = new PIXI.Container();
     this._global.stage.addChild(this._container);
 
-    this.entityArray.push(new Player({ global }));
+    this._player = new Player({ global });
   }
 
   destructor() {
     this._global.stage.removeChild(this._container);
-    for (const entity of this.entityArray) entity.destructor();
+    this._player.destructor();
   }
 
   // #################################################
@@ -32,7 +31,7 @@ export default class Entities implements Mono, EntityArray<Player> {
   // #################################################
 
   handleResize(dimensions: Dimensions) {
-    for (const entity of this.entityArray) entity.handleResize(dimensions);
+    this._player.handleResize(dimensions);
   }
 
   // #################################################
@@ -40,7 +39,7 @@ export default class Entities implements Mono, EntityArray<Player> {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    for (const entity of this.entityArray) entity.gameLoop(deltaInSeconds);
+    this._player.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -48,6 +47,6 @@ export default class Entities implements Mono, EntityArray<Player> {
   // #################################################
 
   get player() {
-    return this.entityArray[0];
+    return this._player;
   }
 }
