@@ -110,11 +110,11 @@ export default class Player implements Mono, Interactible {
   handleResize(dimensions: Dimensions) {
     const { tile } = dimensions;
 
-    this._spriteContainer.position.set(this._position.x * tile, this._position.y * tile);
+    this._spriteContainer.position.set(this.position.x * tile, this.position.y * tile);
 
     this._spritesManager.handleResize(dimensions);
 
-    this._hitBoxSprite.position.set(this._position.x * tile, this._position.y * tile);
+    this._hitBoxSprite.position.set(this.position.x * tile, this.position.y * tile);
     this._hitBoxSprite.height = tile * PlayerJson.info.heightInTiles;
     this._hitBoxSprite.width = tile * PlayerJson.info.widthInTiles;
     this._hitBoxSprite.anchor.set(0.5, 0.5);
@@ -213,7 +213,7 @@ export default class Player implements Mono, Interactible {
   // #################################################
 
   #checkForInteraction() {
-    const origin = this._position;
+    const origin = this.facePosition;
     const mousePosition = this._global.controller.interaction.mousePositionInTiles;
     const direction = Vector2.direction(origin, mousePosition);
     const layers = [InteractionLayer.GROUND];
@@ -307,6 +307,10 @@ export default class Player implements Mono, Interactible {
 
   get position() {
     return this._position;
+  }
+
+  get facePosition() {
+    return new Vector2(this._position.x, this._position.y - PlayerJson.info.heightInTiles / 4);
   }
 
   get roundedPosition() {

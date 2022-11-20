@@ -17,7 +17,7 @@ export default class Camera implements Mono {
   constructor({ global }: CameraProps) {
     this._global = global;
 
-    this._targetPositionInTiles = this._global.controller.entities.player.position;
+    this._targetPositionInTiles = this._global.controller.entities.player.facePosition;
     this.#moveCameraTo(this._targetPositionInTiles);
   }
 
@@ -36,6 +36,8 @@ export default class Camera implements Mono {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
+    this._targetPositionInTiles = this._global.controller.entities.player.facePosition;
+
     this.#panCameraToTargetPosition(deltaInSeconds);
   }
 
