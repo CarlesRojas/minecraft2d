@@ -1,5 +1,5 @@
 import { Dimensions, Global } from '@game/Controller';
-import { EntityType, getEntityTexture } from '@game/tool/Textures';
+import { EntityType, getEntityTexture } from '@game/system/Textures';
 import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
 import Vector2 from '@util/Vector2';

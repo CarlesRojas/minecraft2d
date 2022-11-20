@@ -1,5 +1,5 @@
-import { addNoiseToTerrain, getTerrainElevation, hasOre, isCave } from '@game/tool/Noise';
-import { TileType } from '@game/tool/Textures';
+import { addNoiseToTerrain, getTerrainElevation, hasOre, isCave } from '@game/system/Noise';
+import { TileType } from '@game/system/Textures';
 import { CoordsMap } from '@util/abstract/TileMap';
 import Vector2 from '@util/Vector2';
 

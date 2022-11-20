@@ -1,5 +1,5 @@
 import { SEED } from '@game/constant/constants';
-import { TileType } from '@game/tool/Textures';
+import { TileType } from '@game/system/Textures';
 import Vector2 from '@util/Vector2';
 import p5 from 'p5';
 const p5Instance = new p5(() => {});

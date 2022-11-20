@@ -1,6 +1,6 @@
 import { Dimensions, Global } from '@game/Controller';
-import { isCollidingWithLayers } from '@game/tool/Collision';
-import { getTileTexture, TileType } from '@game/tool/Textures';
+import { isCollidingWithLayers } from '@game/system/Collision';
+import { getTileTexture, TileType } from '@game/system/Textures';
 import { CollisionLayer, Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
 import { Bounds } from '@util/EntityTypes';

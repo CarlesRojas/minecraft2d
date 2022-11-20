@@ -4,7 +4,7 @@ import Camera from '@game/Camera';
 import DevTools from '@game/DevTools';
 import Entities from '@game/Entities';
 import Interaction from '@game/Interaction';
-import textures from '@game/tool/Textures';
+import textures from '@game/system/Textures';
 import World from '@game/world/World';
 import { Mono } from '@util/abstract/Mono';
 import { Events } from '@util/Events';

@@ -1,5 +1,5 @@
 import { Dimensions, Global } from '@game/Controller';
-import { getTileTypeInCoords } from '@game/tool/Terrain';
+import { getTileTypeInCoords } from '@game/system/Terrain';
 import Tile from '@game/world/Tile';
 import { RenderArea } from '@game/world/World';
 import { Mono } from '@util/abstract/Mono';
