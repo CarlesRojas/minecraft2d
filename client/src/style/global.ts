@@ -34,7 +34,7 @@ const globalStyles = globalCss({
     '-webkit-font-smoothing': 'antialiased',
     '-moz-osx-font-smoothing': 'grayscale',
     overflow: 'hidden',
-    pointerEvents: 'none',
+    pointerEvents: 'all',
   },
 
   '#root': {
