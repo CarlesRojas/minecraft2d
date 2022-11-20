@@ -1,5 +1,5 @@
 import { Dimensions, Global } from '@game/Controller';
-import { CharacterType, getCharacterTexture } from '@game/tool/Textures';
+import { EntityType, getEntityTexture } from '@game/tool/Textures';
 import { Mono } from '@util/abstract/Mono';
 import Entity from '@util/EntityTypes';
 import Vector2 from '@util/Vector2';
@@ -9,7 +9,7 @@ export interface SpritesManagerProps {
   global: Global;
   container: PIXI.Container;
   pixel: number;
-  texture: CharacterType;
+  texture: EntityType;
   info: Entity;
 }
 
@@ -38,7 +38,7 @@ export default class SpritesManager implements Mono {
     // SPRITES
     for (const part in this._info.parts) {
       const { x, y, width, height } = this._info.parts[part].bounds;
-      this._sprites[part] = new PIXI.Sprite(getCharacterTexture(texture, new PIXI.Rectangle(x, y, width, height)));
+      this._sprites[part] = new PIXI.Sprite(getEntityTexture(texture, new PIXI.Rectangle(x, y, width, height)));
       this._container.addChild(this._sprites[part]);
     }
 

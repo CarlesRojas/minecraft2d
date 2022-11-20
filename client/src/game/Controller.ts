@@ -2,8 +2,8 @@ import * as PIXI from 'pixi.js';
 
 import Camera from '@game/Camera';
 import DevTools from '@game/DevTools';
+import Entities from '@game/Entities';
 import Interaction from '@game/Interaction';
-import Steve from '@game/Steve';
 import textures from '@game/tool/Textures';
 import World from '@game/world/World';
 import { Mono } from '@util/abstract/Mono';
@@ -12,8 +12,8 @@ import Vector2 from '@util/Vector2';
 
 export enum Child {
   DEV_TOOLS = 'dev-tools',
+  ENTITIES = 'entities',
   WORLD = 'world',
-  CHARACTER = 'character',
   CAMERA = 'camera',
   INTERACTION = 'interaction',
 }
@@ -108,14 +108,14 @@ export default class Controller implements Mono {
 
   async #loadAssets() {
     PIXI.Assets.init({ manifest: textures });
-    await Promise.all([PIXI.Assets.loadBundle('blocks'), PIXI.Assets.loadBundle('characters')]);
+    await Promise.all([PIXI.Assets.loadBundle('blocks'), PIXI.Assets.loadBundle('entities')]);
     this.#handleLoadingComplete();
   }
 
   #handleLoadingComplete() {
     this._global.childs[Child.DEV_TOOLS] = new DevTools({ global: this._global });
     this._global.childs[Child.WORLD] = new World({ global: this._global });
-    this._global.childs[Child.CHARACTER] = new Steve({ global: this._global });
+    this._global.childs[Child.ENTITIES] = new Entities({ global: this._global });
     this._global.childs[Child.CAMERA] = new Camera({ global: this._global });
     this._global.childs[Child.INTERACTION] = new Interaction({ global: this._global });
 
@@ -135,8 +135,8 @@ export default class Controller implements Mono {
     return this._global.childs[Child.WORLD] as World;
   }
 
-  get character() {
-    return this._global.childs[Child.CHARACTER] as Steve;
+  get entities() {
+    return this._global.childs[Child.ENTITIES] as Entities;
   }
 
   get camera() {

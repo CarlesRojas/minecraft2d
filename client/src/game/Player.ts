@@ -1,4 +1,4 @@
-import CharacterJSON from '@asset/texture/entity/character.json';
+import PlayerJson from '@asset/json/entity/player.json';
 import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { MouseButton } from '@game/Interaction';
@@ -6,20 +6,20 @@ import SpritesManager from '@game/sprite/SpritesManager';
 import { getMovementAfterCollisions } from '@game/tool/Collision';
 import { getTerrainElevation } from '@game/tool/Noise';
 import castRay, { BlockSide, RayCollision } from '@game/tool/Ray';
-import { CharacterType } from '@game/tool/Textures';
+import { EntityType } from '@game/tool/Textures';
 import { CollisionLayer, Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
-import Entity from '@util/EntityTypes';
+import Entity, { Bounds } from '@util/EntityTypes';
 import Timer from '@util/Timer';
 import Vector2 from '@util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 
-export interface SteveProps {
+export interface PlayerProps {
   global: Global;
 }
 
-export default class Steve implements Mono {
+export default class Player implements Mono, Interactible {
   // GLOBAL
   private _global: Global;
   private _container: PIXI.Container;
@@ -39,6 +39,10 @@ export default class Steve implements Mono {
   private _canJump = false;
   private _jumpTimer: Timer;
 
+  // LAYERS
+  interactionLayer: InteractionLayer = InteractionLayer.PLAYER;
+  collisionLayer: CollisionLayer = CollisionLayer.PLAYER;
+
   // INTERACTION
   private _reachInTiles = 5;
   highlightedInteractible: Interactible | null = null;
@@ -48,12 +52,12 @@ export default class Steve implements Mono {
   private _debug = true;
   collisionPoint: PIXI.Sprite | null = null;
 
-  constructor({ global }: SteveProps) {
+  constructor({ global }: PlayerProps) {
     // GLOBAL
     this._global = global;
     this._container = new PIXI.Container();
     this._global.stage.addChild(this._container);
-    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - CharacterJSON.info.heightInTiles / 2);
+    this._position = new Vector2(0, getTerrainElevation(0) - 0.5 - PlayerJson.info.heightInTiles / 2);
 
     // SPRITES
     this._spriteContainer = new PIXI.Container();
@@ -62,9 +66,9 @@ export default class Steve implements Mono {
     this._spritesManager = new SpritesManager({
       global,
       container: this._spriteContainer,
-      pixel: CharacterJSON.info.heightInTiles * (1 / CharacterJSON.info.heightInPixels), // Total number of height pixels
-      texture: CharacterType.PINYA,
-      info: CharacterJSON as Entity,
+      pixel: PlayerJson.info.heightInTiles * (1 / PlayerJson.info.heightInPixels), // Total number of height pixels
+      texture: EntityType.PINYA,
+      info: PlayerJson as Entity,
     });
     this._container.addChild(this._spriteContainer);
 
@@ -111,8 +115,8 @@ export default class Steve implements Mono {
     this._spritesManager.handleResize(dimensions);
 
     this._hitBoxSprite.position.set(this._position.x * tile, this._position.y * tile);
-    this._hitBoxSprite.height = tile * CharacterJSON.info.heightInTiles;
-    this._hitBoxSprite.width = tile * CharacterJSON.info.widthInTiles;
+    this._hitBoxSprite.height = tile * PlayerJson.info.heightInTiles;
+    this._hitBoxSprite.width = tile * PlayerJson.info.widthInTiles;
     this._hitBoxSprite.anchor.set(0.5, 0.5);
   }
 
@@ -170,7 +174,7 @@ export default class Steve implements Mono {
     const finalMovement = getMovementAfterCollisions({
       position: this._position,
       velocity: this._velocity,
-      sizeInTiles: new Vector2(CharacterJSON.info.widthInTiles, CharacterJSON.info.heightInTiles),
+      sizeInTiles: new Vector2(PlayerJson.info.widthInTiles, PlayerJson.info.heightInTiles),
       layers: [CollisionLayer.GROUND],
       deltaInSeconds,
       global: this._global,
@@ -180,10 +184,10 @@ export default class Steve implements Mono {
     const { position, velocity, isGrounded } = finalMovement;
     this._velocity = velocity;
     this._isGrounded = isGrounded;
-    this.#moveCharacterToPosition(position);
+    this.#moveToPosition(position);
   }
 
-  #moveCharacterToPosition(position: Vector2) {
+  #moveToPosition(position: Vector2) {
     this._position.x = position.x;
     this._position.y = position.y;
     const tileSize = this._global.dimensions.tile;
@@ -271,6 +275,30 @@ export default class Steve implements Mono {
     this.collisionPoint.visible = !!collision;
     if (collision && collision.point)
       this.collisionPoint.position.set(collision.point.x * tile, collision.point.y * tile);
+  }
+
+  // #################################################
+  //   INTERACTION INTERFACE
+  // #################################################
+
+  highlight() {}
+  stopHighlighting() {}
+  interact() {}
+  stopInteracting() {}
+  interactSecondary() {}
+  shouldCollide() {
+    return true;
+  }
+
+  get bounds() {
+    const bounds: Bounds = {
+      x: this._position.x - PlayerJson.info.widthInTiles / 2,
+      y: this._position.y - PlayerJson.info.heightInTiles / 2,
+      width: PlayerJson.info.widthInTiles,
+      height: PlayerJson.info.heightInTiles,
+    };
+
+    return bounds;
   }
 
   // #################################################

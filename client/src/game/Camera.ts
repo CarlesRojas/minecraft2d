@@ -17,7 +17,7 @@ export default class Camera implements Mono {
   constructor({ global }: CameraProps) {
     this._global = global;
 
-    this._targetPositionInTiles = this._global.controller.character.position;
+    this._targetPositionInTiles = this._global.controller.entities.player.position;
     this.#moveCameraTo(this._targetPositionInTiles);
   }
 

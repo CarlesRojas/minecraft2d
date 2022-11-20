@@ -1,4 +1,5 @@
-import { Dimensions } from '@game/Controller';
+import { Dimensions, Global } from '@game/Controller';
+import { isCollidingWithLayers } from '@game/tool/Collision';
 import { getTileTexture, TileType } from '@game/tool/Textures';
 import { CollisionLayer, Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
@@ -12,6 +13,7 @@ export interface TileProps {
   dimensions: Dimensions;
   type: TileType;
   isBackground: boolean;
+  global: Global;
 }
 
 const roundToNearestEven = (num: number) => Math.round(num / 2) * 2;
@@ -21,6 +23,7 @@ export default class Tile implements Mono, Interactible {
   // GLOBAL
   private _container: PIXI.Container;
   private _dimensions: Dimensions;
+  private _global: Global;
 
   // SPRITES
   private _sprite: PIXI.Sprite | null = null;
@@ -45,10 +48,11 @@ export default class Tile implements Mono, Interactible {
   private _debug = false;
   private _text: PIXI.Text | null = null;
 
-  constructor({ coords, container, dimensions, type, isBackground }: TileProps) {
+  constructor({ coords, container, dimensions, type, isBackground, global }: TileProps) {
     this._coords = coords;
     this._container = container;
     this._dimensions = dimensions;
+    this._global = global;
 
     this.setTile(type, isBackground);
   }
@@ -168,6 +172,9 @@ export default class Tile implements Mono, Interactible {
   interactSecondary() {
     if (this.type !== TileType.NONE) return;
 
+    const collision = isCollidingWithLayers(this.bounds, [CollisionLayer.PLAYER, CollisionLayer.ENTITY], this._global);
+    if (!!collision) return;
+
     this.setTile(TileType.DIRT, false);
   }
 
@@ -175,7 +182,7 @@ export default class Tile implements Mono, Interactible {
     return !!this._sprite && this.type !== TileType.NONE;
   }
 
-  get bounds(): Bounds {
+  get bounds() {
     const bounds: Bounds = {
       x: this._coords.x - 0.5,
       y: this._coords.y - 0.5,

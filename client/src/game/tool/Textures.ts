@@ -49,7 +49,7 @@ export enum TileType {
   DESTROY_STATE_9 = 'destroy_stage_9',
 }
 
-export enum CharacterType {
+export enum EntityType {
   STEVE = 'steve',
   ALEX = 'alex',
   MARIO = 'mario',
@@ -84,13 +84,13 @@ const textures = {
       ],
     },
     {
-      name: 'characters',
+      name: 'entities',
       assets: [
-        { name: CharacterType.STEVE, srcs: AlexImage },
-        { name: CharacterType.ALEX, srcs: MarioImage },
-        { name: CharacterType.MARIO, srcs: PartsImage },
-        { name: CharacterType.PINYA, srcs: PinyaImage },
-        { name: CharacterType.PARTS, srcs: SteveImage },
+        { name: EntityType.STEVE, srcs: AlexImage },
+        { name: EntityType.ALEX, srcs: MarioImage },
+        { name: EntityType.MARIO, srcs: PartsImage },
+        { name: EntityType.PINYA, srcs: PinyaImage },
+        { name: EntityType.PARTS, srcs: SteveImage },
       ],
     },
   ],
@@ -102,7 +102,7 @@ export const getTileTexture = (name: TileType) => {
   return texture;
 };
 
-export const getCharacterTexture = (name: CharacterType, rectangle?: PIXI.Rectangle) => {
+export const getEntityTexture = (name: EntityType, rectangle?: PIXI.Rectangle) => {
   const texture = PIXI.Assets.get(name) as PIXI.Texture;
   const newTexture = new PIXI.Texture(texture.baseTexture, rectangle);
   newTexture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;

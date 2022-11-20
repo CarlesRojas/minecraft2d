@@ -15,22 +15,12 @@ interface EntityMovement {
 }
 
 export interface Collision {
-  isColliding: boolean;
   left: boolean;
   right: boolean;
   top: boolean;
   bottom: boolean;
   correction: Vector2;
 }
-
-const noCollision: Collision = {
-  isColliding: false,
-  left: false,
-  right: false,
-  top: false,
-  bottom: false,
-  correction: new Vector2(0, 0),
-};
 
 export const getMovementAfterCollisions = (movement: EntityMovement) => {
   const movementAfterVertical = applyVerticalMovement(movement);
@@ -51,7 +41,7 @@ const checkIfGrounded = (movement: EntityMovement) => {
     height: sizeInTiles.y,
   };
   const collision = isCollidingWithLayers(newBounds, layers, global);
-  const isGrounded = collision && collision.isColliding;
+  const isGrounded = !!collision;
 
   const newMovement: EntityMovement = {
     ...movement,
@@ -77,11 +67,10 @@ const applyVerticalMovement = (movement: EntityMovement) => {
 
   const newMovement: EntityMovement = {
     ...movement,
-    position:
-      collision && collision.isColliding
-        ? new Vector2(position.x, collision.correction.y)
-        : new Vector2(position.x, position.y + velocity.y * deltaInSeconds),
-    velocity: collision && collision.isColliding ? new Vector2(velocity.x, 0) : velocity,
+    position: !!collision
+      ? new Vector2(position.x, collision.correction.y)
+      : new Vector2(position.x, position.y + velocity.y * deltaInSeconds),
+    velocity: !!collision ? new Vector2(velocity.x, 0) : velocity,
   };
 
   return newMovement;
@@ -102,11 +91,10 @@ const applyHorizontalMovement = (movement: EntityMovement) => {
 
   const newMovement: EntityMovement = {
     ...movement,
-    position:
-      collision && collision.isColliding
-        ? new Vector2(collision.correction.x, position.y)
-        : new Vector2(position.x + velocity.x * deltaInSeconds, position.y),
-    velocity: collision && collision.isColliding ? new Vector2(0, velocity.y) : velocity,
+    position: !!collision
+      ? new Vector2(collision.correction.x, position.y)
+      : new Vector2(position.x + velocity.x * deltaInSeconds, position.y),
+    velocity: !!collision ? new Vector2(0, velocity.y) : velocity,
   };
 
   return newMovement;
@@ -116,7 +104,7 @@ export const isCollidingWithLayers = (bounds: Bounds, layers: CollisionLayer[], 
   let minX = Math.floor(bounds.x);
   let maxX = Math.ceil(bounds.x + bounds.width);
   let minY = Math.floor(bounds.y);
-  let maxY = Math.ceil(bounds.x + bounds.height);
+  let maxY = Math.ceil(bounds.y + bounds.height);
 
   const tileMaps: TileMap<any>[] = [global.controller.world.ground];
 
@@ -133,7 +121,7 @@ export const isCollidingWithLayers = (bounds: Bounds, layers: CollisionLayer[], 
       for (const interactible of interactibles) {
         const interactibleBounds = interactible.bounds;
         const collision = areBoundsColliding(bounds, interactibleBounds);
-        if (collision.isColliding) return collision;
+        if (!!collision) return collision;
       }
     }
 
@@ -165,7 +153,7 @@ export const areBoundsColliding = (bounds1: Bounds, bounds2: Bounds) => {
     entity1.y - entity1.halfHeight < entity2.y + entity2.halfHeight &&
     entity1.y + entity1.halfHeight > entity2.y - entity2.halfHeight;
 
-  if (!collides) return noCollision;
+  if (!collides) return false;
 
   const horizontal = entity1.x - entity2.x;
   const vertical = entity1.y - entity2.y;
@@ -181,7 +169,6 @@ export const areBoundsColliding = (bounds1: Bounds, bounds2: Bounds) => {
   const bottomCorrection = entity2.y - 0.5 - entity1.halfHeight;
 
   return {
-    isColliding: true,
     left,
     right,
     top,

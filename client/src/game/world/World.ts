@@ -33,8 +33,8 @@ export default class World implements Mono {
     this._global.stage.addChild(this._container);
 
     this._layers = {
-      background: new Background({ global: this._global }),
-      ground: new Ground({ global: this._global }),
+      background: new Background({ global }),
+      ground: new Ground({ global }),
     };
 
     this._renderArea = {
@@ -72,14 +72,14 @@ export default class World implements Mono {
 
   async #updateRenderArea() {
     const { screen, tile } = this._global.dimensions;
-    const characterPosition = this._global.controller.character.roundedPosition;
+    const playerPosition = this._global.controller.entities.player.roundedPosition;
 
     const horizontalNumberOfTiles = Math.ceil(screen.x / tile / 2) + SAFTY_TILES;
     const verticalNumberOfTiles = Math.ceil(screen.y / tile / 2) + SAFTY_TILES;
 
     this._renderArea = {
-      start: new Vector2(characterPosition.x - horizontalNumberOfTiles, characterPosition.y - verticalNumberOfTiles),
-      end: new Vector2(characterPosition.x + horizontalNumberOfTiles, characterPosition.y + verticalNumberOfTiles),
+      start: new Vector2(playerPosition.x - horizontalNumberOfTiles, playerPosition.y - verticalNumberOfTiles),
+      end: new Vector2(playerPosition.x + horizontalNumberOfTiles, playerPosition.y + verticalNumberOfTiles),
     };
 
     if (
