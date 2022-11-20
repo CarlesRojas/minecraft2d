@@ -9,7 +9,7 @@ const globalStyles = globalCss({
     overscrollBehavior: 'none',
     overflow: 'hidden',
     cursor: 'none',
-    pointerEvents: 'none',
+    '-webkit-touch-callout': 'none',
   },
 
   html: {
@@ -18,6 +18,7 @@ const globalStyles = globalCss({
     width: '100%',
     fontSize: '$main',
     overflow: 'hidden',
+    pointerEvents: 'none',
   },
 
   body: {
@@ -32,6 +33,7 @@ const globalStyles = globalCss({
     '-webkit-font-smoothing': 'antialiased',
     '-moz-osx-font-smoothing': 'grayscale',
     overflow: 'hidden',
+    pointerEvents: 'none',
   },
 
   '#root': {
@@ -39,6 +41,7 @@ const globalStyles = globalCss({
     height: '100%',
     width: '100%',
     overflow: 'hidden',
+    pointerEvents: 'none',
   },
 
   'img, video, svg': {

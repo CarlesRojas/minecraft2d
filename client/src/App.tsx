@@ -1,5 +1,6 @@
 import Cursor from '@component/Cursor';
 import DevToolsUI from '@component/DevToolsUI';
+import TouchUI from '@component/TouchUI';
 import { HORIZONTAL_TILES_PER_SCREEN } from '@game/constant/constants';
 import Controller from '@game/Controller';
 import Vector2 from '@game/util/Vector2';
@@ -9,6 +10,7 @@ import globalStyles from '@style/global';
 import { styled } from '@style/stitches.config';
 import { Event, useEvents } from '@util/Events';
 import { useEffect, useRef, useState } from 'react';
+import { isMobile } from 'react-device-detect';
 
 const getGameDimensions = (dimensions: Vector2) => ({
   screen: dimensions,
@@ -67,9 +69,14 @@ const App = () => {
   const handleKeyUp = (e: KeyboardEvent) => events.emit(Event.ON_KEY_UP, e);
   const handleMouseDown = (e: MouseEvent) => events.emit(Event.ON_MOUSE_DOWN, e);
   const handleMouseUp = (e: MouseEvent) => events.emit(Event.ON_MOUSE_UP, e);
-  const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+  const handleContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+    return false;
+  };
 
   useEffect(() => {
+    if (isMobile) return;
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
@@ -94,7 +101,8 @@ const App = () => {
   return (
     <>
       <DevToolsUI />
-      <Cursor />
+      {isMobile && <TouchUI />}
+      {!isMobile && <Cursor />}
       <Game ref={container} />
     </>
   );
