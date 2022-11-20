@@ -3,7 +3,7 @@ import { GRAVITY } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { MouseButton } from '@game/Interaction';
 import { getTerrainElevation } from '@game/tool/Noise';
-import castRay, { RayCollision } from '@game/tool/Ray';
+import castRay, { BlockSide, RayCollision } from '@game/tool/Ray';
 import { CharacterType, TileType } from '@game/tool/Textures';
 import { Interactible, InteractionLayer } from '@util/abstract/Interactible';
 import { Mono } from '@util/abstract/Mono';
@@ -53,7 +53,7 @@ export default class Steve implements Mono {
   interactedInteractible: Interactible | null = null;
 
   // DEBUG
-  private _debug = false;
+  private _debug = true;
   collisionPoint: PIXI.Sprite | null = null;
 
   constructor({ global }: SteveProps) {
@@ -138,7 +138,7 @@ export default class Steve implements Mono {
 
     this.#changeAnimation();
 
-    this.#castRay();
+    this.#checkForInteraction();
 
     this._spritesManager.gameLoop(deltaInSeconds);
   }
@@ -321,29 +321,17 @@ export default class Steve implements Mono {
   //   INTERACT
   // #################################################
 
-  #castRay() {
+  #checkForInteraction() {
     const origin = this._position;
     const mousePosition = this._global.controller.interaction.mousePositionInTiles;
     const direction = Vector2.direction(origin, mousePosition);
     const layers = [InteractionLayer.GROUND];
-
     const collision = castRay(origin, direction, this._reachInTiles, layers, this._global);
+
     this.#moveCollisionPoint(collision);
     this.#interact(collision);
     this.#highlight(collision);
-  }
-
-  #highlight(collision: RayCollision | false) {
-    if (collision) {
-      if (collision.interactible !== this.highlightedInteractible) {
-        this.highlightedInteractible?.stopHighlighting();
-        collision.interactible.highlight();
-        this.highlightedInteractible = collision.interactible;
-      }
-    } else {
-      this.highlightedInteractible?.stopHighlighting();
-      this.highlightedInteractible = null;
-    }
+    this.#interactSecondary(collision);
   }
 
   #interact(collision: RayCollision | false) {
@@ -361,11 +349,41 @@ export default class Steve implements Mono {
     }
   }
 
+  #highlight(collision: RayCollision | false) {
+    if (collision) {
+      if (collision.interactible !== this.highlightedInteractible) {
+        this.highlightedInteractible?.stopHighlighting();
+        collision.interactible.highlight();
+        this.highlightedInteractible = collision.interactible;
+      }
+    } else {
+      this.highlightedInteractible?.stopHighlighting();
+      this.highlightedInteractible = null;
+    }
+  }
+
+  #interactSecondary(collision: RayCollision | false) {
+    const interactSecondaryButtonClicked = this._global.controller.interaction.isKeyFirstPressed(MouseButton.RIGHT);
+
+    if (interactSecondaryButtonClicked && collision) {
+      const { blockSide, coords } = collision;
+
+      if (blockSide === BlockSide.LEFT) coords.x -= 1;
+      else if (blockSide === BlockSide.RIGHT) coords.x += 1;
+      else if (blockSide === BlockSide.TOP) coords.y -= 1;
+      else if (blockSide === BlockSide.BOTTOM) coords.y += 1;
+      else return;
+
+      this._global.controller.world.ground.elementAtCoords(coords)?.interactSecondary();
+    }
+  }
+
   #moveCollisionPoint(collision: RayCollision | false) {
     if (!this.collisionPoint) return;
     const { tile } = this._global.dimensions;
     this.collisionPoint.visible = !!collision;
-    if (collision) this.collisionPoint.position.set(collision.point.x * tile, collision.point.y * tile);
+    if (collision && collision.point)
+      this.collisionPoint.position.set(collision.point.x * tile, collision.point.y * tile);
   }
 
   // #################################################

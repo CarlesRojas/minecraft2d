@@ -12,5 +12,6 @@ export interface Interactible {
   stopHighlighting(): void;
   interact(): void;
   stopInteracting(): void;
+  interactSecondary(): void;
   get getBounds(): Bounds; // In tile space
 }

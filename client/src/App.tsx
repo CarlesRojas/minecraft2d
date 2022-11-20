@@ -89,11 +89,11 @@ const App = () => {
   // #################################################
 
   return (
-    <>
+    <div onContextMenu={(e) => e.preventDefault()}>
       <DevToolsUI />
       <Cursor />
       <Game ref={container} />
-    </>
+    </div>
   );
 };
 

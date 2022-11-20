@@ -15,6 +15,10 @@ export default class Vector2 {
     return new Vector2(a.x * b.x + a.y * b.y);
   }
 
+  public static invert(a: Vector2): Vector2 {
+    return new Vector2(-a.x, -a.y);
+  }
+
   public static toCoords(coords: string): Vector2 {
     const [x, y] = coords.split('-');
     return new Vector2(parseInt(x), parseInt(y));

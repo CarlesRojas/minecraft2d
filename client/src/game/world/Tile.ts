@@ -128,7 +128,6 @@ export default class Tile implements Mono, Interactible {
     this._isBreaking = false;
     this._isReparing = false;
     this._currentBreakingTime = 0;
-    this.destructor();
     this.setTile(TileType.NONE, false);
   }
 
@@ -165,6 +164,12 @@ export default class Tile implements Mono, Interactible {
     this._isReparing = true;
   }
 
+  interactSecondary(): void {
+    if (this.type !== TileType.NONE) return;
+
+    this.setTile(TileType.DIRT, false);
+  }
+
   get getBounds(): Bounds {
     const bounds: Bounds = {
       x: this._coords.x - 0.5,
@@ -193,6 +198,7 @@ export default class Tile implements Mono, Interactible {
   // #################################################
 
   setTile(type: TileType, isBackground: boolean) {
+    this.destructor();
     this._type = type;
     this._isBackground = isBackground;
     this.interactionLayer = isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
