@@ -1,6 +1,6 @@
 # Minecraft 2D
 
-A Minecraft clone in 2D.
+A Minecraft clone in 2D
 
 ## Run locally
 
