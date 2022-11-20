@@ -2,7 +2,7 @@ import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@util/abstract/Mono';
 import { Event } from '@util/Events';
 
-export interface DevToolsProps {
+interface DevToolsProps {
   global: Global;
 }
 

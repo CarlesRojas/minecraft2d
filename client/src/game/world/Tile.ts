@@ -7,7 +7,7 @@ import { Bounds } from '@util/EntityTypes';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
-export interface TileProps {
+interface TileProps {
   coords: Vector2;
   container: PIXI.Container;
   dimensions: Dimensions;

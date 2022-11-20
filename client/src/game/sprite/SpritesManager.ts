@@ -5,7 +5,7 @@ import Entity from '@util/EntityTypes';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
-export interface SpritesManagerProps {
+interface SpritesManagerProps {
   global: Global;
   container: PIXI.Container;
   pixel: number;

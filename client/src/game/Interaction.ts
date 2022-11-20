@@ -4,7 +4,7 @@ import { Event } from '@util/Events';
 import screenToTiles from '@util/ScreenToTiles';
 import Vector2 from '@util/Vector2';
 
-export interface InteractionProps {
+interface InteractionProps {
   global: Global;
 }
 

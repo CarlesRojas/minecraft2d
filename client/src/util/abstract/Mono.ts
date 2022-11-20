@@ -13,7 +13,7 @@ import * as PIXI from 'pixi.js';
 import { Dimensions, Global } from '@game/Controller';
 import GameClass from '@util/GameClass';
 
-export interface WorldProps {
+interface WorldProps {
   global: Global;
 }
 

@@ -15,7 +15,7 @@ import Vector2 from '@util/Vector2';
 import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 
-export interface PlayerProps {
+interface PlayerProps {
   global: Global;
 }
 

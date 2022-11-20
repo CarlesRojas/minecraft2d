@@ -6,17 +6,18 @@ import { Mono } from '@util/abstract/Mono';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
-export interface Layers {
+interface Layers {
   ground: Ground;
   background: Background;
 }
 
+// TODO refactor this into an interface
 export interface RenderArea {
   start: Vector2;
   end: Vector2;
 }
 
-export interface WorldProps {
+interface WorldProps {
   global: Global;
 }
 
@@ -45,7 +46,7 @@ export default class World implements Mono {
   }
 
   destructor() {
-    for (const value of Object.values(this._layers)) value.destructor();
+    for (const layer of Object.values(this._layers)) layer.destructor();
     this._global.stage.removeChild(this._container);
   }
 
@@ -54,7 +55,7 @@ export default class World implements Mono {
   // #################################################
 
   handleResize(dimensions: Dimensions) {
-    for (const value of Object.values(this._layers)) value.handleResize(dimensions);
+    for (const layer of Object.values(this._layers)) layer.handleResize(dimensions);
   }
 
   // #################################################
@@ -63,7 +64,7 @@ export default class World implements Mono {
 
   gameLoop(deltaInSeconds: number) {
     this.#updateRenderArea();
-    for (const value of Object.values(this._layers)) value.gameLoop(deltaInSeconds);
+    for (const layer of Object.values(this._layers)) layer.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -91,7 +92,7 @@ export default class World implements Mono {
 
     this._lastRenderArea = this._renderArea;
 
-    for (const value of Object.values(this._layers)) value.updateRenderArea(this._renderArea);
+    for (const layer of Object.values(this._layers)) layer.updateRenderArea(this._renderArea);
   }
 
   // #################################################

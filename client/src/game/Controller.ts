@@ -10,12 +10,12 @@ import { Mono } from '@util/abstract/Mono';
 import { Events } from '@util/Events';
 import Vector2 from '@util/Vector2';
 
-export enum Child {
-  DEV_TOOLS = 'dev-tools',
-  ENTITIES = 'entities',
-  WORLD = 'world',
-  CAMERA = 'camera',
-  INTERACTION = 'interaction',
+interface Layers {
+  devTools: Mono | null;
+  entities: Mono | null;
+  world: Mono | null;
+  camera: Mono | null;
+  interaction: Mono | null;
 }
 
 export interface Dimensions {
@@ -26,13 +26,12 @@ export interface Dimensions {
 export interface Global {
   app: PIXI.Application;
   dimensions: Dimensions;
-  childs: { [key in Child]?: Mono };
   events: Events;
   controller: Controller;
   stage: PIXI.Container;
 }
 
-export interface ControllerProps {
+interface ControllerProps {
   container: HTMLElement;
   dimensions: Dimensions;
   events: Events;
@@ -40,6 +39,7 @@ export interface ControllerProps {
 
 export default class Controller implements Mono {
   private _global: Global;
+  private _layers: Layers;
 
   constructor({ container, dimensions, events }: ControllerProps) {
     this._global = {
@@ -51,10 +51,17 @@ export default class Controller implements Mono {
         autoDensity: true,
       }),
       dimensions,
-      childs: {},
       events,
       controller: this,
       stage: new PIXI.Container(),
+    };
+
+    this._layers = {
+      devTools: null,
+      entities: null,
+      world: null,
+      camera: null,
+      interaction: null,
     };
 
     this._global.app.stage.addChild(this._global.stage);
@@ -64,7 +71,7 @@ export default class Controller implements Mono {
   }
 
   destructor() {
-    for (const value of Object.values(this._global.childs)) value.destructor();
+    for (const layer of Object.values(this._layers)) layer.destructor();
     this._global.app.stage.removeChild(this._global.stage);
   }
 
@@ -75,7 +82,7 @@ export default class Controller implements Mono {
   handleResize(dimensions: Dimensions) {
     this._global.dimensions = dimensions;
     this._global.app.renderer.resize(dimensions.screen.x, dimensions.screen.y);
-    for (const value of Object.values(this._global.childs)) value.handleResize(dimensions);
+    for (const layer of Object.values(this._layers)) layer && layer.handleResize(dimensions);
   }
 
   // #################################################
@@ -88,7 +95,7 @@ export default class Controller implements Mono {
   }
 
   gameLoop(deltaInSeconds: number) {
-    for (const value of Object.values(this._global.childs)) value.gameLoop(deltaInSeconds);
+    for (const layer of Object.values(this._layers)) layer.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -113,11 +120,11 @@ export default class Controller implements Mono {
   }
 
   #handleLoadingComplete() {
-    this._global.childs[Child.DEV_TOOLS] = new DevTools({ global: this._global });
-    this._global.childs[Child.WORLD] = new World({ global: this._global });
-    this._global.childs[Child.ENTITIES] = new Entities({ global: this._global });
-    this._global.childs[Child.CAMERA] = new Camera({ global: this._global });
-    this._global.childs[Child.INTERACTION] = new Interaction({ global: this._global });
+    this._layers.devTools = new DevTools({ global: this._global });
+    this._layers.world = new World({ global: this._global });
+    this._layers.entities = new Entities({ global: this._global });
+    this._layers.camera = new Camera({ global: this._global });
+    this._layers.interaction = new Interaction({ global: this._global });
 
     this.handleResize(this._global.dimensions);
     this.#startGameLoop();
@@ -128,22 +135,22 @@ export default class Controller implements Mono {
   // #################################################
 
   get devTools() {
-    return this._global.childs[Child.DEV_TOOLS] as DevTools;
+    return this._layers.devTools as DevTools;
   }
 
   get world() {
-    return this._global.childs[Child.WORLD] as World;
+    return this._layers.world as World;
   }
 
   get entities() {
-    return this._global.childs[Child.ENTITIES] as Entities;
+    return this._layers.entities as Entities;
   }
 
   get camera() {
-    return this._global.childs[Child.CAMERA] as Camera;
+    return this._layers.camera as Camera;
   }
 
   get interaction() {
-    return this._global.childs[Child.INTERACTION] as Interaction;
+    return this._layers.interaction as Interaction;
   }
 }

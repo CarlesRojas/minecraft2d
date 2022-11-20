@@ -7,7 +7,7 @@ import { CoordsMap, TileMap } from '@util/abstract/TileMap';
 import Vector2 from '@util/Vector2';
 import * as PIXI from 'pixi.js';
 
-export interface BackgroundProps {
+interface BackgroundProps {
   global: Global;
 }
 

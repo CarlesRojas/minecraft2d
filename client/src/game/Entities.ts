@@ -3,7 +3,7 @@ import Player from '@game/Player';
 import { Mono } from '@util/abstract/Mono';
 import * as PIXI from 'pixi.js';
 
-export interface EntitiesProps {
+interface EntitiesProps {
   global: Global;
 }
 

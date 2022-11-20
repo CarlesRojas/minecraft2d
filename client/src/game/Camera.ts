@@ -3,7 +3,7 @@ import { Mono } from '@util/abstract/Mono';
 import screenToTiles from '@util/ScreenToTiles';
 import Vector2 from '@util/Vector2';
 
-export interface CameraProps {
+interface CameraProps {
   global: Global;
 }
 
