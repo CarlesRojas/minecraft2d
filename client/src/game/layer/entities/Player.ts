@@ -215,13 +215,24 @@ export default class Player implements Mono, Interactible {
   #checkForInteraction() {
     const origin = this.facePosition;
     const mousePosition = this._global.controller.interaction.mousePositionInTiles;
+
+    if (!mousePosition) {
+      this.#moveCollisionPoint(false);
+      this.#interact(false);
+      this.#highlight(false);
+      this.#interactSecondary(false);
+      return;
+    }
+
     const direction = Vector2.direction(origin, mousePosition);
     const layers = [InteractionLayer.GROUND];
     const collision = castRay(origin, direction, this._reachInTiles, layers, this._global);
 
     this.#moveCollisionPoint(collision);
-    this.#interact(collision);
     this.#highlight(collision);
+
+    // TODO Do one or the other depending on the type of block in the player hand
+    this.#interact(collision);
     this.#interactSecondary(collision);
   }
 
@@ -255,6 +266,10 @@ export default class Player implements Mono, Interactible {
 
   #interactSecondary(collision: RayCollision | false) {
     const interactSecondaryButtonClicked = this._global.controller.interaction.isKeyFirstPressed(MouseButton.RIGHT);
+
+    if (interactSecondaryButtonClicked) {
+      console.log(collision);
+    }
 
     if (interactSecondaryButtonClicked && collision) {
       const { blockSide, coords } = collision;

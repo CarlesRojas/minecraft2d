@@ -2,7 +2,8 @@ import joystickArrow from '@asset/texture/gui/touch/joystickArrow.png';
 import joystickCircle from '@asset/texture/gui/touch/joystickCircle.png';
 import Vector2 from '@game/util/Vector2';
 import { styled } from '@style/stitches.config';
-import { TouchEvent, useRef, useState } from 'react';
+import { Event, useEvents } from '@util/Events';
+import { TouchEvent, useEffect, useRef, useState } from 'react';
 
 const Area = styled('div', {
   position: 'relative',
@@ -35,8 +36,10 @@ const JoystickArrow = styled('img', {
 });
 
 const Joystick = () => {
+  const { emit } = useEvents();
   const [arrowVisible, setArrowVisible] = useState(false);
   const [angle, setAngle] = useState(0);
+  const direction = useRef<Vector2 | null>(new Vector2(0, 0));
   const areaRef = useRef<HTMLDivElement>(null);
   const touchID = useRef(0);
 
@@ -57,20 +60,34 @@ const Joystick = () => {
     if (!touch) return handleStop();
 
     const rect = areaRef.current.getBoundingClientRect();
-    const direction = new Vector2(
+    const newDirection = new Vector2(
       touch.clientX - rect.left - rect.width / 2,
       touch.clientY - rect.top - rect.height / 2
     ).normalized;
+    direction.current = newDirection;
 
-    var angle = Math.atan2(direction.y, direction.x);
+    var angle = Math.atan2(newDirection.y, newDirection.x);
     var degrees = (180 * angle) / Math.PI + 90;
 
     setAngle(degrees);
   };
 
   const handleStop = () => {
+    direction.current = null;
+
+    // TODO send event only if the up is not inside de cancel button
+    emit(Event.ON_JOYSTICK_UP);
     setArrowVisible(false);
   };
+
+  // #################################################
+  //   SEND INPUT TO GAME
+  // #################################################
+
+  useEffect(() => {
+    if (!direction.current) return;
+    emit(Event.ON_JOYSTICK_MOVE, direction.current);
+  }, [angle]);
 
   // #################################################
   //   RENDER

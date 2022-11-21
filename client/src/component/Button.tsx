@@ -3,7 +3,9 @@ import buttonArrow from '@asset/texture/gui/touch/buttonArrow.png';
 import buttonCancel from '@asset/texture/gui/touch/buttonCancel.png';
 import buttonShadow from '@asset/texture/gui/touch/buttonShadow.png';
 import { styled } from '@style/stitches.config';
-import { useState } from 'react';
+import { Event, useEvents } from '@util/Events';
+import { CODE_SHIFT_LEFT, CODE_SPACE } from 'keycode-js';
+import { useEffect, useState } from 'react';
 
 export enum ButtonAction {
   JUMP = 'jump',
@@ -86,6 +88,8 @@ interface ButtonProps {
 }
 
 const Button = ({ action }: ButtonProps) => {
+  const { emit } = useEvents();
+
   const [pressed, setPressed] = useState(false);
 
   // #################################################
@@ -99,6 +103,15 @@ const Button = ({ action }: ButtonProps) => {
   const handleStop = () => {
     setPressed(false);
   };
+
+  // #################################################
+  //   SEND INPUT TO GAME
+  // #################################################
+
+  useEffect(() => {
+    if (action === ButtonAction.JUMP) emit(pressed ? Event.ON_KEY_DOWN : Event.ON_KEY_UP, { code: CODE_SPACE });
+    if (action === ButtonAction.CROUCH) emit(pressed ? Event.ON_KEY_DOWN : Event.ON_KEY_UP, { code: CODE_SHIFT_LEFT });
+  }, [pressed]);
 
   // #################################################
   //   RENDER

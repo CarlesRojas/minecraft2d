@@ -1,5 +1,6 @@
 import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@game/interface/Mono';
+import Vector2 from '@game/util/Vector2';
 import { Event } from '@util/Events';
 
 interface DevToolsProps {
@@ -42,6 +43,6 @@ export default class DevTools implements Mono {
 
   #updateMousePosition() {
     const mousePosition = this._global.controller.interaction.mousePositionInTiles;
-    this._global.events.emit(Event.ON_MOUSE_POSITION_CHANGE, { mouseCoords: mousePosition });
+    this._global.events.emit(Event.ON_MOUSE_POSITION_CHANGE, { mouseCoords: mousePosition ?? new Vector2(0, 0) });
   }
 }

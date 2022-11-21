@@ -1,5 +1,4 @@
 import { styled } from '@style/stitches.config';
-import { useEvents } from '@util/Events';
 import Button, { ButtonAction } from './Button';
 import Joystick from './Joystick';
 import Toggle from './Toggle';
@@ -74,8 +73,6 @@ const CancelArea = styled('div', {
 });
 
 const TouchUI = () => {
-  const { sub, unsub, emit } = useEvents();
-
   // #################################################
   //   RENDER
   // #################################################

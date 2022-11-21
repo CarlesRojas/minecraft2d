@@ -2,7 +2,9 @@ import button from '@asset/texture/gui/touch/button.png';
 import buttonArrow from '@asset/texture/gui/touch/buttonArrow.png';
 import toggle from '@asset/texture/gui/touch/toggle.png';
 import { styled } from '@style/stitches.config';
-import { TouchEvent, useRef, useState } from 'react';
+import { Event, useEvents } from '@util/Events';
+import { CODE_A, CODE_D } from 'keycode-js';
+import { TouchEvent, useEffect, useRef, useState } from 'react';
 
 export enum ToggleState {
   LEFT = 'left',
@@ -88,7 +90,10 @@ const ArrowImage = styled('img', {
 });
 
 const Toggle = () => {
+  const { emit } = useEvents();
+
   const [state, setState] = useState(ToggleState.CENTER);
+  const lastState = useRef(ToggleState.CENTER);
   const areaRef = useRef<HTMLDivElement>(null);
   const touchID = useRef(0);
 
@@ -116,6 +121,18 @@ const Toggle = () => {
   const handleStop = () => {
     setState(ToggleState.CENTER);
   };
+
+  // #################################################
+  //   SEND INPUT TO GAME
+  // #################################################
+
+  useEffect(() => {
+    emit(Event.ON_KEY_UP, { code: CODE_A });
+    emit(Event.ON_KEY_UP, { code: CODE_D });
+
+    if (state === ToggleState.LEFT) emit(Event.ON_KEY_DOWN, { code: CODE_A });
+    if (state === ToggleState.RIGHT) emit(Event.ON_KEY_DOWN, { code: CODE_D });
+  }, [state]);
 
   // #################################################
   //   RENDER

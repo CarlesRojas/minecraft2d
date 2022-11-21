@@ -18,21 +18,26 @@ export default class Interaction implements Mono {
   private _global: Global;
   private _prevKeyPressed: { [key: string]: boolean } = {};
   private _keyPressed: { [key: string]: boolean } = {};
-  private _mousePositionInTiles: Vector2;
-  private _mouseScreenPosition: Vector2;
+  private _mousePositionInTiles: Vector2 | null;
+  private _mouseScreenPosition: Vector2 | null;
+
+  // JOYSTICK
+  private _usingJoystick = false;
 
   constructor({ global }: InteractionProps) {
     this._global = global;
     this._global.app.stage.interactive = false;
 
-    this._mousePositionInTiles = new Vector2(0, 0);
-    this._mouseScreenPosition = new Vector2(0, 0);
+    this._mousePositionInTiles = null;
+    this._mouseScreenPosition = null;
 
     this._global.events.sub(Event.ON_MOUSE_MOVE, this.#handleMouseMove.bind(this));
     this._global.events.sub(Event.ON_KEY_DOWN, this.#handleKeyDown.bind(this));
     this._global.events.sub(Event.ON_KEY_UP, this.#handleKeyUp.bind(this));
     this._global.events.sub(Event.ON_MOUSE_DOWN, this.#handleMouseDown.bind(this));
     this._global.events.sub(Event.ON_MOUSE_UP, this.#handleMouseUp.bind(this));
+    this._global.events.sub(Event.ON_JOYSTICK_MOVE, this.#handleJoystickMove.bind(this));
+    this._global.events.sub(Event.ON_JOYSTICK_UP, this.#handleJoystickUp.bind(this));
   }
 
   destructor() {
@@ -41,6 +46,8 @@ export default class Interaction implements Mono {
     this._global.events.unsub(Event.ON_KEY_UP, this.#handleKeyUp.bind(this));
     this._global.events.unsub(Event.ON_MOUSE_DOWN, this.#handleMouseDown.bind(this));
     this._global.events.unsub(Event.ON_MOUSE_UP, this.#handleMouseUp.bind(this));
+    this._global.events.unsub(Event.ON_JOYSTICK_MOVE, this.#handleJoystickMove.bind(this));
+    this._global.events.unsub(Event.ON_JOYSTICK_UP, this.#handleJoystickUp.bind(this));
   }
 
   // #################################################
@@ -56,9 +63,12 @@ export default class Interaction implements Mono {
   gameLoop(deltaInSeconds: number) {
     this._prevKeyPressed = { ...this._keyPressed };
     this.#getMousePositionInTiles();
+    this.#handleJoystickState();
   }
 
   #getMousePositionInTiles() {
+    if (!this._mouseScreenPosition) return;
+
     const mousePositionInTiles = screenToTiles(
       new Vector2(this._mouseScreenPosition.x, this._mouseScreenPosition.y),
       this._global.dimensions
@@ -79,11 +89,11 @@ export default class Interaction implements Mono {
     this._mouseScreenPosition = new Vector2(e.clientX, e.clientY);
   }
 
-  #handleKeyDown(e: KeyboardEvent) {
+  #handleKeyDown(e: { code: string }) {
     this._keyPressed[e.code] = true;
   }
 
-  #handleKeyUp(e: KeyboardEvent) {
+  #handleKeyUp(e: { code: string }) {
     this._keyPressed[e.code] = false;
   }
 
@@ -97,6 +107,29 @@ export default class Interaction implements Mono {
     this._keyPressed[code] = false;
   }
 
+  #handleJoystickMove(direction: Vector2) {
+    const playerPositionInTiles = this._global.controller.entities.player.position;
+    this._mousePositionInTiles = new Vector2(
+      playerPositionInTiles.x + direction.x,
+      playerPositionInTiles.y + direction.y
+    );
+    this._keyPressed[MouseButton.LEFT] = true;
+  }
+
+  #handleJoystickUp() {
+    this._usingJoystick = true;
+    this._keyPressed[MouseButton.LEFT] = false;
+    this._keyPressed[MouseButton.RIGHT] = true;
+  }
+
+  #handleJoystickState() {
+    if (!this._usingJoystick) return;
+
+    this._mousePositionInTiles = null;
+    this._usingJoystick = false;
+    this._keyPressed[MouseButton.RIGHT] = false;
+  }
+
   // #################################################
   //   GETTERS
   // #################################################
@@ -107,10 +140,6 @@ export default class Interaction implements Mono {
 
   get isKeyPressed() {
     return (key: string) => this._keyPressed[key];
-  }
-
-  get mouseScreenPosition() {
-    return this._mouseScreenPosition;
   }
 
   get mousePositionInTiles() {
