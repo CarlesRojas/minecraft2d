@@ -23,6 +23,8 @@ export default class Interaction implements Mono {
 
   // JOYSTICK
   private _usingJoystick = false;
+  private _movingJoystick = false;
+  private _joystickDirection = new Vector2(0, 0);
 
   constructor({ global }: InteractionProps) {
     this._global = global;
@@ -108,16 +110,14 @@ export default class Interaction implements Mono {
   }
 
   #handleJoystickMove(direction: Vector2) {
-    const playerPositionInTiles = this._global.controller.entities.player.position;
-    this._mousePositionInTiles = new Vector2(
-      playerPositionInTiles.x + direction.x,
-      playerPositionInTiles.y + direction.y
-    );
+    this._usingJoystick = true;
+    this._movingJoystick = true;
+    this._joystickDirection = direction;
     this._keyPressed[MouseButton.LEFT] = true;
   }
 
   #handleJoystickUp() {
-    this._usingJoystick = true;
+    this._movingJoystick = false;
     this._keyPressed[MouseButton.LEFT] = false;
     this._keyPressed[MouseButton.RIGHT] = true;
   }
@@ -125,9 +125,16 @@ export default class Interaction implements Mono {
   #handleJoystickState() {
     if (!this._usingJoystick) return;
 
-    this._mousePositionInTiles = null;
-    this._usingJoystick = false;
-    this._keyPressed[MouseButton.RIGHT] = false;
+    if (this._movingJoystick) {
+      const playerPositionInTiles = this._global.controller.entities.player.position;
+      this._mousePositionInTiles = new Vector2(
+        playerPositionInTiles.x + this._joystickDirection.x,
+        playerPositionInTiles.y + this._joystickDirection.y
+      );
+    } else {
+      this._mousePositionInTiles = null;
+      this._keyPressed[MouseButton.RIGHT] = false;
+    }
   }
 
   // #################################################

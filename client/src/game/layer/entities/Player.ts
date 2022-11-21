@@ -267,10 +267,6 @@ export default class Player implements Mono, Interactible {
   #interactSecondary(collision: RayCollision | false) {
     const interactSecondaryButtonClicked = this._global.controller.interaction.isKeyFirstPressed(MouseButton.RIGHT);
 
-    if (interactSecondaryButtonClicked) {
-      console.log(collision);
-    }
-
     if (interactSecondaryButtonClicked && collision) {
       const { blockSide, coords } = collision;
 
