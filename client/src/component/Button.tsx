@@ -47,6 +47,7 @@ const ShadowImage = styled('img', {
   width: '80%',
   height: '80%',
   imageRendering: 'pixelated',
+  pointerEvents: 'none',
   zIndex: 0,
   translate: '0 0',
 });
