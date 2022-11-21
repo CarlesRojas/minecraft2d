@@ -26,9 +26,9 @@ const Grid = styled('div', {
   gridTemplateRows: 'repeat(4, minmax(0, 1fr))',
   gridTemplateAreas: `
     '. . . . . . x'
-    '. . . . . . .'
-    '. m m . u u j'
-    '. m m . u u c'
+    '. . . . . . j'
+    'm m . . . u u '
+    'm m . . c u u '
   `,
 });
 
