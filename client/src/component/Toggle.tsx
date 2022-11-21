@@ -90,26 +90,30 @@ const ArrowImage = styled('img', {
 const Toggle = () => {
   const [state, setState] = useState(ToggleState.CENTER);
   const areaRef = useRef<HTMLDivElement>(null);
+  const touchID = useRef(0);
 
   // #################################################
   //   HANDLERS
   // #################################################
 
   const handleStart = (event: TouchEvent) => {
+    touchID.current = event.changedTouches[0].identifier;
     handleMove(event);
   };
 
   const handleMove = (event: TouchEvent) => {
     if (!areaRef.current) return;
 
-    const { clientX: x } = event.touches[0];
+    const touch = Array.from(event.changedTouches).find((touch) => touch.identifier === touchID.current);
+    if (!touch) return handleStop();
+
     const rect = areaRef.current.getBoundingClientRect();
-    const direction = Math.max(0, Math.min(1, (x - rect.left) / rect.width)) - 0.5;
+    const direction = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width)) - 0.5;
 
     setState(direction < 0 ? ToggleState.LEFT : ToggleState.RIGHT);
   };
 
-  const handleStop = (event: TouchEvent) => {
+  const handleStop = () => {
     setState(ToggleState.CENTER);
   };
 
