@@ -21,13 +21,14 @@ const Grid = styled('div', {
   right: 0,
   bottom: 0,
   display: 'grid',
-  gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr) minmax(0, 1fr)',
+  gridTemplateColumns:
+    'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 6fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
   gridTemplateRows: 'repeat(4, minmax(0, 1fr))',
   gridTemplateAreas: `
-    '. . . . x'
-    'm m . c j'
-    'm m . u u'
-    'm m i u u'
+    '. . . . . . x'
+    '. . . . . . .'
+    'm m . . u u j'
+    'm m . . u u c'
   `,
 });
 

@@ -61,7 +61,7 @@ const Joystick = () => {
     setAngle(degrees);
   };
 
-  const handleStop = () => {
+  const handleStop = (event: TouchEvent) => {
     setArrowVisible(false);
   };
 

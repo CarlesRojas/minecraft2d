@@ -23,7 +23,6 @@ const Area = styled('div', {
 
 const Container = styled('div', {
   position: 'relative',
-  marginTop: '50%',
   width: '80%',
   aspectRatio: '2',
   pointerEvents: 'none',
@@ -110,7 +109,7 @@ const Toggle = () => {
     setState(direction < 0 ? ToggleState.LEFT : ToggleState.RIGHT);
   };
 
-  const handleStop = () => {
+  const handleStop = (event: TouchEvent) => {
     setState(ToggleState.CENTER);
   };
 

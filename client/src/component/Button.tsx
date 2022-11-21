@@ -3,7 +3,7 @@ import buttonArrow from '@asset/texture/gui/touch/buttonArrow.png';
 import buttonCancel from '@asset/texture/gui/touch/buttonCancel.png';
 import buttonShadow from '@asset/texture/gui/touch/buttonShadow.png';
 import { styled } from '@style/stitches.config';
-import { useState } from 'react';
+import { TouchEvent, useState } from 'react';
 
 export enum ButtonAction {
   JUMP = 'jump',
@@ -91,11 +91,11 @@ const Button = ({ action }: ButtonProps) => {
   //   HANDLERS
   // #################################################
 
-  const handleStart = () => {
+  const handleStart = (event: TouchEvent) => {
     setPressed(true);
   };
 
-  const handleStop = () => {
+  const handleStop = (event: TouchEvent) => {
     setPressed(false);
   };
 
