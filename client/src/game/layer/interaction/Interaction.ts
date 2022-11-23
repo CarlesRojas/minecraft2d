@@ -116,10 +116,10 @@ export default class Interaction implements Mono {
     this._keyPressed[MouseButton.LEFT] = true;
   }
 
-  #handleJoystickUp() {
+  #handleJoystickUp({ canceled }: { canceled: boolean }) {
     this._movingJoystick = false;
     this._keyPressed[MouseButton.LEFT] = false;
-    this._keyPressed[MouseButton.RIGHT] = true;
+    this._keyPressed[MouseButton.RIGHT] = !canceled;
   }
 
   #handleJoystickState() {

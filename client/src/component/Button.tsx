@@ -22,6 +22,14 @@ const Area = styled('button', {
   justifyContent: 'center',
   alignItems: 'center',
   opacity: 0.8,
+
+  variants: {
+    hidden: {
+      true: {
+        display: 'none',
+      },
+    },
+  },
 });
 
 const Image = styled('img', {
@@ -88,9 +96,10 @@ interface ButtonProps {
 }
 
 const Button = ({ action }: ButtonProps) => {
-  const { emit } = useEvents();
+  const { emit, sub, unsub } = useEvents();
 
   const [pressed, setPressed] = useState(false);
+  const [visible, setVisible] = useState(action !== ButtonAction.CANCEL);
 
   // #################################################
   //   HANDLERS
@@ -114,11 +123,45 @@ const Button = ({ action }: ButtonProps) => {
   }, [pressed]);
 
   // #################################################
+  //   CANCEL BUTTON
+  // #################################################
+
+  const handleJoystickDown = () => {
+    if (action === ButtonAction.CANCEL) setVisible(true);
+  };
+
+  const handleJoystickUp = () => {
+    if (action === ButtonAction.CANCEL) setVisible(false);
+  };
+
+  const handleJoystickInsideArea = (insideArea) => {
+    if (action === ButtonAction.CANCEL) setPressed(insideArea);
+  };
+
+  useEffect(() => {
+    sub(Event.ON_JOYSTICK_DOWN, handleJoystickDown);
+    sub(Event.ON_JOYSTICK_UP, handleJoystickUp);
+    sub(Event.ON_JOYSTICK_INSIDE_AREA, handleJoystickInsideArea);
+
+    return () => {
+      unsub(Event.ON_JOYSTICK_DOWN, handleJoystickDown);
+      unsub(Event.ON_JOYSTICK_UP, handleJoystickUp);
+      sub(Event.ON_JOYSTICK_INSIDE_AREA, handleJoystickInsideArea);
+    };
+  }, []);
+
+  // #################################################
   //   RENDER
   // #################################################
 
   return (
-    <Area onTouchStart={handleStart} onTouchEnd={handleStop} onTouchCancel={handleStop}>
+    <Area
+      hidden={!visible}
+      onTouchStart={handleStart}
+      onTouchEnd={handleStop}
+      onTouchCancel={handleStop}
+      id={`touchControl_${action}`}
+    >
       <ShadowImage src={buttonShadow} alt="button shadow" />
       <Image pressed={pressed} src={button} alt="button" />
       <ButtonTypeImage

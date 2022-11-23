@@ -1,6 +1,8 @@
 import joystickArrow from '@asset/texture/gui/touch/joystickArrow.png';
 import joystickCircle from '@asset/texture/gui/touch/joystickCircle.png';
+import { ButtonAction } from '@component/Button';
 import Vector2 from '@game/util/Vector2';
+import useInsideArea from '@hook/useInsideArea';
 import { styled } from '@style/stitches.config';
 import { Event, useEvents } from '@util/Events';
 import { TouchEvent, useEffect, useRef, useState } from 'react';
@@ -41,7 +43,9 @@ const Joystick = () => {
   const [angle, setAngle] = useState(0);
   const direction = useRef<Vector2 | null>(new Vector2(0, 0));
   const areaRef = useRef<HTMLDivElement>(null);
+  const lastMouseCoords = useRef(new Vector2(0, 0));
   const touchID = useRef(0);
+  const isInsideCancelButton = useInsideArea(`touchControl_${ButtonAction.CANCEL}`);
 
   // #################################################
   //   HANDLERS
@@ -51,6 +55,7 @@ const Joystick = () => {
     touchID.current = event.changedTouches[0].identifier;
     setArrowVisible(true);
     handleMove(event);
+    emit(Event.ON_JOYSTICK_DOWN);
   };
 
   const handleMove = (event: TouchEvent) => {
@@ -69,15 +74,19 @@ const Joystick = () => {
     var angle = Math.atan2(newDirection.y, newDirection.x);
     var degrees = (180 * angle) / Math.PI + 90;
 
+    lastMouseCoords.current = new Vector2(touch.clientX, touch.clientY);
+    const insideArea = isInsideCancelButton(lastMouseCoords.current);
+    emit(Event.ON_JOYSTICK_INSIDE_AREA, insideArea);
+
     setAngle(degrees);
   };
 
   const handleStop = () => {
     direction.current = null;
-
-    // TODO send event only if the up is not inside de cancel button
-    emit(Event.ON_JOYSTICK_UP);
     setArrowVisible(false);
+
+    const insideArea = isInsideCancelButton(lastMouseCoords.current);
+    emit(Event.ON_JOYSTICK_UP, { canceled: insideArea });
   };
 
   // #################################################

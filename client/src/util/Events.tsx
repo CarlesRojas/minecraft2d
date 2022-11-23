@@ -9,8 +9,11 @@ enum Event {
   ON_KEY_UP = 'onKeyUp',
   ON_MOUSE_DOWN = 'onMouseDown',
   ON_MOUSE_UP = 'onMouseUp',
+
+  ON_JOYSTICK_DOWN = 'onJoystickDown',
   ON_JOYSTICK_MOVE = 'onJoystickMove',
   ON_JOYSTICK_UP = 'onJoystickUp',
+  ON_JOYSTICK_INSIDE_AREA = 'onJoystickStayDown',
 
   ON_GROUND_LOADED = 'onGroundLoaded',
 }
