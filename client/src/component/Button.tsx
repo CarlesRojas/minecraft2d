@@ -134,7 +134,7 @@ const Button = ({ action }: ButtonProps) => {
     if (action === ButtonAction.CANCEL) setVisible(false);
   };
 
-  const handleJoystickInsideArea = (insideArea) => {
+  const handleJoystickInsideArea = (insideArea: boolean) => {
     if (action === ButtonAction.CANCEL) setPressed(insideArea);
   };
 
