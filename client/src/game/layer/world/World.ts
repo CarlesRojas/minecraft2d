@@ -1,20 +1,15 @@
 import { SAFTY_TILES } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@game/interface/Mono';
+import { Area, RenderArea } from '@game/interface/RenderArea';
 import Background from '@game/layer/world/Background';
 import Ground from '@game/layer/world/Ground';
 import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
 interface Layers {
-  ground: Ground;
-  background: Background;
-}
-
-// TODO refactor this into an interface
-export interface RenderArea {
-  start: Vector2;
-  end: Vector2;
+  ground: Mono & RenderArea;
+  background: Mono & RenderArea;
 }
 
 interface WorldProps {
@@ -25,8 +20,8 @@ export default class World implements Mono {
   private _global: Global;
   private _container: PIXI.Container;
   private _layers: Layers;
-  private _renderArea: RenderArea;
-  private _lastRenderArea: RenderArea | null;
+  private _renderArea: Area;
+  private _lastRenderArea: Area | null;
 
   constructor({ global }: WorldProps) {
     this._global = global;

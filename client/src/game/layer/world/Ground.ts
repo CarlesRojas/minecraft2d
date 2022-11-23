@@ -1,8 +1,8 @@
 import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@game/interface/Mono';
+import { Area, RenderArea } from '@game/interface/RenderArea';
 import { CoordsMap, TileMap } from '@game/interface/TileMap';
 import Tile from '@game/layer/world/Tile';
-import { RenderArea } from '@game/layer/world/World';
 import { getTileTypeInCoords } from '@game/system/Terrain';
 import { TileType } from '@game/system/Textures';
 import Vector2 from '@game/util/Vector2';
@@ -12,7 +12,7 @@ interface GroundProps {
   global: Global;
 }
 
-export default class Ground implements Mono, TileMap<Tile> {
+export default class Ground implements Mono, TileMap<Tile>, RenderArea {
   private _global: Global;
   private _container: PIXI.Container;
   tilemap: CoordsMap<Tile>;
@@ -81,7 +81,7 @@ export default class Ground implements Mono, TileMap<Tile> {
     });
   }
 
-  updateRenderArea(renderArea: RenderArea) {
+  updateRenderArea(renderArea: Area) {
     const { start, end } = renderArea;
     const { x: startX, y: startY } = start;
     const { x: endX, y: endY } = end;

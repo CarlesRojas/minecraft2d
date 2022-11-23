@@ -90,9 +90,9 @@ const TouchUI = () => {
           <Joystick />
         </UseArea>
 
-        <CrouchArea>
+        {/* <CrouchArea>
           <Button action={ButtonAction.CROUCH} />
-        </CrouchArea>
+        </CrouchArea> */}
 
         <JumpArea>
           <Button action={ButtonAction.JUMP} />
