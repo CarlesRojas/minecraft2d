@@ -87,7 +87,7 @@ export default class Tile implements Mono, Interactible {
 
     if (this._highlightSprite) {
       this._highlightSprite.position.set(this._coords.x * tile, this._coords.y * tile);
-      const highlightWidth = tile + roundToNearestEven(tile * 0.04);
+      const highlightWidth = tile + roundToNearestEven(tile * 0.1);
       this._highlightSprite.width = highlightWidth;
       this._highlightSprite.height = highlightWidth;
     }
@@ -237,7 +237,7 @@ export default class Tile implements Mono, Interactible {
 
     this._highlightSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     this._highlightSprite.zIndex = 1;
-    this._highlightSprite.tint = 0xffffff;
+    this._highlightSprite.tint = 0xeeeeee;
     this._highlightSprite.alpha = 0.9;
     this._highlightSprite.anchor.set(0.5);
     this._highlightSprite.visible = false;
