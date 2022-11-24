@@ -2,14 +2,16 @@ import { SAFTY_TILES } from '@game/constant/constants';
 import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@game/interface/Mono';
 import { Area, RenderArea } from '@game/interface/RenderArea';
+import { TileMap } from '@game/interface/TileMap';
 import Background from '@game/layer/world/Background';
 import Ground from '@game/layer/world/Ground';
+import Tile from '@game/layer/world/Tile';
 import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
 interface Layers {
-  ground: Mono & RenderArea;
-  background: Mono & RenderArea;
+  ground: Mono & RenderArea & TileMap<Tile>;
+  background: Mono & RenderArea & TileMap<Tile>;
 }
 
 interface WorldProps {

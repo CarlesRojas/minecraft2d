@@ -86,11 +86,11 @@ const textures = {
     {
       name: 'entities',
       assets: [
-        { name: EntityType.STEVE, srcs: AlexImage },
-        { name: EntityType.ALEX, srcs: MarioImage },
-        { name: EntityType.MARIO, srcs: PartsImage },
+        { name: EntityType.STEVE, srcs: SteveImage },
+        { name: EntityType.ALEX, srcs: AlexImage },
         { name: EntityType.PINYA, srcs: PinyaImage },
-        { name: EntityType.PARTS, srcs: SteveImage },
+        { name: EntityType.MARIO, srcs: MarioImage },
+        { name: EntityType.PARTS, srcs: PartsImage },
       ],
     },
   ],

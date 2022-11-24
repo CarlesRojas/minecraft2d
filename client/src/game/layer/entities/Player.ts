@@ -67,7 +67,7 @@ export default class Player implements Mono, Interactible {
       global,
       container: this._spriteContainer,
       pixel: PlayerJson.info.heightInTiles * (1 / PlayerJson.info.heightInPixels), // Total number of height pixels
-      texture: EntityType.PINYA,
+      texture: EntityType.STEVE,
       info: PlayerJson as Entity,
     });
     this._container.addChild(this._spriteContainer);
