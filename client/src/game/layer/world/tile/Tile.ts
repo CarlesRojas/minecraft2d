@@ -160,25 +160,28 @@ export default class Tile implements Mono, Interactible {
     };
 
     const handleBreak = this.#destroyObject.bind(this);
-    this._type = type;
 
     this.#destroyObject();
-    this.#setLayers(type);
 
     if (type === TileType.DIRT || type === TileType.GRASS) this.object = new Dirt(props, handleBreak);
     else this.object = new TileObject(props, handleBreak);
+
+    this._type = type;
+    this.#setLayers();
   }
 
   #destroyObject() {
     this.object?.destructor();
     this.object = null;
+    this._type = TileType.NONE;
+    this.#setLayers();
   }
 
-  #setLayers(type: TileType) {
+  #setLayers() {
     this.interactionLayer = this._isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
     this.collisionLayer = this._isBackground ? CollisionLayer.NONE : CollisionLayer.GROUND;
 
-    if (type === TileType.NONE) {
+    if (this._type === TileType.NONE) {
       this.interactionLayer = InteractionLayer.NONE;
       this.collisionLayer = CollisionLayer.NONE;
     }
