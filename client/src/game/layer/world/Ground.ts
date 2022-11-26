@@ -72,6 +72,7 @@ export default class Ground implements Mono, TileMap<Tile>, RenderArea {
     const { groundType, isCave } = await getTileTypeInCoords(coords);
 
     this.tilemap[key] = new Tile({
+      global: this._global,
       coords: new Vector2(coords.x, coords.y),
       container: this._container,
       dimensions: this._global.dimensions,

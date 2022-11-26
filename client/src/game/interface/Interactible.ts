@@ -26,6 +26,7 @@ export interface Interactible {
   stopInteracting(): void;
 
   interactSecondary(): void;
+  isInteractable(): boolean;
 
   shouldCollide(): boolean;
 

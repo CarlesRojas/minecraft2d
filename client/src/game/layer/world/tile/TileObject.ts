@@ -123,6 +123,10 @@ export default class TileObject implements Mono, Interactible {
 
   interactSecondary() {}
 
+  isInteractable() {
+    return false;
+  }
+
   shouldCollide() {
     return true;
   }

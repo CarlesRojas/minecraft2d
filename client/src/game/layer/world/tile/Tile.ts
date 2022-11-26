@@ -1,6 +1,7 @@
-import { Dimensions } from '@game/Controller';
+import { Dimensions, Global } from '@game/Controller';
 import { CollisionLayer, Interactible, InteractionLayer } from '@game/interface/Interactible';
 import { Mono } from '@game/interface/Mono';
+import { isCollidingWithLayers } from '@game/system/Collision';
 import { TileType } from '@game/system/Textures';
 import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
@@ -8,6 +9,7 @@ import Dirt from './Dirt';
 import TileObject from './TileObject';
 
 export interface TileProps {
+  global: Global;
   coords: Vector2;
   container: PIXI.Container;
   dimensions: Dimensions;
@@ -17,11 +19,13 @@ export interface TileProps {
 
 export default class Tile implements Mono, Interactible {
   // GLOBAL
+  private _global: Global;
   private _container: PIXI.Container;
   private _dimensions: Dimensions;
 
   // PROPERTIES
   private _coords: Vector2;
+  private _type: TileType;
   private _isBackground: boolean;
   private object: (Mono & Interactible) | null = null;
   interactionLayer: InteractionLayer = InteractionLayer.NONE;
@@ -31,11 +35,13 @@ export default class Tile implements Mono, Interactible {
   private _debug = false;
   private _text: PIXI.Text | null = null;
 
-  constructor({ coords, container, dimensions, type, isBackground }: TileProps) {
+  constructor({ global, coords, container, dimensions, type, isBackground }: TileProps) {
+    this._global = global;
     this._coords = coords;
     this._container = container;
     this._dimensions = dimensions;
     this._isBackground = isBackground;
+    this._type = type;
     this.interactionLayer = isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
     this.collisionLayer = isBackground ? CollisionLayer.NONE : CollisionLayer.GROUND;
 
@@ -96,12 +102,23 @@ export default class Tile implements Mono, Interactible {
   }
 
   interactSecondary() {
-    // TODO place object in this tile if empty and it is not coliding with any entity
-    // const collision = isCollidingWithLayers(this.bounds, [CollisionLayer.PLAYER, CollisionLayer.ENTITY], this._global);
-    // if (!!collision) return;
+    if (this.isInteractable()) this.object?.interactSecondary();
+    else if (!this.occupied) {
+      const collision = isCollidingWithLayers(
+        this.bounds,
+        [CollisionLayer.PLAYER, CollisionLayer.ENTITY],
+        this._global
+      );
 
-    // this.setTile(TileType.DIRT, false);
+      // TODO Use object in the player's hand instead of dirt
+      if (!collision) this.#instantiateObject(TileType.DIRT);
+    }
+
     this.object?.interactSecondary();
+  }
+
+  isInteractable() {
+    return this.object?.isInteractable() ?? false;
   }
 
   shouldCollide() {
@@ -116,6 +133,14 @@ export default class Tile implements Mono, Interactible {
   //   GETTERS
   // #################################################
 
+  get occupied() {
+    return this._type !== TileType.NONE;
+  }
+
+  get type() {
+    return this._type;
+  }
+
   get coords() {
     return this._coords;
   }
@@ -126,13 +151,16 @@ export default class Tile implements Mono, Interactible {
 
   #instantiateObject(type: TileType) {
     const props: TileProps = {
+      global: this._global,
       coords: this._coords,
       container: this._container,
       dimensions: this._dimensions,
       isBackground: this._isBackground,
       type,
     };
+
     const handleBreak = this.#destroyObject.bind(this);
+    this._type = type;
 
     this.#destroyObject();
     this.#setLayers(type);

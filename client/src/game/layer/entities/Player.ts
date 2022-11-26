@@ -270,13 +270,27 @@ export default class Player implements Mono, Interactible {
     if (interactSecondaryButtonClicked && collision) {
       const { blockSide, coords } = collision;
 
-      if (blockSide === BlockSide.LEFT) coords.x -= 1;
-      else if (blockSide === BlockSide.RIGHT) coords.x += 1;
-      else if (blockSide === BlockSide.TOP) coords.y -= 1;
-      else if (blockSide === BlockSide.BOTTOM) coords.y += 1;
+      const direction = new Vector2(0, 0);
+      if (blockSide === BlockSide.LEFT) direction.x = -1;
+      else if (blockSide === BlockSide.RIGHT) direction.x = 1;
+      else if (blockSide === BlockSide.TOP) direction.y = -1;
+      else if (blockSide === BlockSide.BOTTOM) direction.y = 1;
       else return;
 
-      this._global.controller.world.ground.elementAtCoords(coords)?.interactSecondary();
+      let currCoords = coords;
+
+      for (let i = 0; i < 3; i++) {
+        const tile = this._global.controller.world.ground.elementAtCoords(currCoords);
+        const isInteractable = tile?.isInteractable() ?? false;
+        const isOccupied = tile?.occupied ?? false;
+
+        if (isInteractable || !isOccupied) {
+          tile?.interactSecondary();
+          break;
+        }
+
+        currCoords = Vector2.add(currCoords, direction);
+      }
     }
   }
 
@@ -293,10 +307,19 @@ export default class Player implements Mono, Interactible {
   // #################################################
 
   highlight() {}
+
   stopHighlighting() {}
+
   interact() {}
+
   stopInteracting() {}
+
   interactSecondary() {}
+
+  isInteractable() {
+    return false;
+  }
+
   shouldCollide() {
     return true;
   }
