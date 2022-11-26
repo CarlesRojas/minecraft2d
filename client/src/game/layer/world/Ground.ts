@@ -77,7 +77,6 @@ export default class Ground implements Mono, TileMap<Tile>, RenderArea {
       dimensions: this._global.dimensions,
       type: isCave ? TileType.NONE : groundType,
       isBackground: false,
-      global: this._global,
     });
   }
 

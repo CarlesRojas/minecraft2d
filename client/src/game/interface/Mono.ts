@@ -1,7 +1,6 @@
 import { Dimensions } from '@game/Controller';
 
 export interface Mono {
-  constructor: Function;
   destructor(): void;
   handleResize(dimensions: Dimensions): void;
   gameLoop(deltaInSeconds: number): void;

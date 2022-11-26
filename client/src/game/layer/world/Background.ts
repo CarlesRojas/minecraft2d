@@ -60,7 +60,6 @@ export default class Background implements Mono, TileMap<Tile>, RenderArea {
       dimensions: this._global.dimensions,
       type: backgroundType,
       isBackground: true,
-      global: this._global,
     });
   }
 
