@@ -22,6 +22,8 @@ export interface Collision {
   correction: Vector2;
 }
 
+const EXTRA_CORRECTION = 0.001;
+
 export const getMovementAfterCollisions = (movement: EntityMovement) => {
   const movementAfterVertical = applyVerticalMovement(movement);
   const movementAfterHorizontal = applyHorizontalMovement(movementAfterVertical);
@@ -33,7 +35,7 @@ export const getMovementAfterCollisions = (movement: EntityMovement) => {
 const checkIfGrounded = (movement: EntityMovement) => {
   const { position, sizeInTiles, layers, global } = movement;
 
-  const deltaPosition = new Vector2(0, 0.1);
+  const deltaPosition = new Vector2(0, 0.01);
   const newBounds: Bounds = {
     x: position.x + deltaPosition.x - sizeInTiles.x / 2,
     y: position.y + deltaPosition.y - sizeInTiles.y / 2,
@@ -45,7 +47,7 @@ const checkIfGrounded = (movement: EntityMovement) => {
 
   const newMovement: EntityMovement = {
     ...movement,
-    velocity: new Vector2(movement.velocity.x, isGrounded ? 0 : movement.velocity.y),
+    velocity: movement.velocity,
     isGrounded,
   };
 
@@ -180,15 +182,15 @@ export const areBoundsColliding = (bounds1: Bounds, bounds2: Bounds) => {
   const horizontal = entity1.x - entity2.x;
   const vertical = entity1.y - entity2.y;
 
-  const left = horizontal > 0;
-  const right = horizontal < 0;
-  const top = vertical > 0;
-  const bottom = vertical < 0;
+  const left = horizontal < 0;
+  const right = horizontal > 0;
+  const top = vertical < 0;
+  const bottom = vertical > 0;
 
-  const leftCorrection = entity2.x + 0.5 + entity1.halfWidth;
-  const rightCorrection = entity2.x - 0.5 - entity1.halfWidth;
-  const topCorrection = entity2.y + 0.5 + entity1.halfHeight;
-  const bottomCorrection = entity2.y - 0.5 - entity1.halfHeight;
+  const leftCorrection = entity2.x - entity2.halfWidth - entity1.halfWidth - EXTRA_CORRECTION;
+  const rightCorrection = entity2.x + entity2.halfWidth + entity1.halfWidth + EXTRA_CORRECTION;
+  const topCorrection = entity2.y - entity2.halfWidth - entity1.halfHeight - EXTRA_CORRECTION;
+  const bottomCorrection = entity2.y + entity2.halfWidth + entity1.halfHeight + EXTRA_CORRECTION;
 
   return {
     left,
