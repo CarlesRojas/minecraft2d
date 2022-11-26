@@ -2,7 +2,7 @@ import { Dimensions, Global } from '@game/Controller';
 import { Mono } from '@game/interface/Mono';
 import { Area, RenderArea } from '@game/interface/RenderArea';
 import { CoordsMap, TileMap } from '@game/interface/TileMap';
-import Tile from '@game/layer/world/Tile';
+import Tile from '@game/layer/world/tile/Tile';
 import { getTileTypeInCoords } from '@game/system/Terrain';
 import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';

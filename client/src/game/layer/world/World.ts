@@ -5,7 +5,7 @@ import { Area, RenderArea } from '@game/interface/RenderArea';
 import { TileMap } from '@game/interface/TileMap';
 import Background from '@game/layer/world/Background';
 import Ground from '@game/layer/world/Ground';
-import Tile from '@game/layer/world/Tile';
+import Tile from '@game/layer/world/tile/Tile';
 import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
