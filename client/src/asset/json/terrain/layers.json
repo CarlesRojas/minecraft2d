@@ -1,0 +1,107 @@
+{
+  "dirt": {
+    "baseHeight": 0,
+    "waves": [
+      {
+        "frequency": 0.005,
+        "amplitude": 100,
+        "offset": 0
+      },
+      {
+        "frequency": 0.05,
+        "amplitude": 5,
+        "offset": 0
+      }
+    ]
+  },
+  "stone": {
+    "baseHeight": 5,
+    "waves": [
+      {
+        "frequency": 0.005,
+        "amplitude": 100,
+        "offset": 0
+      },
+      {
+        "frequency": 0.05,
+        "amplitude": 5,
+        "offset": 100
+      }
+    ]
+  },
+  "deepslate": {
+    "baseHeight": 30,
+    "waves": [
+      {
+        "frequency": 0.05,
+        "amplitude": 100,
+        "offset": 0
+      },
+      {
+        "frequency": 0.1,
+        "amplitude": 5,
+        "offset": 0
+      }
+    ]
+  },
+  "netherock": {
+    "baseHeight": 50,
+    "waves": [
+      {
+        "frequency": 0.05,
+        "amplitude": 100,
+        "offset": 0
+      },
+      {
+        "frequency": 0.1,
+        "amplitude": 5,
+        "offset": 0
+      }
+    ]
+  },
+  "nether": {
+    "baseHeight": 55,
+    "waves": [
+      {
+        "frequency": 0.05,
+        "amplitude": 100,
+        "offset": 0
+      },
+      {
+        "frequency": 0.1,
+        "amplitude": 5,
+        "offset": 0
+      }
+    ]
+  },
+  "bedrock": {
+    "baseHeight": 75,
+    "waves": [
+      {
+        "frequency": 0.05,
+        "amplitude": 100,
+        "offset": 0
+      },
+      {
+        "frequency": 0.1,
+        "amplitude": 5,
+        "offset": 0
+      }
+    ]
+  },
+  "end": {
+    "baseHeight": 80,
+    "waves": [
+      {
+        "frequency": 0.05,
+        "amplitude": 100,
+        "offset": 0
+      },
+      {
+        "frequency": 0.1,
+        "amplitude": 5,
+        "offset": 0
+      }
+    ]
+  }
+}

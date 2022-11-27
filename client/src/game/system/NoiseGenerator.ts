@@ -2,48 +2,45 @@ import Vector2 from '@game/util/Vector2';
 import P5 from 'p5';
 
 export interface Wave {
-  speed: number;
-  frequency: number;
-  amplitude: number;
+  frequency: number; // How many waves per unit of length
+  amplitude: number; // How high the wave is in tiles
+  offset: number; // How far the wave is shifted in tiles
 }
 
 interface NoiseProps {
   seed: number;
-  waves: Wave[];
-  offset: Vector2;
-  scale: number;
 }
 
 export class NoiseGenerator {
-  private _seed: number;
-  private _waves: Wave[];
-  private _offset: Vector2;
-  private _scale: number;
   private _p5Instance: P5;
 
-  constructor({ seed, waves, offset, scale }: NoiseProps) {
-    this._seed = seed;
-    this._waves = waves;
-    this._offset = offset;
-    this._scale = scale;
-
+  constructor({ seed }: NoiseProps) {
     this._p5Instance = new P5(() => {});
     this._p5Instance.noiseSeed(seed);
   }
 
-  public getNoiseAtCoords(coords: Vector2): number {
-    const { x, y } = coords;
-
-    const samplePos = new Vector2(x * this._scale + this._offset.x, y * this._scale + this._offset.y);
-
-    let normalization = 0;
+  public getNoiseAtPoint(x: number, waves: Wave[], round = true): number {
     let noise = 0;
 
-    for (const wave of this._waves) {
-      noise += this._p5Instance.noise(samplePos.x * wave.frequency, samplePos.y * wave.frequency) * wave.amplitude;
-      normalization += wave.amplitude;
+    for (const wave of waves) {
+      const samplePos = x + wave.offset;
+      noise += (this._p5Instance.noise(samplePos * wave.frequency) - 0.5) * wave.amplitude;
     }
 
-    return noise / normalization;
+    return round ? Math.round(noise) : noise;
+  }
+
+  public getNoiseAtCoords(coords: Vector2, waves: Wave[], round = true): number {
+    const { x, y } = coords;
+    let noise = 0;
+
+    for (const wave of waves) {
+      const samplePos = new Vector2(x + wave.offset, y + wave.offset);
+
+      noise +=
+        (this._p5Instance.noise(samplePos.x * wave.frequency, samplePos.y * wave.frequency) - 0.5) * wave.amplitude;
+    }
+
+    return round ? Math.round(noise) : noise;
   }
 }
