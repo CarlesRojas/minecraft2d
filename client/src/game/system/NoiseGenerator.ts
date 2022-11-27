@@ -11,6 +11,23 @@ interface NoiseProps {
   seed: number;
 }
 
+interface NoiseOptions {
+  round?: boolean;
+  decimals?: number;
+  aroundZero?: boolean;
+}
+
+const defaultOptions = {
+  round: true,
+  decimals: 0,
+  aroundZero: true,
+};
+
+const roundToDecimals = (num: number, decimals: number) => {
+  const factor = Math.pow(10, decimals);
+  return Math.round(num * factor) / factor;
+};
+
 const DISPLACEMENT = 100000;
 
 export class NoiseGenerator {
@@ -21,18 +38,26 @@ export class NoiseGenerator {
     this._p5Instance.noiseSeed(seed);
   }
 
-  public getNoiseAtPoint(x: number, waves: Wave[], round = true): number {
+  public getNoiseAtPoint(x: number, waves: Wave[], options?: NoiseOptions): number {
+    const round = options?.round ?? defaultOptions.round;
+    const aroundZero = options?.aroundZero ?? defaultOptions.aroundZero;
+    const decimals = options?.decimals ?? defaultOptions.decimals;
+
     let noise = 0;
 
     for (const wave of waves) {
       const samplePos = x + wave.offset + DISPLACEMENT;
-      noise += (this._p5Instance.noise(samplePos * wave.frequency) - 0.5) * wave.amplitude;
+      noise += (this._p5Instance.noise(samplePos * wave.frequency) - (aroundZero ? 0.5 : 0)) * wave.amplitude;
     }
 
-    return round ? Math.round(noise) : noise;
+    return round ? roundToDecimals(noise, decimals) : noise;
   }
 
-  public getNoiseAtCoords(coords: Vector2, waves: Wave[], round = true): number {
+  public getNoiseAtCoords(coords: Vector2, waves: Wave[], options?: NoiseOptions): number {
+    const round = options?.round ?? defaultOptions.round;
+    const aroundZero = options?.aroundZero ?? defaultOptions.aroundZero;
+    const decimals = options?.decimals ?? defaultOptions.decimals;
+
     const { x, y } = coords;
     let noise = 0;
 
@@ -40,9 +65,10 @@ export class NoiseGenerator {
       const samplePos = new Vector2(x + wave.offset + DISPLACEMENT, y + wave.offset + DISPLACEMENT);
 
       noise +=
-        (this._p5Instance.noise(samplePos.x * wave.frequency, samplePos.y * wave.frequency) - 0.5) * wave.amplitude;
+        (this._p5Instance.noise(samplePos.x * wave.frequency, samplePos.y * wave.frequency) - (aroundZero ? 0.5 : 0)) *
+        wave.amplitude;
     }
 
-    return round ? Math.round(noise) : noise;
+    return round ? roundToDecimals(noise, decimals) : noise;
   }
 }

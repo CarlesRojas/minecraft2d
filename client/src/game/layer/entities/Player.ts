@@ -49,7 +49,7 @@ export default class Player implements Mono, Interactible {
   interactedInteractible: Interactible | null = null;
 
   // DEBUG
-  private _debug = true;
+  private _debug = false;
   private _debugMovementSpeed = 30;
   collisionPoint: PIXI.Sprite | null = null;
 

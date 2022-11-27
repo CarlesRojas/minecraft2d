@@ -58,7 +58,7 @@ export default class Background implements Mono, TileMap<Tile>, RenderArea {
   // #################################################
 
   async #instantiateTile(key: string, coords: Vector2) {
-    const tileType = this._terrainGenerator.getGroundTileAtCoords(coords);
+    const tileType = this._terrainGenerator.getBackgroundTileAtCoords(coords);
 
     this.tilemap[key] = new Tile({
       global: this._global,
