@@ -22,7 +22,8 @@ export interface Collision {
   correction: Vector2;
 }
 
-const EXTRA_CORRECTION = 0.001;
+const EXTRA_CORRECTION = 0.001; // In tiles
+const COLLISION_STEP = 0.01; // In tiles
 
 export const getMovementAfterCollisions = (movement: EntityMovement) => {
   const movementAfterVertical = applyVerticalMovement(movement);
@@ -35,7 +36,7 @@ export const getMovementAfterCollisions = (movement: EntityMovement) => {
 const checkIfGrounded = (movement: EntityMovement) => {
   const { position, sizeInTiles, layers, global } = movement;
 
-  const deltaPosition = new Vector2(0, 0.01);
+  const deltaPosition = new Vector2(0, COLLISION_STEP);
   const newBounds: Bounds = {
     x: position.x + deltaPosition.x - sizeInTiles.x / 2,
     y: position.y + deltaPosition.y - sizeInTiles.y / 2,
@@ -58,21 +59,36 @@ const applyVerticalMovement = (movement: EntityMovement) => {
   const { velocity, position, deltaInSeconds, sizeInTiles, layers, global } = movement;
   if (velocity.y === 0) return movement;
 
-  const deltaPosition = new Vector2(0, velocity.y * deltaInSeconds);
-  const newBounds: Bounds = {
-    x: position.x + deltaPosition.x - sizeInTiles.x / 2,
-    y: position.y + deltaPosition.y - sizeInTiles.y / 2,
-    width: sizeInTiles.x,
-    height: sizeInTiles.y,
-  };
-  const collision = isCollidingWithLayers(newBounds, layers, global);
+  const sign = velocity.y > 0 ? 1 : -1;
+  const totalDeltaYPosition = Math.abs(velocity.y * deltaInSeconds);
+
+  for (let deltaYPosition = COLLISION_STEP; deltaYPosition <= totalDeltaYPosition; deltaYPosition += COLLISION_STEP) {
+    if (deltaYPosition > totalDeltaYPosition) deltaYPosition = totalDeltaYPosition;
+
+    const newBounds: Bounds = {
+      x: position.x - sizeInTiles.x / 2,
+      y: position.y + deltaYPosition * sign - sizeInTiles.y / 2,
+      width: sizeInTiles.x,
+      height: sizeInTiles.y,
+    };
+    const collision = isCollidingWithLayers(newBounds, layers, global);
+
+    if (!!collision) {
+      const newMovement: EntityMovement = {
+        ...movement,
+        position: new Vector2(position.x, collision.correction.y),
+        velocity: new Vector2(velocity.x, 0),
+      };
+
+      return newMovement;
+    }
+
+    if (deltaYPosition >= totalDeltaYPosition) break;
+  }
 
   const newMovement: EntityMovement = {
     ...movement,
-    position: !!collision
-      ? new Vector2(position.x, collision.correction.y)
-      : new Vector2(position.x, position.y + velocity.y * deltaInSeconds),
-    velocity: !!collision ? new Vector2(velocity.x, 0) : velocity,
+    position: new Vector2(position.x, position.y + velocity.y * deltaInSeconds),
   };
 
   return newMovement;
@@ -82,21 +98,36 @@ const applyHorizontalMovement = (movement: EntityMovement) => {
   const { velocity, position, deltaInSeconds, sizeInTiles, layers, global } = movement;
   if (velocity.x === 0) return movement;
 
-  const deltaPosition = new Vector2(velocity.x * deltaInSeconds, 0);
-  const newBounds: Bounds = {
-    x: position.x + deltaPosition.x - sizeInTiles.x / 2,
-    y: position.y + deltaPosition.y - sizeInTiles.y / 2,
-    width: sizeInTiles.x,
-    height: sizeInTiles.y,
-  };
-  const collision = isCollidingWithLayers(newBounds, layers, global);
+  const sign = velocity.x > 0 ? 1 : -1;
+  const totalDeltaXPosition = Math.abs(velocity.x * deltaInSeconds);
+
+  for (let deltaXPosition = COLLISION_STEP; deltaXPosition <= totalDeltaXPosition; deltaXPosition += COLLISION_STEP) {
+    if (deltaXPosition > totalDeltaXPosition) deltaXPosition = totalDeltaXPosition;
+
+    const newBounds: Bounds = {
+      x: position.x + deltaXPosition * sign - sizeInTiles.x / 2,
+      y: position.y - sizeInTiles.y / 2,
+      width: sizeInTiles.x,
+      height: sizeInTiles.y,
+    };
+    const collision = isCollidingWithLayers(newBounds, layers, global);
+
+    if (!!collision) {
+      const newMovement: EntityMovement = {
+        ...movement,
+        position: new Vector2(collision.correction.x, position.y),
+        velocity: new Vector2(0, velocity.y),
+      };
+
+      return newMovement;
+    }
+
+    if (deltaXPosition >= totalDeltaXPosition) break;
+  }
 
   const newMovement: EntityMovement = {
     ...movement,
-    position: !!collision
-      ? new Vector2(collision.correction.x, position.y)
-      : new Vector2(position.x + velocity.x * deltaInSeconds, position.y),
-    velocity: !!collision ? new Vector2(0, velocity.y) : velocity,
+    position: new Vector2(position.x + velocity.x * deltaInSeconds, position.y),
   };
 
   return newMovement;
