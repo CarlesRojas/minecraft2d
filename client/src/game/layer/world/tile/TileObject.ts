@@ -1,4 +1,4 @@
-import { Dimensions } from '@game/Controller';
+import { Dimensions, Global } from '@game/Controller';
 import { CollisionLayer, Interactible, InteractionLayer } from '@game/interface/Interactible';
 import { Mono } from '@game/interface/Mono';
 import { getTileTexture, TileType } from '@game/system/Textures';
@@ -12,6 +12,7 @@ const BACKGROUND_TINT = 0x999999;
 
 export default class TileObject implements Mono, Interactible {
   // GLOBAL
+  protected _global: Global;
   protected _container: PIXI.Container;
   protected _dimensions: Dimensions;
   protected _handleBreak: () => void;
@@ -35,7 +36,8 @@ export default class TileObject implements Mono, Interactible {
   protected _breakingTime = 1; // In seconds
   protected _currentBreakingTime = 0;
 
-  constructor({ coords, container, dimensions, type, isBackground }: TileProps, handleBreak: () => void) {
+  constructor({ global, coords, container, dimensions, type, isBackground }: TileProps, handleBreak: () => void) {
+    this._global = global;
     this._coords = coords;
     this._container = container;
     this._dimensions = dimensions;
@@ -140,6 +142,10 @@ export default class TileObject implements Mono, Interactible {
     };
 
     return bounds;
+  }
+
+  get occupied(): boolean {
+    return this._type !== TileType.NONE;
   }
 
   // #################################################

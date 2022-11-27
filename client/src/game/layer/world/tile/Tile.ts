@@ -129,17 +129,13 @@ export default class Tile implements Mono, Interactible {
     return this.object?.bounds ?? { x: this.coords.x - 0.5, y: this.coords.y - 0.5, width: 1, height: 1 };
   }
 
+  get occupied() {
+    return (this.object && this.object.occupied) ?? false;
+  }
+
   // #################################################
   //   GETTERS
   // #################################################
-
-  get occupied() {
-    return this._type !== TileType.NONE;
-  }
-
-  get type() {
-    return this._type;
-  }
 
   get coords() {
     return this._coords;

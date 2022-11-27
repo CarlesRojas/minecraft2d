@@ -335,6 +335,10 @@ export default class Player implements Mono, Interactible {
     return bounds;
   }
 
+  get occupied() {
+    return true;
+  }
+
   // #################################################
   //   GETTERS
   // #################################################

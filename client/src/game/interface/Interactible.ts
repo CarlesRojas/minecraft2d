@@ -31,4 +31,5 @@ export interface Interactible {
   shouldCollide(): boolean;
 
   get bounds(): Bounds; // In tile space
+  get occupied(): boolean; // In tile space
 }
