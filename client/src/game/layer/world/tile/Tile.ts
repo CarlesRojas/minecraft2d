@@ -25,11 +25,8 @@ export default class Tile implements Mono, Interactible {
 
   // PROPERTIES
   private _coords: Vector2;
-  private _type: TileType;
   private _isBackground: boolean;
   private object: (Mono & Interactible) | null = null;
-  interactionLayer: InteractionLayer = InteractionLayer.NONE;
-  collisionLayer: CollisionLayer = CollisionLayer.NONE;
 
   // DEBUG
   private _debug = false;
@@ -41,9 +38,6 @@ export default class Tile implements Mono, Interactible {
     this._container = container;
     this._dimensions = dimensions;
     this._isBackground = isBackground;
-    this._type = type;
-    this.interactionLayer = isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
-    this.collisionLayer = isBackground ? CollisionLayer.NONE : CollisionLayer.GROUND;
 
     this.#instantiateObject(type);
 
@@ -133,6 +127,14 @@ export default class Tile implements Mono, Interactible {
     return (this.object && this.object.occupied) ?? false;
   }
 
+  get interactionLayer() {
+    return this.object?.interactionLayer ?? InteractionLayer.NONE;
+  }
+
+  get collisionLayer() {
+    return this.object?.collisionLayer ?? CollisionLayer.NONE;
+  }
+
   // #################################################
   //   GETTERS
   // #################################################
@@ -161,25 +163,10 @@ export default class Tile implements Mono, Interactible {
 
     if (type === TileType.DIRT || type === TileType.GRASS) this.object = new Dirt(props, handleBreak);
     else this.object = new TileObject(props, handleBreak);
-
-    this._type = type;
-    this.#setLayers();
   }
 
   #destroyObject() {
     this.object?.destructor();
     this.object = null;
-    this._type = TileType.NONE;
-    this.#setLayers();
-  }
-
-  #setLayers() {
-    this.interactionLayer = this._isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
-    this.collisionLayer = this._isBackground ? CollisionLayer.NONE : CollisionLayer.GROUND;
-
-    if (this._type === TileType.NONE) {
-      this.interactionLayer = InteractionLayer.NONE;
-      this.collisionLayer = CollisionLayer.NONE;
-    }
   }
 }

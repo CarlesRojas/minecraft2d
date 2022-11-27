@@ -45,7 +45,7 @@ export default class TileObject implements Mono, Interactible {
     this._isBackground = isBackground;
     this._handleBreak = handleBreak;
 
-    this.#setLayers(type);
+    this.setLayers(type);
     if (type === TileType.NONE) return;
 
     this.#setSprites();
@@ -184,6 +184,13 @@ export default class TileObject implements Mono, Interactible {
   //   SETTERS
   // #################################################
 
+  setType(type: TileType) {
+    const texture = getTileTexture(type);
+    if (this._sprite) this._sprite.texture = texture;
+    this._type = type;
+    this.setLayers(this._type);
+  }
+
   #setSprites() {
     const texture = getTileTexture(this._type);
 
@@ -231,7 +238,7 @@ export default class TileObject implements Mono, Interactible {
     this._container.addChild(this._sprite);
   }
 
-  #setLayers(type: TileType) {
+  setLayers(type: TileType) {
     this.interactionLayer = this._isBackground ? InteractionLayer.BACKGROUND : InteractionLayer.GROUND;
     this.collisionLayer = this._isBackground ? CollisionLayer.NONE : CollisionLayer.GROUND;
 

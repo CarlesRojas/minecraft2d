@@ -1,4 +1,4 @@
-import { getTileTexture, TileType } from '@game/system/Textures';
+import { TileType } from '@game/system/Textures';
 import Timer from '@game/util/Timer';
 import Vector2 from '@game/util/Vector2';
 import random from 'lodash/random';
@@ -8,14 +8,14 @@ import TileObject from './TileObject';
 export default class Dirt extends TileObject {
   private _growGrassTimer: Timer;
   private _killGrassTimer: Timer;
-  private _grassSettings = { min: 1, max: 2 };
+  private _grassSettings = { min: 5, max: 20 };
   private _timersAreRunning = true;
 
   constructor(tileProps: TileProps, handleBreak: () => void) {
     super(tileProps, handleBreak);
 
-    this._growGrassTimer = new Timer(1, this.#growGrass.bind(this));
-    this._killGrassTimer = new Timer(1, this.#killGrass.bind(this));
+    this._growGrassTimer = new Timer(1, () => this.setType(TileType.GRASS));
+    this._killGrassTimer = new Timer(1, () => this.setType(TileType.DIRT));
 
     this.#resetGrassTimers();
   }
@@ -51,18 +51,6 @@ export default class Dirt extends TileObject {
     else covered = this._global.controller.world.ground.elementAtCoords(new Vector2(x, y - 1))?.occupied ?? false;
 
     return covered ?? false;
-  }
-
-  #growGrass() {
-    const texture = getTileTexture(TileType.GRASS);
-    if (this._sprite) this._sprite.texture = texture;
-    this._type = TileType.GRASS;
-  }
-
-  #killGrass() {
-    const texture = getTileTexture(TileType.DIRT);
-    if (this._sprite) this._sprite.texture = texture;
-    this._type = TileType.DIRT;
   }
 
   #resetGrassTimers() {

@@ -16,9 +16,6 @@ export enum CollisionLayer {
 }
 
 export interface Interactible {
-  interactionLayer: InteractionLayer;
-  collisionLayer: CollisionLayer;
-
   highlight(): void;
   stopHighlighting(): void;
 
@@ -31,5 +28,7 @@ export interface Interactible {
   shouldCollide(): boolean;
 
   get bounds(): Bounds; // In tile space
-  get occupied(): boolean; // In tile space
+  get occupied(): boolean;
+  get interactionLayer(): InteractionLayer;
+  get collisionLayer(): CollisionLayer;
 }
