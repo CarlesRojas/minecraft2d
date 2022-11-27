@@ -26,7 +26,7 @@ export default class Tile implements Mono, Interactible {
   // PROPERTIES
   private _coords: Vector2;
   private _isBackground: boolean;
-  private object: (Mono & Interactible) | null = null;
+  private _object: TileObject | null = null;
 
   // DEBUG
   private _debug = false;
@@ -53,7 +53,7 @@ export default class Tile implements Mono, Interactible {
 
   destructor() {
     if (this._text) this._container.removeChild(this._text);
-    this.object?.destructor();
+    this._object?.destructor();
   }
 
   // #################################################
@@ -64,7 +64,7 @@ export default class Tile implements Mono, Interactible {
     const { tile } = dimensions;
     if (this._text) this._text.position.set(this._coords.x * tile, this._coords.y * tile);
 
-    this.object?.handleResize(dimensions);
+    this._object?.handleResize(dimensions);
   }
 
   // #################################################
@@ -72,7 +72,7 @@ export default class Tile implements Mono, Interactible {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
-    this.object?.gameLoop(deltaInSeconds);
+    this._object?.gameLoop(deltaInSeconds);
   }
 
   // #################################################
@@ -80,23 +80,23 @@ export default class Tile implements Mono, Interactible {
   // #################################################
 
   highlight() {
-    this.object?.highlight();
+    this._object?.highlight();
   }
 
   stopHighlighting() {
-    this.object?.stopHighlighting();
+    this._object?.stopHighlighting();
   }
 
   interact() {
-    this.object?.interact();
+    this._object?.interact();
   }
 
   stopInteracting() {
-    this.object?.stopInteracting();
+    this._object?.stopInteracting();
   }
 
   interactSecondary() {
-    if (this.isInteractable()) this.object?.interactSecondary();
+    if (this.isInteractable()) this._object?.interactSecondary();
     else if (!this.occupied) {
       const collision = isCollidingWithLayers(
         this.bounds,
@@ -108,31 +108,31 @@ export default class Tile implements Mono, Interactible {
       if (!collision) this.#instantiateObject(TileType.DIRT);
     }
 
-    this.object?.interactSecondary();
+    this._object?.interactSecondary();
   }
 
   isInteractable() {
-    return this.object?.isInteractable() ?? false;
+    return this._object?.isInteractable() ?? false;
   }
 
   shouldCollide() {
-    return this.object?.shouldCollide() ?? false;
+    return this._object?.shouldCollide() ?? false;
   }
 
   get bounds() {
-    return this.object?.bounds ?? { x: this.coords.x - 0.5, y: this.coords.y - 0.5, width: 1, height: 1 };
+    return this._object?.bounds ?? { x: this.coords.x - 0.5, y: this.coords.y - 0.5, width: 1, height: 1 };
   }
 
   get occupied() {
-    return (this.object && this.object.occupied) ?? false;
+    return (this._object && this._object.occupied) ?? false;
   }
 
   get interactionLayer() {
-    return this.object?.interactionLayer ?? InteractionLayer.NONE;
+    return this._object?.interactionLayer ?? InteractionLayer.NONE;
   }
 
   get collisionLayer() {
-    return this.object?.collisionLayer ?? CollisionLayer.NONE;
+    return this._object?.collisionLayer ?? CollisionLayer.NONE;
   }
 
   // #################################################
@@ -141,6 +141,10 @@ export default class Tile implements Mono, Interactible {
 
   get coords() {
     return this._coords;
+  }
+
+  get type() {
+    return this._object?.type ?? TileType.NONE;
   }
 
   // #################################################
@@ -161,12 +165,12 @@ export default class Tile implements Mono, Interactible {
 
     this.#destroyObject();
 
-    if (type === TileType.DIRT || type === TileType.GRASS) this.object = new Dirt(props, handleBreak);
-    else this.object = new TileObject(props, handleBreak);
+    if (type === TileType.DIRT || type === TileType.GRASS) this._object = new Dirt(props, handleBreak);
+    else this._object = new TileObject(props, handleBreak);
   }
 
   #destroyObject() {
-    this.object?.destructor();
-    this.object = null;
+    this._object?.destructor();
+    this._object = null;
   }
 }

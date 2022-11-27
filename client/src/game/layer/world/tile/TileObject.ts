@@ -144,8 +144,12 @@ export default class TileObject implements Mono, Interactible {
     return bounds;
   }
 
-  get occupied(): boolean {
+  get occupied() {
     return this._type !== TileType.NONE;
+  }
+
+  get type() {
+    return this._type;
   }
 
   // #################################################

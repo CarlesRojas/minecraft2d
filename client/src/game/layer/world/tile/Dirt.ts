@@ -8,7 +8,7 @@ import TileObject from './TileObject';
 export default class Dirt extends TileObject {
   private _growGrassTimer: Timer;
   private _killGrassTimer: Timer;
-  private _grassSettings = { min: 5, max: 20 };
+  private _grassSettings = { min: 2, max: 10 };
   private _timersAreRunning = true;
 
   constructor(tileProps: TileProps, handleBreak: () => void) {
@@ -29,7 +29,7 @@ export default class Dirt extends TileObject {
 
     const isCovered = this.#isCovered();
 
-    if (this._type === TileType.DIRT && !isCovered) {
+    if (this._type === TileType.DIRT && !isCovered && this.#hasGrassAround()) {
       this._growGrassTimer.gameLoop(deltaInSeconds);
       this._timersAreRunning = true;
     } else if (this._type === TileType.GRASS && isCovered) {
@@ -45,12 +45,37 @@ export default class Dirt extends TileObject {
   #isCovered() {
     const { x, y } = this._coords;
 
-    let covered = false;
-    if (this._isBackground)
-      covered = this._global.controller.world.background.elementAtCoords(new Vector2(x, y - 1))?.occupied ?? false;
-    else covered = this._global.controller.world.ground.elementAtCoords(new Vector2(x, y - 1))?.occupied ?? false;
+    const tilemap = this._isBackground
+      ? this._global.controller.world.background
+      : this._global.controller.world.ground;
+
+    const covered = tilemap.elementAtCoords(new Vector2(x, y - 1))?.occupied ?? false;
 
     return covered ?? false;
+  }
+
+  #hasGrassAround() {
+    const { x, y } = this._coords;
+
+    const coordsToCheck = [
+      new Vector2(x - 1, y - 1),
+      new Vector2(x - 1, y),
+      new Vector2(x - 1, y + 1),
+      new Vector2(x + 1, y - 1),
+      new Vector2(x + 1, y),
+      new Vector2(x + 1, y + 1),
+    ];
+
+    const tilemap = this._isBackground
+      ? this._global.controller.world.background
+      : this._global.controller.world.ground;
+
+    for (const coords of coordsToCheck) {
+      const type = tilemap.elementAtCoords(coords)?.type;
+      if (type && type === TileType.GRASS) return true;
+    }
+
+    return false;
   }
 
   #resetGrassTimers() {
