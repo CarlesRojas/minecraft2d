@@ -15,7 +15,7 @@
     ]
   },
   "stone": {
-    "baseHeight": 5,
+    "baseHeight": 6,
     "waves": [
       {
         "frequency": 0.005,
@@ -25,17 +25,17 @@
       {
         "frequency": 0.05,
         "amplitude": 5,
-        "offset": 100
+        "offset": 1000
       }
     ]
   },
   "deepslate": {
-    "baseHeight": 30,
+    "baseHeight": 20,
     "waves": [
       {
         "frequency": 0.05,
-        "amplitude": 100,
-        "offset": 0
+        "amplitude": 15,
+        "offset": 20000
       },
       {
         "frequency": 0.1,
@@ -49,12 +49,12 @@
     "waves": [
       {
         "frequency": 0.05,
-        "amplitude": 100,
-        "offset": 0
+        "amplitude": 15,
+        "offset": 50000
       },
       {
         "frequency": 0.1,
-        "amplitude": 5,
+        "amplitude": 2,
         "offset": 0
       }
     ]
@@ -64,43 +64,43 @@
     "waves": [
       {
         "frequency": 0.05,
-        "amplitude": 100,
-        "offset": 0
+        "amplitude": 15,
+        "offset": 50000
       },
       {
         "frequency": 0.1,
-        "amplitude": 5,
-        "offset": 0
+        "amplitude": 2,
+        "offset": 5500
       }
     ]
   },
   "bedrock": {
-    "baseHeight": 75,
+    "baseHeight": 85,
     "waves": [
       {
         "frequency": 0.05,
-        "amplitude": 100,
-        "offset": 0
+        "amplitude": 15,
+        "offset": 40000
       },
       {
         "frequency": 0.1,
-        "amplitude": 5,
+        "amplitude": 2,
         "offset": 0
       }
     ]
   },
   "end": {
-    "baseHeight": 80,
+    "baseHeight": 90,
     "waves": [
       {
         "frequency": 0.05,
-        "amplitude": 100,
-        "offset": 0
+        "amplitude": 15,
+        "offset": 40000
       },
       {
         "frequency": 0.1,
-        "amplitude": 5,
-        "offset": 0
+        "amplitude": 2,
+        "offset": 5500
       }
     ]
   }

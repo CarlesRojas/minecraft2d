@@ -11,6 +11,8 @@ interface NoiseProps {
   seed: number;
 }
 
+const DISPLACEMENT = 100000;
+
 export class NoiseGenerator {
   private _p5Instance: P5;
 
@@ -23,7 +25,7 @@ export class NoiseGenerator {
     let noise = 0;
 
     for (const wave of waves) {
-      const samplePos = x + wave.offset;
+      const samplePos = x + wave.offset + DISPLACEMENT;
       noise += (this._p5Instance.noise(samplePos * wave.frequency) - 0.5) * wave.amplitude;
     }
 
@@ -35,7 +37,7 @@ export class NoiseGenerator {
     let noise = 0;
 
     for (const wave of waves) {
-      const samplePos = new Vector2(x + wave.offset, y + wave.offset);
+      const samplePos = new Vector2(x + wave.offset + DISPLACEMENT, y + wave.offset + DISPLACEMENT);
 
       noise +=
         (this._p5Instance.noise(samplePos.x * wave.frequency, samplePos.y * wave.frequency) - 0.5) * wave.amplitude;

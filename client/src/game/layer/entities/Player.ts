@@ -12,7 +12,7 @@ import { EntityType } from '@game/system/Textures';
 import Entity, { Bounds } from '@game/util/EntityTypes';
 import Timer from '@game/util/Timer';
 import Vector2 from '@game/util/Vector2';
-import { CODE_A, CODE_D, CODE_SPACE } from 'keycode-js';
+import { CODE_A, CODE_D, CODE_S, CODE_SPACE, CODE_W } from 'keycode-js';
 import * as PIXI from 'pixi.js';
 
 interface PlayerProps {
@@ -49,7 +49,8 @@ export default class Player implements Mono, Interactible {
   interactedInteractible: Interactible | null = null;
 
   // DEBUG
-  private _debug = false;
+  private _debug = true;
+  private _debugMovementSpeed = 30;
   collisionPoint: PIXI.Sprite | null = null;
 
   constructor({ global }: PlayerProps) {
@@ -125,6 +126,8 @@ export default class Player implements Mono, Interactible {
   // #################################################
 
   gameLoop(deltaInSeconds: number) {
+    if (this._debug) return this.#debugMove(deltaInSeconds);
+
     this._jumpTimer.gameLoop(deltaInSeconds);
 
     this.#updatePlayerSpeed(deltaInSeconds);
@@ -206,6 +209,22 @@ export default class Player implements Mono, Interactible {
 
   #handleJumpTimerFinished() {
     this._canJump = true;
+  }
+
+  #debugMove(deltaInSeconds: number) {
+    const leftButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_A);
+    const rightButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_D);
+    const upButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_W);
+    const downButtonClicked = this._global.controller.interaction.isKeyPressed(CODE_S);
+
+    const newPosition = this._position.clone();
+    if (leftButtonClicked) newPosition.x -= this._debugMovementSpeed * deltaInSeconds;
+    else if (rightButtonClicked) newPosition.x += this._debugMovementSpeed * deltaInSeconds;
+
+    if (upButtonClicked) newPosition.y -= this._debugMovementSpeed * deltaInSeconds;
+    else if (downButtonClicked) newPosition.y += this._debugMovementSpeed * deltaInSeconds;
+
+    this.#moveToPosition(newPosition);
   }
 
   // #################################################

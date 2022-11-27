@@ -3,8 +3,7 @@ import { Mono } from '@game/interface/Mono';
 import { Area, RenderArea } from '@game/interface/RenderArea';
 import { CoordsMap, TileMap } from '@game/interface/TileMap';
 import Tile from '@game/layer/world/tile/Tile';
-import { getTileTypeInCoords } from '@game/system/Terrain';
-import { TileType } from '@game/system/Textures';
+import { TerrainGenerator } from '@game/system/TerrainGenerator';
 import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
@@ -13,21 +12,30 @@ interface GroundProps {
 }
 
 export default class Ground implements Mono, TileMap<Tile>, RenderArea {
+  // GLOBAL
   private _global: Global;
   private _container: PIXI.Container;
+
+  // TERRAIN
   tilemap: CoordsMap<Tile>;
+  private _terrainGenerator: TerrainGenerator;
 
   // DEBUG
   private _debug = true;
   private _middleOfWorld: PIXI.Sprite | null = null;
 
   constructor({ global }: GroundProps) {
+    // GLOBAL
     this._global = global;
-
     this._container = new PIXI.Container();
     this._container.sortableChildren = true;
     this._global.stage.addChild(this._container);
 
+    // TERRAIN
+    this.tilemap = {};
+    this._terrainGenerator = new TerrainGenerator();
+
+    // DEBUG
     if (this._debug) {
       this._middleOfWorld = new PIXI.Sprite(PIXI.Texture.WHITE);
       this._middleOfWorld.width = 8;
@@ -38,8 +46,6 @@ export default class Ground implements Mono, TileMap<Tile>, RenderArea {
       this._middleOfWorld.tint = 0x00ff00;
       this._container.addChild(this._middleOfWorld);
     }
-
-    this.tilemap = {};
   }
 
   destructor() {
@@ -69,14 +75,14 @@ export default class Ground implements Mono, TileMap<Tile>, RenderArea {
   // #################################################
 
   async #instantiateTile(key: string, coords: Vector2) {
-    const { groundType, isCave } = await getTileTypeInCoords(coords);
+    const tileType = this._terrainGenerator.getGroundTileAtCoords(coords);
 
     this.tilemap[key] = new Tile({
       global: this._global,
-      coords: new Vector2(coords.x, coords.y),
+      coords,
       container: this._container,
       dimensions: this._global.dimensions,
-      type: isCave ? TileType.NONE : groundType,
+      type: tileType,
       isBackground: false,
     });
   }

@@ -39,8 +39,9 @@ export class TerrainGenerator {
   getGroundTileAtCoords(coords: Vector2): TileType {
     const layersHeight = this.#getLayersElevation(coords.x);
 
-    const layer = Object.entries(layersHeight).find(([_, height]) => {
-      return coords.y <= height;
+    // @ts-ignore
+    const layer = Object.entries(layersHeight).findLast(([_, height]) => {
+      return coords.y >= height;
     });
 
     if (!layer) return TileType.NONE;
@@ -63,11 +64,11 @@ export class TerrainGenerator {
       const noise = this._noiseGenerator.getNoiseAtPoint(x, info.waves);
       layersHeight[layer as Layer] = info.baseHeight + noise;
     }
-    console.log(layersHeight);
 
     return layersHeight;
   }
 
+  // TODO this should be modified by the biome
   #getTileAtLayer(layer: Layer): TileType {
     switch (layer) {
       case Layer.DIRT:
@@ -75,15 +76,15 @@ export class TerrainGenerator {
       case Layer.STONE:
         return TileType.STONE;
       case Layer.DEEPSLATE:
-        return TileType.STONE;
+        return TileType.DEEPSLATE;
       case Layer.NETHEROCK:
-        return TileType.STONE;
+        return TileType.NETHEROCK;
       case Layer.NETHER:
-        return TileType.STONE;
+        return TileType.NETHERRACK;
       case Layer.BEDROCK:
-        return TileType.STONE;
+        return TileType.BEDROCK;
       case Layer.END:
-        return TileType.STONE;
+        return TileType.END_STONE;
 
       default:
         return TileType.NONE;

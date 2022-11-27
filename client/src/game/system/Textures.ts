@@ -1,5 +1,8 @@
 import AndesiteImage from '@asset/texture/block/andesite.png';
+import BedrockImage from '@asset/texture/block/bedrock.png';
+import NetherockImage from '@asset/texture/block/blackstone_top.png';
 import CoalOreImage from '@asset/texture/block/coal_ore.png';
+import DeepslateImage from '@asset/texture/block/deepslate.png';
 import DestroyStage0Image from '@asset/texture/block/destroy_stage_0.png';
 import DestroyStage1Image from '@asset/texture/block/destroy_stage_1.png';
 import DestroyStage2Image from '@asset/texture/block/destroy_stage_2.png';
@@ -13,9 +16,11 @@ import DestroyStage9Image from '@asset/texture/block/destroy_stage_9.png';
 import DiamondOreImage from '@asset/texture/block/diamond_ore.png';
 import DioriteImage from '@asset/texture/block/diorite.png';
 import DirtImage from '@asset/texture/block/dirt.png';
+import EndStoneImage from '@asset/texture/block/end_stone.png';
 import GraniteImage from '@asset/texture/block/granite.png';
 import GrassBlockSideImage from '@asset/texture/block/grass_block_side.png';
 import IronOreImage from '@asset/texture/block/iron_ore.png';
+import NetherrackImage from '@asset/texture/block/netherrack.png';
 import StoneImage from '@asset/texture/block/stone.png';
 
 import AlexImage from '@asset/texture/entity/alex.png';
@@ -31,6 +36,11 @@ export enum TileType {
   DIRT = 'dirt',
   GRASS = 'grass_block_side',
   STONE = 'stone',
+  DEEPSLATE = 'deepslate',
+  NETHEROCK = 'netherock',
+  NETHERRACK = 'netherrack',
+  BEDROCK = 'bedrock',
+  END_STONE = 'end_stone',
   COAL = 'coal_ore',
   IRON = 'iron_ore',
   DIAMOND = 'diamond_ore',
@@ -65,6 +75,11 @@ const textures = {
         { name: TileType.DIRT, srcs: DirtImage },
         { name: TileType.GRASS, srcs: GrassBlockSideImage },
         { name: TileType.STONE, srcs: StoneImage },
+        { name: TileType.DEEPSLATE, srcs: DeepslateImage },
+        { name: TileType.NETHEROCK, srcs: NetherockImage },
+        { name: TileType.NETHERRACK, srcs: NetherrackImage },
+        { name: TileType.BEDROCK, srcs: BedrockImage },
+        { name: TileType.END_STONE, srcs: EndStoneImage },
         { name: TileType.COAL, srcs: CoalOreImage },
         { name: TileType.IRON, srcs: IronOreImage },
         { name: TileType.DIAMOND, srcs: DiamondOreImage },

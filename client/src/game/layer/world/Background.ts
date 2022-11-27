@@ -3,7 +3,7 @@ import { Mono } from '@game/interface/Mono';
 import { Area, RenderArea } from '@game/interface/RenderArea';
 import { CoordsMap, TileMap } from '@game/interface/TileMap';
 import Tile from '@game/layer/world/tile/Tile';
-import { getTileTypeInCoords } from '@game/system/Terrain';
+import { TerrainGenerator } from '@game/system/TerrainGenerator';
 import Vector2 from '@game/util/Vector2';
 import * as PIXI from 'pixi.js';
 
@@ -12,18 +12,24 @@ interface BackgroundProps {
 }
 
 export default class Background implements Mono, TileMap<Tile>, RenderArea {
+  // GLOBAL
   private _global: Global;
   private _container: PIXI.Container;
+
+  // TERRAIN
   tilemap: CoordsMap<Tile>;
+  private _terrainGenerator: TerrainGenerator;
 
   constructor({ global }: BackgroundProps) {
+    // GLOBAL
     this._global = global;
-
     this._container = new PIXI.Container();
     this._container.sortableChildren = true;
     this._global.stage.addChild(this._container);
 
+    // TERRAIN
     this.tilemap = {};
+    this._terrainGenerator = new TerrainGenerator();
   }
 
   destructor() {
@@ -52,14 +58,14 @@ export default class Background implements Mono, TileMap<Tile>, RenderArea {
   // #################################################
 
   async #instantiateTile(key: string, coords: Vector2) {
-    const { backgroundType } = await getTileTypeInCoords(coords);
+    const tileType = this._terrainGenerator.getGroundTileAtCoords(coords);
 
     this.tilemap[key] = new Tile({
       global: this._global,
-      coords: new Vector2(coords.x, coords.y),
+      coords,
       container: this._container,
       dimensions: this._global.dimensions,
-      type: backgroundType,
+      type: tileType,
       isBackground: true,
     });
   }
